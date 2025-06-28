@@ -271,7 +271,7 @@ const ArchitecturePage = () => {
           <div className="text-slate-600">Uptime Target</div>
         </div>
         <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-          <div className="text-3xl font-bold text-green-600 mb-2"><200ms</div>
+          <div className="text-3xl font-bold text-green-600 mb-2">&lt;200ms</div>
           <div className="text-slate-600">Response Time</div>
         </div>
         <div className="bg-white rounded-2xl shadow-lg p-6 text-center">

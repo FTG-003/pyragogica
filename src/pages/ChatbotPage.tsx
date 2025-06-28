@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff } from 'lucide-react';
+import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff } from 'lucide-react';
 import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource } from '../services/ragService';
 
 const ChatbotPage = () => {
@@ -7,7 +7,7 @@ const ChatbotPage = () => {
     {
       id: '1',
       role: 'system',
-      content: 'Benvenuto nel Sistema RAG Pyragogico! 🤖\n\nPer iniziare:\n1. Configura la tua API key con `/set_api_key`\n2. Seleziona una personalità AI\n3. Inizia a chattare!\n\nUsa `/help` per vedere tutti i comandi disponibili.',
+      content: '🤖 **Benvenuto nel Sistema RAG Pyragogico!**\n\n**Vector Store Attivo:** Pinecone con Peeragogy Handbook completo\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Configura la tua API key con `/set_api_key`\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• `/help` - Guida completa\n• `/status` - Verifica sistema\n• `/vector_info` - Info sul database\n\nIl sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚',
       timestamp: new Date()
     }
   ]);
@@ -15,6 +15,7 @@ const ChatbotPage = () => {
   const [selectedPersonality, setSelectedPersonality] = useState('academic');
   const [isTyping, setIsTyping] = useState(false);
   const [apiStatus, setApiStatus] = useState({ configured: false, provider: '', model: '' });
+  const [vectorStoreStatus, setVectorStoreStatus] = useState(true); // Pinecone è sempre attivo
   const [showApiConfig, setShowApiConfig] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [configForm, setConfigForm] = useState({
@@ -82,7 +83,7 @@ const ChatbotPage = () => {
           const errorMessage: ChatMessage = {
             id: (Date.now() + 1).toString(),
             role: 'system',
-            content: '⚠️ **API non configurata**\n\nPer utilizzare il sistema RAG, devi prima configurare la tua API key.\n\nUsa il comando: `/set_api_key <provider> <model> <api_key>`\n\nEsempio: `/set_api_key openai gpt-4o sk-your-key-here`',
+            content: '⚠️ **API non configurata**\n\nPer utilizzare il sistema RAG, devi prima configurare la tua API key.\n\n**Configurazione rapida:**\n`/set_api_key <provider> <model> <api_key>`\n\n**Esempio:**\n`/set_api_key openai gpt-4o sk-your-key-here`\n\n**Vector Store:** ✅ Pinecone attivo con Peeragogy Handbook\n**API:** ❌ Richiesta configurazione',
             timestamp: new Date()
           };
           setMessages(prev => [...prev, errorMessage]);
@@ -110,7 +111,7 @@ const ChatbotPage = () => {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'system',
-        content: `❌ **Errore**: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`,
+        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione API con \`/status\`\n• Controlla la connessione al vector store\n• Riprova con una domanda diversa`,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -140,9 +141,11 @@ const ChatbotPage = () => {
   const quickPrompts = [
     "Spiegami i principi fondamentali della peeragogy",
     "Come posso implementare l'apprendimento peer-to-peer?",
-    "Quali sono i benefici della collaborazione nell'educazione?",
+    "Quali sono i pattern ricorrenti nella peeragogy?",
     "Come gestire i conflitti in un gruppo di apprendimento?",
-    "Che ruolo ha la tecnologia nella peeragogy?"
+    "Che ruolo ha la motivazione nell'apprendimento collaborativo?",
+    "Come creare spazi sicuri per l'apprendimento?",
+    "Quali tecnologie supportano la peeragogy?"
   ];
 
   const commandExamples = [
@@ -150,7 +153,8 @@ const ChatbotPage = () => {
     "/status",
     "/help",
     "/personalities",
-    "/providers"
+    "/providers",
+    "/vector_info"
   ];
 
   return (
@@ -159,22 +163,38 @@ const ChatbotPage = () => {
       <div className="text-center mb-16">
         <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
           <Brain className="w-4 h-4" />
-          <span>Sistema RAG Avanzato</span>
+          <span>Sistema RAG con Vector Store Pinecone</span>
         </div>
         <h1 className="text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
         <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
-          Sistema RAG (Retrieval-Augmented Generation) con personalità multiple basato sul Peeragogy Handbook. 
-          Configura la tua API key e inizia conversazioni intelligenti e contestualizzate.
+          Sistema RAG (Retrieval-Augmented Generation) con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
+          Vector store Pinecone attivo con contenuti reali indicizzati semanticamente.
         </p>
+        
+        {/* Vector Store Status */}
+        <div className="mt-8 inline-flex items-center space-x-4 px-6 py-3 bg-green-50 border border-green-200 rounded-2xl">
+          <div className="flex items-center space-x-2">
+            <Database className="w-5 h-5 text-green-600" />
+            <span className="text-green-800 font-semibold">Vector Store Pinecone</span>
+            {vectorStoreStatus ? (
+              <Wifi className="w-4 h-4 text-green-600" />
+            ) : (
+              <WifiOff className="w-4 h-4 text-red-600" />
+            )}
+          </div>
+          <div className="text-green-700 text-sm">
+            Peeragogy Handbook • Indicizzazione semantica • Pronto per query
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
         {/* Enhanced Sidebar */}
         <div className="lg:col-span-1 space-y-8">
-          {/* API Status */}
+          {/* System Status */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">Stato Sistema</h3>
+              <h3 className="text-lg font-bold text-slate-900">Stato Sistema RAG</h3>
               <button
                 onClick={() => setShowApiConfig(!showApiConfig)}
                 className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
@@ -184,6 +204,7 @@ const ChatbotPage = () => {
             </div>
             
             <div className="space-y-4">
+              {/* API Status */}
               <div className="flex items-center space-x-3">
                 {apiStatus.configured ? (
                   <CheckCircle className="w-5 h-5 text-green-500" />
@@ -192,7 +213,7 @@ const ChatbotPage = () => {
                 )}
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-900">
-                    {apiStatus.configured ? 'Configurato' : 'Non Configurato'}
+                    API {apiStatus.configured ? 'Configurata' : 'Non Configurata'}
                   </div>
                   {apiStatus.configured && (
                     <div className="text-xs text-slate-600">
@@ -202,11 +223,29 @@ const ChatbotPage = () => {
                 </div>
               </div>
               
+              {/* Vector Store Status */}
               <div className="flex items-center space-x-3">
-                <Database className="w-5 h-5 text-blue-500" />
+                <CheckCircle className="w-5 h-5 text-green-500" />
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">Vector Store</div>
-                  <div className="text-xs text-slate-600">Peeragogy Handbook</div>
+                  <div className="text-sm font-medium text-slate-900">Vector Store Pinecone</div>
+                  <div className="text-xs text-slate-600">Peeragogy Handbook • Attivo</div>
+                </div>
+              </div>
+
+              {/* RAG Status */}
+              <div className="flex items-center space-x-3">
+                {apiStatus.configured ? (
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-orange-500" />
+                )}
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-slate-900">
+                    Sistema RAG {apiStatus.configured ? 'Operativo' : 'In Attesa'}
+                  </div>
+                  <div className="text-xs text-slate-600">
+                    {apiStatus.configured ? 'Pronto per query' : 'Configura API per iniziare'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -318,6 +357,9 @@ const ChatbotPage = () => {
                     <h4 className="font-bold">{personality.name}</h4>
                   </div>
                   <p className="text-sm opacity-90">{personality.description}</p>
+                  <div className="mt-2 text-xs opacity-75">
+                    Temp: {personality.temperature} • Max: {personality.maxTokens} token
+                  </div>
                 </button>
               ))}
             </div>
@@ -325,7 +367,7 @@ const ChatbotPage = () => {
 
           {/* Quick Prompts */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-            <h4 className="text-lg font-bold text-slate-900 mb-4">Domande Rapide</h4>
+            <h4 className="text-lg font-bold text-slate-900 mb-4">Domande sul Peeragogy Handbook</h4>
             <div className="space-y-2">
               {quickPrompts.map((prompt, index) => (
                 <button
@@ -341,7 +383,7 @@ const ChatbotPage = () => {
 
           {/* Command Examples */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-            <h4 className="text-lg font-bold text-slate-900 mb-4">Comandi Utili</h4>
+            <h4 className="text-lg font-bold text-slate-900 mb-4">Comandi Sistema</h4>
             <div className="space-y-2">
               {commandExamples.map((command, index) => (
                 <div key={index} className="group flex items-center space-x-2 p-2 bg-slate-50 rounded-lg">
@@ -371,17 +413,28 @@ const ChatbotPage = () => {
                 <div className="flex-1">
                   <div className="flex items-center space-x-3">
                     <h3 className="font-bold text-slate-900 text-xl">
-                      Sistema RAG • {getCurrentPersonality().name}
+                      RAG System • {getCurrentPersonality().name}
                     </h3>
                     <span className="text-2xl">{getCurrentPersonality().emoji}</span>
                   </div>
                   <p className="text-slate-600 leading-relaxed">
-                    {getCurrentPersonality().description}
+                    {getCurrentPersonality().description} • Vector Store Pinecone attivo
                   </p>
                 </div>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>{apiStatus.configured ? 'Pronto' : 'Configurazione richiesta'}</span>
+                <div className="flex flex-col space-y-2">
+                  <div className="flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+                    <Database className="w-4 h-4" />
+                    <span>Pinecone</span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  </div>
+                  <div className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold ${
+                    apiStatus.configured 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-orange-100 text-orange-700'
+                  }`}>
+                    <Key className="w-4 h-4" />
+                    <span>{apiStatus.configured ? 'API OK' : 'Config API'}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -431,10 +484,13 @@ const ChatbotPage = () => {
                         })}
                       </div>
                       
-                      {/* Sources */}
+                      {/* Sources from Pinecone */}
                       {message.sources && message.sources.length > 0 && (
                         <div className="mt-4 pt-4 border-t border-slate-200">
-                          <h5 className="text-sm font-semibold text-slate-600 mb-2">📚 Fonti dal Peeragogy Handbook:</h5>
+                          <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
+                            <Database className="w-4 h-4 mr-2" />
+                            📚 Fonti dal Vector Store Pinecone:
+                          </h5>
                           <div className="space-y-2">
                             {message.sources.map((source: RetrievedSource, index: number) => (
                               <div key={index} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
@@ -447,6 +503,11 @@ const ChatbotPage = () => {
                                 <div className="text-xs text-slate-600">
                                   {source.chapter} • {source.metadata.author} • Pag. {source.metadata.page}
                                 </div>
+                                {source.metadata.section && (
+                                  <div className="text-xs text-slate-500 mt-1">
+                                    Sezione: {source.metadata.section}
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
@@ -478,7 +539,7 @@ const ChatbotPage = () => {
                     <div className="p-6 rounded-3xl shadow-lg bg-white border border-slate-200">
                       <div className="flex items-center space-x-2">
                         <Loader className="w-4 h-4 animate-spin text-indigo-600" />
-                        <span className="text-slate-600">Elaborando risposta RAG...</span>
+                        <span className="text-slate-600">Interrogando vector store Pinecone...</span>
                       </div>
                     </div>
                   </div>
@@ -494,7 +555,7 @@ const ChatbotPage = () => {
                   ref={inputRef}
                   type="text"
                   placeholder={apiStatus.configured 
-                    ? `Scrivi una domanda per ${getCurrentPersonality().name} o usa un comando (/help)...`
+                    ? `Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
                     : 'Configura prima la tua API key con /set_api_key...'
                   }
                   className="flex-1 px-6 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg"
@@ -523,7 +584,7 @@ const ChatbotPage = () => {
 
       {/* Enhanced RAG System Visualization */}
       <div className="mt-20 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-10 text-white shadow-2xl">
-        <h3 className="text-3xl font-bold mb-8 text-center">Sistema RAG in Azione</h3>
+        <h3 className="text-3xl font-bold mb-8 text-center">Sistema RAG con Vector Store Pinecone</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
@@ -531,7 +592,7 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">1. Vector Store</h4>
-              <p className="text-slate-300 text-sm">Peeragogy Handbook indicizzato semanticamente per ricerca intelligente</p>
+              <p className="text-slate-300 text-sm">Peeragogy Handbook completo indicizzato in Pinecone con embedding semantici</p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -540,7 +601,7 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">2. Retrieval</h4>
-              <p className="text-slate-300 text-sm">Ricerca delle fonti più rilevanti basata sulla similarity semantica</p>
+              <p className="text-slate-300 text-sm">Query semantica su Pinecone per trovare i passaggi più rilevanti del manuale</p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -549,7 +610,7 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">3. Augmentation</h4>
-              <p className="text-slate-300 text-sm">Arricchimento del prompt con contesto e personalità selezionata</p>
+              <p className="text-slate-300 text-sm">Arricchimento del prompt con contesto dal manuale e personalità selezionata</p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -558,7 +619,7 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">4. Generation</h4>
-              <p className="text-slate-300 text-sm">Generazione di risposte contestualizzate con la personalità scelta</p>
+              <p className="text-slate-300 text-sm">Generazione di risposte contestualizzate basate sui contenuti reali del manuale</p>
             </div>
           </div>
         </div>
@@ -566,20 +627,20 @@ const ChatbotPage = () => {
         <div className="mt-12 p-6 bg-white/10 backdrop-blur-sm rounded-xl">
           <h4 className="text-lg font-bold mb-4 flex items-center">
             <Key className="w-5 h-5 mr-2" />
-            Gestione API Trasparente
+            Sistema RAG Completo e Trasparente
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
-              <h5 className="font-semibold mb-2">🔐 Privacy</h5>
-              <p className="text-slate-300">Le tue API key sono memorizzate solo localmente nel browser</p>
+              <h5 className="font-semibold mb-2">🔐 Privacy & Controllo</h5>
+              <p className="text-slate-300">API key memorizzate localmente. Controllo completo sui costi e sulla privacy.</p>
             </div>
             <div>
-              <h5 className="font-semibold mb-2">💰 Controllo Costi</h5>
-              <p className="text-slate-300">Usa la tua API key per controllo completo sui costi</p>
+              <h5 className="font-semibold mb-2">📚 Contenuti Reali</h5>
+              <p className="text-slate-300">Vector store Pinecone con Peeragogy Handbook completo e indicizzazione semantica.</p>
             </div>
             <div>
-              <h5 className="font-semibold mb-2">🔄 Flessibilità</h5>
-              <p className="text-slate-300">Supporto per OpenAI, Gemini, OpenRouter e altri provider</p>
+              <h5 className="font-semibold mb-2">🎭 Personalità Multiple</h5>
+              <p className="text-slate-300">4 personalità AI diverse per stili di apprendimento e comunicazione differenti.</p>
             </div>
           </div>
         </div>

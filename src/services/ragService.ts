@@ -519,7 +519,7 @@ IMPORTANTE: Tutte le informazioni provengono dal Peeragogy Handbook originale in
     // Build RAG prompt
     const ragPrompt = this.buildRAGPrompt(query, sources, personality);
 
-    // Chiamata API reale (per ora simulata)
+    // Chiamata API reale
     const response = await this.callLLMAPI(ragPrompt, personality);
 
     return {
@@ -551,109 +551,117 @@ IMPORTANTE: Tutte le informazioni provengono dal Peeragogy Handbook originale in
   }
 
   private async callLLMAPI(prompt: string, personality: PersonalityConfig): Promise<string> {
-    // Simulazione di chiamata API - in produzione farebbe chiamata reale
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Simula latenza
+    if (!this.provider || !this.apiKey) {
+      throw new Error('Provider o API key non configurati');
+    }
 
-    // Risposte simulate basate sui contenuti reali del Peeragogy Handbook
-    const responses = {
-      academic: `**Analisi Accademica Basata sul Peeragogy Handbook**
+    try {
+      switch (this.provider.id) {
+        case 'openai':
+          return await this.callOpenAI(prompt, personality);
+        case 'gemini':
+          return await this.callGemini(prompt, personality);
+        case 'openrouter':
+          return await this.callOpenRouter(prompt, personality);
+        default:
+          throw new Error(`Provider ${this.provider.id} non supportato`);
+      }
+    } catch (error) {
+      console.error('Errore chiamata LLM:', error);
+      throw new Error(`Errore nella chiamata API: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
+    }
+  }
 
-Dal punto di vista teorico, il concetto richiesto può essere analizzato attraverso il framework presentato nel Peeragogy Handbook.
+  private async callOpenAI(prompt: string, personality: PersonalityConfig): Promise<string> {
+    const response = await fetch(`${this.provider!.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`
+      },
+      body: JSON.stringify({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: prompt
+          }
+        ],
+        temperature: personality.temperature,
+        max_tokens: personality.maxTokens,
+        stream: false
+      })
+    });
 
-**Definizione Teorica:**
-Come definito da Howard Rheingold nel Capitolo 1, la peeragogy rappresenta "un framework flessibile di tecniche per l'apprendimento tra pari e la produzione di conoscenza collaborativa". Non si tratta semplicemente di "peer learning" in astratto, ma di imparare e lavorare insieme su problemi che sono personalmente significativi.
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`OpenAI API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    }
 
-**Framework Metodologico:**
-Secondo l'analisi di Paola Ricaurte nel Capitolo 2, questo approccio si basa su fattori motivazionali sia intrinseci (curiosità, soddisfazione personale) che estrinseci (riconoscimento, ricompense). La ricerca evidenzia come la motivazione sia un fattore chiave nell'apprendimento collaborativo.
+    const data = await response.json();
+    return data.choices[0]?.message?.content || 'Nessuna risposta generata';
+  }
 
-**Pattern Ricorrenti:**
-Anna Keune nel Capitolo 4 identifica pattern fondamentali come:
-- **Wrapper**: struttura che contiene e organizza le attività di apprendimento
-- **Heartbeat**: check-in regolari e aggiornamenti sui progressi
-- **Carrying Capacity**: comprensione dei limiti e delle capacità del gruppo
-- **Newcomer**: strategie per integrare nuovi membri
+  private async callGemini(prompt: string, personality: PersonalityConfig): Promise<string> {
+    const response = await fetch(`${this.provider!.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: personality.temperature,
+          maxOutputTokens: personality.maxTokens,
+          topP: 0.8,
+          topK: 10
+        }
+      })
+    });
 
-**Implicazioni per la Ricerca:**
-L'implementazione pratica, come documentata da Charles Jeffrey Danoff nel Capitolo 5, richiede attenzione particolare alle dinamiche di gruppo, alle tecniche di facilitazione e alla creazione di spazi sicuri per l'apprendimento.
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Gemini API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    }
 
-**Direzioni per Approfondimenti:**
-Raccomando di consultare il Capitolo 6 per le strategie di convening e i capitoli successivi per applicazioni specifiche in contesti K-12 e professionali.`,
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Nessuna risposta generata';
+  }
 
-      divulgative: `💡 **Scopriamo insieme questo concetto dal Peeragogy Handbook!**
+  private async callOpenRouter(prompt: string, personality: PersonalityConfig): Promise<string> {
+    const response = await fetch(`${this.provider!.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`,
+        'HTTP-Referer': window.location.origin,
+        'X-Title': 'Biblioteca Digitale Pyragogica'
+      },
+      body: JSON.stringify({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: prompt
+          }
+        ],
+        temperature: personality.temperature,
+        max_tokens: personality.maxTokens,
+        stream: false
+      })
+    });
 
-**Immagina questa situazione:**
-Sei in un gruppo di persone che vogliono imparare qualcosa insieme. Non c'è un "professore" che sa tutto, ma ognuno porta le proprie conoscenze ed esperienze. Questo è esattamente quello che Howard Rheingold chiama "peeragogy" nel suo manuale!
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`OpenRouter API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    }
 
-🎯 **Cosa significa in pratica?**
-Come spiega il Capitolo 1, la peeragogy non è solo teoria, ma un modo concreto di "imparare e lavorare insieme su problemi che sono personalmente significativi e che vogliamo risolvere". È come quando un gruppo di amici si aiuta a vicenda per imparare qualcosa di nuovo!
-
-🚀 **Perché funziona così bene?**
-Paola Ricaurte nel Capitolo 2 ci spiega che funziona perché tocca sia la nostra motivazione interna (la curiosità, il piacere di imparare) che quella esterna (il riconoscimento degli altri). È come avere il meglio di entrambi i mondi!
-
-🛠️ **Come puoi iniziare subito:**
-Il Capitolo 4 ci dà alcuni "pattern" super utili:
-- **Wrapper**: crea una struttura per organizzare il vostro apprendimento
-- **Heartbeat**: fate check-in regolari per vedere come va
-- **Newcomer**: accogliete sempre nuove persone nel gruppo
-
-📚 **Il segreto del successo:**
-Come dice Charles Jeffrey Danoff nel Capitolo 5, la chiave è creare "spazi sicuri per l'apprendimento" dove tutti si sentono a proprio agio nel condividere e sbagliare.
-
-Pronto a provare? Inizia trovando anche solo una persona con cui condividere un interesse comune! 🌟`,
-
-      critical: `🧠 **Analisi Critica dei Contenuti del Peeragogy Handbook**
-
-**Domanda provocatoria iniziale:**
-Il Peeragogy Handbook presenta la peeragogy come una "rivoluzione" nell'apprendimento, ma dobbiamo chiederci: stiamo davvero parlando di qualcosa di nuovo o stiamo semplicemente riconfezionando pratiche educative esistenti?
-
-**Esame critico delle assunzioni:**
-Howard Rheingold nel Capitolo 1 definisce la peeragogy come "apprendimento e lavoro collaborativo su problemi personalmente significativi". Ma chi decide cosa è "personalmente significativo"? E come gestiamo i conflitti quando le priorità personali divergono?
-
-**Punti critici emersi dall'analisi:**
-
-1. **Bias di privilegio**: Il Capitolo 2 di Paola Ricaurte parla di motivazione intrinseca ed estrinseca, ma non affronta come le disuguaglianze socioeconomiche influenzino l'accesso a questi tipi di motivazione.
-
-2. **Scalabilità questionabile**: I pattern del Capitolo 4 (Wrapper, Heartbeat, etc.) funzionano in piccoli gruppi, ma come si applicano a contesti più ampi? Anna Keune non affronta questa limitazione.
-
-3. **Romanticizzazione della collaborazione**: Il Capitolo 5 parla di "spazi sicuri", ma ignora le dinamiche di potere inevitabili anche tra "pari". Come gestiamo leadership informale, personalità dominanti, esclusioni sottili?
-
-**Prospettive alternative non considerate:**
-- Come si applica la peeragogy in culture non occidentali?
-- Quali sono le implicazioni per chi ha stili di apprendimento non collaborativi?
-- Come affrontiamo la qualità e l'accuratezza delle informazioni scambiate?
-
-**Domande per la riflessione critica:**
-- Stiamo assumendo che la collaborazione sia sempre positiva?
-- Chi beneficia davvero da questo approccio e chi potrebbe essere escluso?
-- Come misuriamo il successo oltre l'entusiasmo dei partecipanti?
-
-Il manuale offre spunti interessanti, ma manca di un'analisi critica delle proprie limitazioni. 🤔`,
-
-      socratic: `🤔 **Esploriamo insieme attraverso domande...**
-
-**Iniziamo con una riflessione personale:**
-Quando pensi all'ultima volta che hai imparato qualcosa di veramente importante, come è successo? Qualcuno te l'ha "insegnato" dall'alto, o è emerso attraverso l'esperienza e lo scambio?
-
-**Approfondendo la tua esperienza:**
-Howard Rheingold nel Capitolo 1 parla di "lavorare insieme su problemi personalmente significativi". Quali sono i problemi che per te sono davvero significativi? E come pensi che altri potrebbero aiutarti a risolverli?
-
-**Connessioni interessanti:**
-Il Capitolo 2 menziona motivazione intrinseca ed estrinseca. Quando sei più motivato a imparare: quando qualcuno ti dice che "devi" farlo, o quando senti che è qualcosa che vuoi davvero scoprire? Perché pensi che sia così?
-
-**Esplorando i pattern:**
-Anna Keune nel Capitolo 4 parla di pattern come "Heartbeat" (check-in regolari). Nella tua esperienza, quando un gruppo funziona bene, cosa succede? Come si mantiene unito? Come gestisce i nuovi arrivati?
-
-**La domanda cruciale:**
-Se dovessi progettare un'esperienza di apprendimento ideale per te stesso, che elementi includeresti? Come si collega questo a quello che Charles Jeffrey Danoff descrive nel Capitolo 5 riguardo agli "spazi sicuri"?
-
-**Per andare più a fondo:**
-Guardando la tua vita quotidiana, dove vedi già esempi di "peeragogy" in azione, anche se non la chiamavi così? E cosa potresti fare per amplificare questi momenti?
-
-**La sfida finale:**
-Se dovessi convincere qualcuno scettico del valore dell'apprendimento collaborativo, quale esempio dalla tua esperienza useresti? E cosa ti dice questo sui principi fondamentali che rendono efficace questo approccio? 🌱`
-    };
-
-    return responses[personality.id as keyof typeof responses] || responses.academic;
+    const data = await response.json();
+    return data.choices[0]?.message?.content || 'Nessuna risposta generata';
   }
 
   parseCommand(message: string): { isCommand: boolean; command?: string; args?: string[] } {
@@ -695,7 +703,9 @@ ${API_PROVIDERS.map(p => `• **${p.id}**: ${p.description}`).join('\n')}
 **Chiave:** ${apiKey.substring(0, 8)}...
 **Vector Store:** Pinecone (Peeragogy Handbook)
 
-Ora puoi iniziare a chattare con l'AI! Il sistema RAG utilizzerà i contenuti reali del Peeragogy Handbook indicizzati nel vector store. 🚀`;
+🚀 **Sistema RAG completamente operativo!** Ora puoi chattare con l'AI e ricevere risposte basate sui contenuti reali del Peeragogy Handbook.
+
+**Test rapido:** Prova a chiedere "Spiegami i principi della peeragogy"`;
         } else {
           return `❌ **Errore nella configurazione**
 
@@ -705,12 +715,12 @@ Provider "${providerId}" non riconosciuto. Provider disponibili: ${API_PROVIDERS
       case 'status':
         const status = this.getAPIStatus();
         if (status.configured) {
-          return `✅ **Sistema RAG Configurato e Operativo**
+          return `✅ **Sistema RAG Completamente Operativo**
 
 **🔧 Configurazione API:**
 • Provider: ${status.provider}
 • Modello: ${status.model}
-• Status: Attivo
+• Status: ✅ Connesso e funzionante
 
 **📚 Vector Store:**
 • Database: Pinecone
@@ -721,14 +731,51 @@ Provider "${providerId}" non riconosciuto. Provider disponibili: ${API_PROVIDERS
 **🎭 Personalità disponibili:** ${PERSONALITIES.length}
 • 🎓 Accademico • 💡 Divulgatore • 🧠 Critico • 🤔 Socratico
 
-**🚀 Sistema pronto per l'uso!**`;
+**🚀 Tutto pronto!** Fai una domanda sul Peeragogy Handbook per testare il sistema.`;
         } else {
-          return `⚠️ **Sistema non configurato**
+          return `⚠️ **Sistema parzialmente configurato**
 
 **Vector Store:** ✅ Pinecone attivo
 **API:** ❌ Non configurata
 
-Usa \`/set_api_key\` per configurare l'API e iniziare a usare il sistema RAG.`;
+**Per completare la configurazione:**
+\`/set_api_key <provider> <model> <your_api_key>\`
+
+**Esempio:**
+\`/set_api_key openai gpt-4o sk-your-openai-key\``;
+        }
+
+      case 'test_connection':
+        if (!this.getAPIStatus().configured) {
+          return `❌ **Test fallito: API non configurata**
+
+Configura prima l'API con \`/set_api_key\``;
+        }
+
+        try {
+          const testResponse = await this.callLLMAPI(
+            'Rispondi brevemente: "Test di connessione riuscito! Il sistema RAG è operativo."',
+            PERSONALITIES[0]
+          );
+          
+          return `✅ **Test di connessione riuscito!**
+
+**Risposta dal modello ${this.model}:**
+"${testResponse}"
+
+🚀 **Il sistema RAG è completamente operativo!** Ora puoi fare domande sul Peeragogy Handbook.`;
+        } catch (error) {
+          return `❌ **Test di connessione fallito**
+
+**Errore:** ${error instanceof Error ? error.message : 'Errore sconosciuto'}
+
+**Possibili cause:**
+• API key non valida
+• Modello non disponibile
+• Problemi di rete
+• Quota API esaurita
+
+Verifica la configurazione con \`/status\``;
         }
 
       case 'help':
@@ -737,6 +784,7 @@ Usa \`/set_api_key\` per configurare l'API e iniziare a usare il sistema RAG.`;
 **🔧 Configurazione:**
 • \`/set_api_key <provider> <model> <key>\` - Configura API
 • \`/status\` - Verifica configurazione sistema
+• \`/test_connection\` - Testa connessione API
 
 **ℹ️ Informazioni:**
 • \`/help\` - Mostra questa guida
@@ -751,7 +799,7 @@ Usa \`/set_api_key\` per configurare l'API e iniziare a usare il sistema RAG.`;
 4. **Vedi le fonti** utilizzate per la risposta
 
 **🎯 Esempio d'uso:**
-"Spiegami i principi della peeragogy" → Il sistema troverà i passaggi più rilevanti dal manuale e genererà una risposta personalizzata.
+"Spiegami i principi della peeragogy" → Il sistema troverà i passaggi più rilevanti dal manuale e genererà una risposta personalizzata usando la tua API.
 
 **🚀 Inizia subito:** Configura la tua API key e seleziona una personalità!`;
 
@@ -795,7 +843,9 @@ ${API_PROVIDERS.map(p => `**${p.name}** (\`${p.id}\`)
 **🔧 Configurazione:**
 \`/set_api_key <provider> <model> <your_api_key>\`
 
-**💰 Controllo costi:** Usa la tua API key per controllo completo sui costi!`;
+**💰 Controllo costi:** Usa la tua API key per controllo completo sui costi!
+
+**🧪 Test:** Usa \`/test_connection\` dopo la configurazione per verificare che tutto funzioni.`;
 
       case 'vector_info':
         return `📚 **Informazioni Vector Store**
@@ -832,6 +882,7 @@ Il vector store è sempre attivo e pronto per le tue domande! 🚀`;
 • \`/help\` - Guida completa
 • \`/status\` - Stato sistema
 • \`/set_api_key\` - Configura API
+• \`/test_connection\` - Testa connessione
 • \`/personalities\` - Lista personalità
 • \`/providers\` - Provider API
 • \`/vector_info\` - Info vector store

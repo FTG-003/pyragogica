@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Brain, Users, Menu, X } from 'lucide-react';
+import { BookOpen, Brain, Users, Menu, X, Sparkles } from 'lucide-react';
 import HomePage from './pages/HomePage';
 import LibraryPage from './pages/LibraryPage';
 import ChatbotPage from './pages/ChatbotPage';
@@ -9,7 +9,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { id: 'home', name: 'Home', icon: BookOpen },
+    { id: 'home', name: 'Home', icon: Sparkles },
     { id: 'library', name: 'Biblioteca', icon: BookOpen },
     { id: 'chatbot', name: 'AI Assistant', icon: Brain },
   ];
@@ -24,57 +24,70 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      {/* Enhanced Navigation */}
+      <nav className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
+          <div className="flex justify-between items-center h-20">
+            {/* Enhanced Logo */}
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <BookOpen className="w-7 h-7 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-2.5 h-2.5 text-white" />
+                </div>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-900">Biblioteca Pyragogica</h1>
-                <p className="text-xs text-slate-500">Digital Knowledge Hub</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Biblioteca Pyragogica
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">Digital Knowledge Hub</p>
               </div>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-1">
+            {/* Enhanced Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
                   <button
                     key={item.id}
                     onClick={() => setCurrentPage(item.id)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`group relative flex items-center space-x-3 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                       currentPage === item.id
-                        ? 'bg-indigo-100 text-indigo-700'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className={`w-5 h-5 transition-transform duration-300 ${
+                      currentPage === item.id ? 'scale-110' : 'group-hover:scale-105'
+                    }`} />
                     <span>{item.name}</span>
+                    {currentPage === item.id && (
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-20 blur-xl"></div>
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Mobile menu button */}
+            {/* Enhanced Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-slate-600 hover:text-slate-900"
+                className="p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-300"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
 
-          {/* Mobile Navigation */}
+          {/* Enhanced Mobile Navigation */}
           {mobileMenuOpen && (
-            <div className="md:hidden border-t border-slate-200 py-4">
-              <div className="space-y-2">
+            <div className="md:hidden border-t border-slate-200/50 py-6 bg-white/95 backdrop-blur-xl">
+              <div className="space-y-3">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -84,14 +97,14 @@ function App() {
                         setCurrentPage(item.id);
                         setMobileMenuOpen(false);
                       }}
-                      className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg text-left transition-all ${
+                      className={`flex items-center space-x-4 w-full px-6 py-4 rounded-2xl text-left transition-all duration-300 ${
                         currentPage === item.id
-                          ? 'bg-indigo-100 text-indigo-700'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
+                      <Icon className="w-6 h-6" />
+                      <span className="font-semibold text-lg">{item.name}</span>
                     </button>
                   );
                 })}
@@ -101,10 +114,31 @@ function App() {
         </div>
       </nav>
 
-      {/* Page Content */}
-      <main>
+      {/* Enhanced Page Content */}
+      <main className="relative">
         {renderPage()}
       </main>
+
+      {/* Floating Action Elements */}
+      <div className="fixed bottom-8 right-8 z-40">
+        <div className="flex flex-col space-y-4">
+          {/* Quick AI Assistant */}
+          <button
+            onClick={() => setCurrentPage('chatbot')}
+            className="group w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
+          >
+            <Brain className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
+          </button>
+          
+          {/* Quick Library Access */}
+          <button
+            onClick={() => setCurrentPage('library')}
+            className="group w-14 h-14 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
+          >
+            <BookOpen className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

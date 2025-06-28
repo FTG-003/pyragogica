@@ -1,14 +1,14 @@
 import React from 'react';
-import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Play, Download, TrendingUp } from 'lucide-react';
+import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Play, Download, TrendingUp, Github, ExternalLink } from 'lucide-react';
 
 const HomePage = () => {
   const features = [
     {
       icon: BookOpen,
-      title: 'Contenuti Curati',
-      description: 'Biblioteca di risorse educative peer-to-peer, eticamente verificate e continuamente aggiornate.',
+      title: 'Peeragogy Handbook Completo',
+      description: 'La guida definitiva all\'apprendimento peer-to-peer con 14 capitoli dettagliati, esempi pratici e metodologie innovative.',
       color: 'from-blue-500 to-cyan-500',
-      stats: '12+ risorse'
+      stats: '14 capitoli'
     },
     {
       icon: Brain,
@@ -20,14 +20,14 @@ const HomePage = () => {
     {
       icon: Users,
       title: 'Community Pyragogica',
-      description: 'Spazio collaborativo per co-creazione cognitiva e apprendimento reciproco tra pari.',
+      description: 'Spazio collaborativo per co-creazione cognitiva e apprendimento reciproco tra pari, basato sui principi del handbook.',
       color: 'from-green-500 to-teal-500',
       stats: '1.2k+ membri'
     },
     {
       icon: Zap,
       title: 'RAG Avanzato',
-      description: 'Sistema di retrieval intelligente che connette contenuti, conversazioni e conoscenze in tempo reale.',
+      description: 'Sistema di retrieval intelligente che connette contenuti del handbook, conversazioni e conoscenze in tempo reale.',
       color: 'from-orange-500 to-red-500',
       stats: '99.9% uptime'
     }
@@ -37,21 +37,21 @@ const HomePage = () => {
     {
       icon: Globe,
       title: 'Accesso Democratico',
-      description: 'Conoscenza libera e premium bilanciata per sostenibilità e inclusività',
-      stats: '70% contenuti gratuiti',
+      description: 'Tutto il Peeragogy Handbook è completamente gratuito e open source, seguendo i principi di condivisione della conoscenza',
+      stats: '100% contenuti gratuiti',
       color: 'from-emerald-500 to-teal-600'
     },
     {
       icon: Shield,
       title: 'Etica AI',
-      description: 'Trasparenza algoritmica e rispetto della privacy nel processo educativo',
+      description: 'Trasparenza algoritmica e rispetto della privacy nel processo educativo, in linea con i valori peeragogici',
       stats: '100% tracciabilità',
       color: 'from-blue-500 to-indigo-600'
     },
     {
       icon: Lightbulb,
       title: 'Apprendimento Attivo',
-      description: 'Metodologie innovative per co-creazione e sintesi personalizzata',
+      description: 'Metodologie innovative per co-creazione e sintesi personalizzata, direttamente dal Peeragogy Handbook',
       stats: '5x engagement',
       color: 'from-amber-500 to-orange-600'
     }
@@ -59,22 +59,45 @@ const HomePage = () => {
 
   const testimonials = [
     {
-      name: 'Dr. Maria Rossi',
-      role: 'Ricercatrice in Pedagogia Digitale',
-      content: 'La Biblioteca Pyragogica ha rivoluzionato il mio approccio alla ricerca collaborativa.',
-      avatar: 'MR'
+      name: 'Howard Rheingold',
+      role: 'Co-founder, Peeragogy Project',
+      content: 'La peeragogy rappresenta il futuro dell\'educazione: collaborativa, democratica e centrata sulla comunità.',
+      avatar: 'HR'
     },
     {
-      name: 'Prof. Giovanni Bianchi',
-      role: 'Esperto in AI Ethics',
-      content: 'Un esempio perfetto di come l\'AI possa essere utilizzata eticamente nell\'educazione.',
-      avatar: 'GB'
+      name: 'Charles Jeffrey Danoff',
+      role: 'Co-author, Peeragogy Handbook',
+      content: 'Questo progetto dimostra come l\'apprendimento peer-to-peer possa trasformare la conoscenza in azione.',
+      avatar: 'CD'
     },
     {
-      name: 'Sara Verdi',
-      role: 'Student Researcher',
-      content: 'L\'AI Assistant mi ha aiutato a sviluppare un pensiero critico più profondo.',
-      avatar: 'SV'
+      name: 'Paola Ricaurte',
+      role: 'Researcher, Digital Pedagogy',
+      content: 'Un esempio perfetto di come la tecnologia possa servire l\'educazione democratica e inclusiva.',
+      avatar: 'PR'
+    }
+  ];
+
+  const handbookHighlights = [
+    {
+      chapter: 'Introduction',
+      description: 'Scopri i principi fondamentali della peeragogy',
+      icon: BookOpen
+    },
+    {
+      chapter: 'Patterns & Use Cases',
+      description: 'Pattern ricorrenti e applicazioni pratiche',
+      icon: Zap
+    },
+    {
+      chapter: 'Technologies',
+      description: 'Strumenti digitali per l\'apprendimento collaborativo',
+      icon: Brain
+    },
+    {
+      chapter: 'Assessment',
+      description: 'Metodologie di valutazione peer-to-peer',
+      icon: Users
     }
   ];
 
@@ -97,7 +120,7 @@ const HomePage = () => {
             {/* Badge */}
             <div className="inline-flex items-center space-x-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20">
               <Star className="w-5 h-5 text-yellow-400" />
-              <span>Innovazione nell'Educazione AI-Driven</span>
+              <span>Basato sul Peeragogy Handbook v4.0</span>
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
             
@@ -111,8 +134,8 @@ const HomePage = () => {
               </h1>
               
               <p className="max-w-4xl mx-auto text-xl md:text-2xl text-white/80 leading-relaxed font-light">
-                Un hub di conoscenza interattiva dove contenuti educativi, AI etica e co-creazione cognitiva 
-                si incontrano per trasformare l'apprendimento peer-to-peer.
+                La collezione completa del <strong>Peeragogy Handbook</strong> con AI etica e strumenti per 
+                l'apprendimento peer-to-peer del futuro.
               </p>
             </div>
             
@@ -120,14 +143,15 @@ const HomePage = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
               <button className="group relative inline-flex items-center space-x-3 px-10 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/25">
                 <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Esplora la Biblioteca</span>
+                <span className="text-lg">Leggi il Handbook</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
               </button>
               
               <button className="group inline-flex items-center space-x-3 px-10 py-5 bg-white/10 backdrop-blur-sm text-white font-bold rounded-2xl border-2 border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <Play className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Demo Interattiva</span>
+                <Github className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">Repository GitHub</span>
+                <ExternalLink className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               </button>
             </div>
 
@@ -138,19 +162,64 @@ const HomePage = () => {
                 <div className="text-white/70 font-medium">Downloads</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">1.2k+</div>
-                <div className="text-white/70 font-medium">Utenti Attivi</div>
+                <div className="text-3xl md:text-4xl font-bold text-white mb-2">14</div>
+                <div className="text-white/70 font-medium">Capitoli</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">4.9</div>
-                <div className="text-white/70 font-medium">Rating Medio</div>
+                <div className="text-3xl md:text-4xl font-bold text-white mb-2">350</div>
+                <div className="text-white/70 font-medium">Pagine</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">12+</div>
-                <div className="text-white/70 font-medium">Risorse</div>
+                <div className="text-3xl md:text-4xl font-bold text-white mb-2">8+</div>
+                <div className="text-white/70 font-medium">Autori</div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Handbook Highlights */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-6 mb-20">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+            <BookOpen className="w-4 h-4" />
+            <span>Peeragogy Handbook</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
+            Contenuti Principali
+          </h2>
+          <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
+            Esplora i capitoli chiave del Peeragogy Handbook, la guida definitiva all'apprendimento collaborativo
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {handbookHighlights.map((highlight, index) => {
+            const Icon = highlight.icon;
+            return (
+              <div
+                key={index}
+                className="group relative p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 border border-slate-100"
+              >
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative space-y-6">
+                  <div className="inline-flex p-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-8 h-8 text-white" />
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors duration-300">
+                      {highlight.chapter}
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed">
+                      {highlight.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -165,7 +234,7 @@ const HomePage = () => {
             Tecnologie all'Avanguardia
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Un ecosistema completo per l'apprendimento collaborativo con AI etica e contenuti curati
+            Un ecosistema completo per l'apprendimento collaborativo con AI etica e contenuti curati dal Peeragogy Handbook
           </p>
         </div>
 
@@ -216,13 +285,13 @@ const HomePage = () => {
           <div className="text-center space-y-6 mb-20">
             <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-semibold border border-white/20">
               <Globe className="w-4 h-4" />
-              <span>Impatto Globale</span>
+              <span>Valori Peeragogici</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Valore per l'Ecosistema
+              Principi Fondamentali
             </h2>
             <p className="max-w-3xl mx-auto text-xl text-slate-300 leading-relaxed">
-              Impatto misurabile su apprendimento, comunità e innovazione educativa
+              Basato sui valori del Peeragogy Handbook: democraticità, collaborazione e condivisione della conoscenza
             </p>
           </div>
 
@@ -257,11 +326,14 @@ const HomePage = () => {
         <div className="text-center space-y-6 mb-20">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
             <Users className="w-4 h-4" />
-            <span>Community Voices</span>
+            <span>Voci della Community</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
-            Cosa Dicono i Nostri Utenti
+            Cosa Dicono gli Autori
           </h2>
+          <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
+            Testimonianze dirette dai creatori del Peeragogy Handbook
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -299,22 +371,22 @@ const HomePage = () => {
           
           <div className="relative space-y-8">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Pronto a Rivoluzionare l'Apprendimento?
+              Inizia il Tuo Viaggio Peeragogico
             </h2>
             <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto leading-relaxed">
-              Unisciti alla community pyragogica e sperimenta il futuro dell'educazione peer-to-peer
+              Accedi gratuitamente al Peeragogy Handbook completo e scopri il futuro dell'apprendimento collaborativo
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
               <button className="group inline-flex items-center space-x-3 px-10 py-5 bg-white text-indigo-600 font-bold rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-2xl">
                 <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Inizia Gratuitamente</span>
+                <span className="text-lg">Leggi Gratuitamente</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
               
               <button className="group inline-flex items-center space-x-3 px-10 py-5 border-2 border-white text-white font-bold rounded-2xl hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
-                <Users className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Membership Very</span>
+                <Download className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">Download PDF</span>
               </button>
             </div>
 
@@ -323,15 +395,15 @@ const HomePage = () => {
               <div className="flex flex-wrap items-center justify-center space-x-8 text-white/80">
                 <div className="flex items-center space-x-2">
                   <Shield className="w-5 h-5" />
-                  <span>100% Sicuro</span>
+                  <span>100% Open Source</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Download className="w-5 h-5" />
-                  <span>Download Gratuiti</span>
+                  <span>Creative Commons</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Star className="w-5 h-5" />
-                  <span>Rating 4.9/5</span>
+                  <span>Community Driven</span>
                 </div>
               </div>
             </div>

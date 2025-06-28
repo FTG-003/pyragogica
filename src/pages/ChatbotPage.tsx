@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff } from 'lucide-react';
+import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff, RotateCcw, Trash2 } from 'lucide-react';
 import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource } from '../services/ragService';
 
 const ChatbotPage = () => {
@@ -12,7 +12,7 @@ const ChatbotPage = () => {
     }
   ]);
   const [inputValue, setInputValue] = useState('');
-  const [selectedPersonality, setSelectedPersonality] = useState('academic');
+  const [selectedPersonality, setSelectedPersonality] = useState('socratic'); // Socratica come default
   const [isTyping, setIsTyping] = useState(false);
   const [apiStatus, setApiStatus] = useState({ configured: false, provider: '', model: '' });
   const [vectorStoreStatus, setVectorStoreStatus] = useState(true); // Pinecone è sempre attivo
@@ -42,6 +42,29 @@ const ChatbotPage = () => {
   const checkApiStatus = () => {
     const status = ragService.getAPIStatus();
     setApiStatus(status);
+  };
+
+  // Reset Chat Function
+  const resetChat = () => {
+    const confirmReset = window.confirm('Sei sicuro di voler azzerare la conversazione? Tutti i messaggi verranno eliminati.');
+    
+    if (confirmReset) {
+      setMessages([
+        {
+          id: '1',
+          role: 'system',
+          content: '🔄 **Chat Azzerata!**\n\n**Sistema RAG Pyragogico** pronto per una nuova conversazione.\n\n**Personalità Attiva:** ' + getCurrentPersonality().name + ' ' + getCurrentPersonality().emoji + '\n**Vector Store:** Pinecone con Peeragogy Handbook\n**API Status:** ' + (apiStatus.configured ? '✅ Configurata' : '⚠️ Da configurare') + '\n\nPuoi iniziare con una nuova domanda o cambiare personalità! 🚀',
+          timestamp: new Date()
+        }
+      ]);
+      setInputValue('');
+      setIsTyping(false);
+      
+      // Focus sull'input dopo il reset
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -136,6 +159,25 @@ const ChatbotPage = () => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  // Personality Change Handler
+  const handlePersonalityChange = (personalityId: string) => {
+    const oldPersonality = getCurrentPersonality();
+    setSelectedPersonality(personalityId);
+    const newPersonality = PERSONALITIES.find(p => p.id === personalityId);
+    
+    if (newPersonality && oldPersonality.id !== personalityId) {
+      // Add a system message about personality change
+      const changeMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'system',
+        content: `🎭 **Personalità cambiata!**\n\n**Da:** ${oldPersonality.name} ${oldPersonality.emoji} → **A:** ${newPersonality.name} ${newPersonality.emoji}\n\n**Nuovo stile:** ${newPersonality.description}\n\nLe prossime risposte seguiranno questo approccio. La conversazione precedente rimane invariata.`,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, changeMessage]);
+    }
   };
 
   const quickPrompts = [
@@ -338,30 +380,57 @@ const ChatbotPage = () => {
             </div>
           )}
 
-          {/* Personality Selector */}
+          {/* Enhanced Personality Selector with Active Indicator */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-6">Personalità AI</h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-slate-900">Personalità AI</h3>
+              <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Attiva</span>
+              </div>
+            </div>
             <div className="space-y-3">
               {PERSONALITIES.map((personality) => (
                 <button
                   key={personality.id}
-                  onClick={() => setSelectedPersonality(personality.id)}
+                  onClick={() => handlePersonalityChange(personality.id)}
                   className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 ${
                     selectedPersonality === personality.id
-                      ? 'bg-indigo-600 text-white shadow-lg'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-900'
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-900 border-2 border-transparent hover:border-slate-200'
                   }`}
                 >
                   <div className="flex items-center space-x-3 mb-2">
                     <span className="text-2xl">{personality.emoji}</span>
-                    <h4 className="font-bold">{personality.name}</h4>
+                    <div className="flex-1">
+                      <h4 className="font-bold flex items-center space-x-2">
+                        <span>{personality.name}</span>
+                        {selectedPersonality === personality.id && (
+                          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">ATTIVA</span>
+                        )}
+                        {personality.id === 'socratic' && selectedPersonality !== personality.id && (
+                          <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">OPERATIVA</span>
+                        )}
+                      </h4>
+                    </div>
                   </div>
-                  <p className="text-sm opacity-90">{personality.description}</p>
-                  <div className="mt-2 text-xs opacity-75">
+                  <p className="text-sm opacity-90 mb-2">{personality.description}</p>
+                  <div className="text-xs opacity-75">
                     Temp: {personality.temperature} • Max: {personality.maxTokens} token
                   </div>
                 </button>
               ))}
+            </div>
+            
+            {/* Personality Status Note */}
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2 text-blue-700 text-sm">
+                <Brain className="w-4 h-4" />
+                <span className="font-semibold">Personalità Socratica 🤔 Pienamente Operativa</span>
+              </div>
+              <p className="text-blue-600 text-xs mt-1">
+                Le altre personalità sono disponibili ma la Socratica offre l'esperienza più completa.
+              </p>
             </div>
           </div>
 
@@ -403,7 +472,7 @@ const ChatbotPage = () => {
         {/* Enhanced Chat Interface */}
         <div className="lg:col-span-3">
           <div className="bg-white rounded-3xl shadow-xl h-[800px] flex flex-col border border-slate-200">
-            {/* Enhanced Chat Header */}
+            {/* Enhanced Chat Header with Reset Button */}
             <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white rounded-t-3xl">
               <div className="flex items-center space-x-4">
                 <div className="relative p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
@@ -416,6 +485,11 @@ const ChatbotPage = () => {
                       RAG System • {getCurrentPersonality().name}
                     </h3>
                     <span className="text-2xl">{getCurrentPersonality().emoji}</span>
+                    {selectedPersonality === 'socratic' && (
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                        OPERATIVA
+                      </span>
+                    )}
                   </div>
                   <p className="text-slate-600 leading-relaxed">
                     {getCurrentPersonality().description} • Vector Store Pinecone attivo
@@ -436,6 +510,15 @@ const ChatbotPage = () => {
                     <span>{apiStatus.configured ? 'API OK' : 'Config API'}</span>
                   </div>
                 </div>
+                
+                {/* Reset Chat Button */}
+                <button
+                  onClick={resetChat}
+                  className="group p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 border-2 border-transparent hover:border-red-200"
+                  title="Reset Chat - Azzera conversazione"
+                >
+                  <RotateCcw className="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" />
+                </button>
               </div>
             </div>
 
@@ -548,7 +631,7 @@ const ChatbotPage = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Enhanced Input */}
+            {/* Enhanced Input with Reset Button */}
             <div className="p-6 border-t border-slate-200 bg-white rounded-b-3xl">
               <div className="flex space-x-4">
                 <input
@@ -564,6 +647,18 @@ const ChatbotPage = () => {
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   disabled={isTyping}
                 />
+                
+                {/* Reset Button in Input Area */}
+                <button
+                  onClick={resetChat}
+                  disabled={isTyping}
+                  className="px-6 py-4 border-2 border-slate-300 text-slate-700 rounded-2xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-300 flex items-center space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Reset Chat"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  <span className="hidden sm:inline">Reset</span>
+                </button>
+                
                 <button
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim() || isTyping}
@@ -627,20 +722,20 @@ const ChatbotPage = () => {
         <div className="mt-12 p-6 bg-white/10 backdrop-blur-sm rounded-xl">
           <h4 className="text-lg font-bold mb-4 flex items-center">
             <Key className="w-5 h-5 mr-2" />
-            Sistema RAG Completo e Trasparente
+            Controllo Utente Completo
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
+              <h5 className="font-semibold mb-2">🔄 Reset Chat</h5>
+              <p className="text-slate-300">Bottone sempre disponibile per azzerare la conversazione e ricominciare da capo.</p>
+            </div>
+            <div>
+              <h5 className="font-semibold mb-2">🎭 Personalità Attive</h5>
+              <p className="text-slate-300">Personalità Socratica 🤔 pienamente operativa. Cambia personalità in tempo reale.</p>
+            </div>
+            <div>
               <h5 className="font-semibold mb-2">🔐 Privacy & Controllo</h5>
               <p className="text-slate-300">API key memorizzate localmente. Controllo completo sui costi e sulla privacy.</p>
-            </div>
-            <div>
-              <h5 className="font-semibold mb-2">📚 Contenuti Reali</h5>
-              <p className="text-slate-300">Vector store Pinecone con Peeragogy Handbook completo e indicizzazione semantica.</p>
-            </div>
-            <div>
-              <h5 className="font-semibold mb-2">🎭 Personalità Multiple</h5>
-              <p className="text-slate-300">4 personalità AI diverse per stili di apprendimento e comunicazione differenti.</p>
             </div>
           </div>
         </div>

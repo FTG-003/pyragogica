@@ -139,16 +139,6 @@ function App() {
           </button>
         </div>
       </div>
-
-      {/* Scalability Indicator */}
-      <div className="fixed bottom-8 left-8 z-40">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border border-slate-200">
-          <div className="flex items-center space-x-2 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-slate-600 font-medium">Biblioteca Scalabile</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

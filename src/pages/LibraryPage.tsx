@@ -82,6 +82,8 @@ const LibraryPage = () => {
               </span>
               <span className="text-slate-500">•</span>
               <span className="text-slate-600">Pagine {selectedChapter.pages}</span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-600">Titolo originale: "{selectedChapter.originalTitle}"</span>
             </div>
             
             <h1 className="text-4xl font-bold text-slate-900 mb-4">{selectedChapter.title}</h1>
@@ -115,11 +117,33 @@ const LibraryPage = () => {
 
           {/* Main Content */}
           <div className="text-slate-700 leading-relaxed space-y-6">
-            {selectedChapter.content?.split('\n\n').map((paragraph: string, index: number) => (
-              <p key={index} className="text-lg leading-relaxed">
-                {paragraph.trim()}
-              </p>
-            ))}
+            {selectedChapter.content?.split('\n\n').map((paragraph: string, index: number) => {
+              // Handle markdown-style headers
+              if (paragraph.startsWith('# ')) {
+                return <h1 key={index} className="text-3xl font-bold text-slate-900 mt-8 mb-4">{paragraph.substring(2)}</h1>;
+              }
+              if (paragraph.startsWith('## ')) {
+                return <h2 key={index} className="text-2xl font-bold text-slate-900 mt-6 mb-3">{paragraph.substring(3)}</h2>;
+              }
+              if (paragraph.startsWith('### ')) {
+                return <h3 key={index} className="text-xl font-bold text-slate-900 mt-4 mb-2">{paragraph.substring(4)}</h3>;
+              }
+              if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                return <p key={index} className="font-bold text-slate-900 text-lg mt-4 mb-2">{paragraph.slice(2, -2)}</p>;
+              }
+              if (paragraph.startsWith('*') && paragraph.endsWith('*') && !paragraph.includes('\n')) {
+                return <p key={index} className="italic text-slate-600 text-center mt-6 mb-6 border-t border-b border-slate-200 py-4">{paragraph.slice(1, -1)}</p>;
+              }
+              if (paragraph.startsWith('---')) {
+                return <hr key={index} className="my-8 border-slate-300" />;
+              }
+              
+              return (
+                <p key={index} className="text-lg leading-relaxed mb-4">
+                  {paragraph.trim()}
+                </p>
+              );
+            })}
           </div>
 
           {/* Chapter Navigation */}
@@ -178,34 +202,52 @@ const LibraryPage = () => {
                   {getTypeIcon(selectedContent.type)}
                   <span>Open Source</span>
                 </span>
-                <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold border border-blue-200">
-                  v{selectedContent.version}
-                </span>
+                {selectedContent.version && (
+                  <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold border border-blue-200">
+                    v{selectedContent.version}
+                  </span>
+                )}
                 {selectedContent.featured && (
                   <span className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold shadow-lg">
                     ⭐ Featured
                   </span>
                 )}
-                <span className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold border border-green-200">
-                  {selectedContent.license}
-                </span>
+                {selectedContent.license && (
+                  <span className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold border border-green-200">
+                    {selectedContent.license}
+                  </span>
+                )}
               </div>
               
               {/* Title and Subtitle */}
               <div className="space-y-4">
                 <h1 className="text-5xl font-bold text-slate-900 leading-tight">{selectedContent.title}</h1>
-                <p className="text-2xl text-slate-600 font-light">{selectedContent.subtitle}</p>
+                {selectedContent.subtitle && (
+                  <p className="text-2xl text-slate-600 font-light">{selectedContent.subtitle}</p>
+                )}
               </div>
               
               {/* Metadata */}
               <div className="flex flex-wrap items-center gap-6 text-slate-600 text-lg">
-                <span className="font-semibold">di {selectedContent.authors.join(', ')}</span>
-                <span>•</span>
-                <span>{selectedContent.pages} pagine</span>
-                <span>•</span>
-                <span>{selectedContent.language}</span>
-                <span>•</span>
-                <span>Aggiornato: {selectedContent.lastUpdated}</span>
+                <span className="font-semibold">di {Array.isArray(selectedContent.authors) ? selectedContent.authors.join(', ') : selectedContent.author}</span>
+                {selectedContent.pages && (
+                  <>
+                    <span>•</span>
+                    <span>{selectedContent.pages} pagine</span>
+                  </>
+                )}
+                {selectedContent.language && (
+                  <>
+                    <span>•</span>
+                    <span>{selectedContent.language}</span>
+                  </>
+                )}
+                {selectedContent.lastUpdated && (
+                  <>
+                    <span>•</span>
+                    <span>Aggiornato: {selectedContent.lastUpdated}</span>
+                  </>
+                )}
               </div>
 
               {/* Description */}
@@ -274,15 +316,15 @@ const LibraryPage = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600 font-medium">Downloads</span>
-                    <span className="font-bold text-lg">{selectedContent.downloads.toLocaleString()}</span>
+                    <span className="font-bold text-lg">{selectedContent.downloads?.toLocaleString() || 'N/A'}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600 font-medium">Likes</span>
-                    <span className="font-bold text-lg">{selectedContent.likes.toLocaleString()}</span>
+                    <span className="font-bold text-lg">{selectedContent.likes?.toLocaleString() || 'N/A'}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-600 font-medium">Bookmarks</span>
-                    <span className="font-bold text-lg">{selectedContent.bookmarks.toLocaleString()}</span>
+                    <span className="font-bold text-lg">{selectedContent.bookmarks?.toLocaleString() || 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -356,7 +398,7 @@ const LibraryPage = () => {
           </div>
           <h1 className="text-5xl font-bold text-slate-900">Esplora la Conoscenza</h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Scopri la collezione completa del Peeragogy Handbook e risorse correlate per l'apprendimento peer-to-peer
+            Scopri la collezione completa del Manuale di Peeragogy tradotto in italiano e risorse correlate per l'apprendimento peer-to-peer
           </p>
         </div>
 
@@ -420,6 +462,9 @@ const LibraryPage = () => {
                 <p className="text-indigo-200 text-sm">
                   {peeragogyHandbook.chapters.length} capitoli • {peeragogyHandbook.pages} pagine • {peeragogyHandbook.authors.length} autori
                 </p>
+                <p className="text-indigo-200 text-sm font-medium">
+                  📖 Traduzione italiana completa del testo originale
+                </p>
               </div>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
@@ -446,7 +491,7 @@ const LibraryPage = () => {
                 className="group inline-flex items-center space-x-3 px-8 py-4 bg-white text-indigo-600 font-bold rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Esplora il Handbook</span>
+                <span className="text-lg">Esplora il Manuale</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </div>
@@ -550,7 +595,7 @@ const LibraryPage = () => {
           </div>
           <div className="space-y-3">
             <div className="text-4xl font-bold">{peeragogyHandbook.chapters.length}</div>
-            <div className="text-indigo-200 font-medium">Capitoli Handbook</div>
+            <div className="text-indigo-200 font-medium">Capitoli Tradotti</div>
           </div>
           <div className="space-y-3">
             <div className="text-4xl font-bold">{peeragogyHandbook.authors.length}</div>

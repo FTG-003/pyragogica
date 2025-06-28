@@ -5,10 +5,10 @@ const HomePage = () => {
   const features = [
     {
       icon: BookOpen,
-      title: 'Peeragogy Handbook Completo',
-      description: 'La guida definitiva all\'apprendimento peer-to-peer con 14 capitoli dettagliati, esempi pratici e metodologie innovative.',
+      title: 'Manuale di Peeragogy Completo',
+      description: 'La traduzione italiana integrale del Peeragogy Handbook con 14 capitoli dettagliati, esempi pratici e metodologie innovative.',
       color: 'from-blue-500 to-cyan-500',
-      stats: '14 capitoli'
+      stats: '14 capitoli tradotti'
     },
     {
       icon: Brain,
@@ -20,14 +20,14 @@ const HomePage = () => {
     {
       icon: Users,
       title: 'Community Pyragogica',
-      description: 'Spazio collaborativo per co-creazione cognitiva e apprendimento reciproco tra pari, basato sui principi del handbook.',
+      description: 'Spazio collaborativo per co-creazione cognitiva e apprendimento reciproco tra pari, basato sui principi del manuale.',
       color: 'from-green-500 to-teal-500',
       stats: '1.2k+ membri'
     },
     {
       icon: Zap,
       title: 'RAG Avanzato',
-      description: 'Sistema di retrieval intelligente che connette contenuti del handbook, conversazioni e conoscenze in tempo reale.',
+      description: 'Sistema di retrieval intelligente che connette contenuti del manuale, conversazioni e conoscenze in tempo reale.',
       color: 'from-orange-500 to-red-500',
       stats: '99.9% uptime'
     }
@@ -37,7 +37,7 @@ const HomePage = () => {
     {
       icon: Globe,
       title: 'Accesso Democratico',
-      description: 'Tutto il Peeragogy Handbook è completamente gratuito e open source, seguendo i principi di condivisione della conoscenza',
+      description: 'Tutto il Manuale di Peeragogy è completamente gratuito e open source, seguendo i principi di condivisione della conoscenza',
       stats: '100% contenuti gratuiti',
       color: 'from-emerald-500 to-teal-600'
     },
@@ -51,7 +51,7 @@ const HomePage = () => {
     {
       icon: Lightbulb,
       title: 'Apprendimento Attivo',
-      description: 'Metodologie innovative per co-creazione e sintesi personalizzata, direttamente dal Peeragogy Handbook',
+      description: 'Metodologie innovative per co-creazione e sintesi personalizzata, direttamente dal Manuale di Peeragogy',
       stats: '5x engagement',
       color: 'from-amber-500 to-orange-600'
     }
@@ -60,19 +60,19 @@ const HomePage = () => {
   const testimonials = [
     {
       name: 'Howard Rheingold',
-      role: 'Co-founder, Peeragogy Project',
+      role: 'Co-fondatore, Progetto Peeragogy',
       content: 'La peeragogy rappresenta il futuro dell\'educazione: collaborativa, democratica e centrata sulla comunità.',
       avatar: 'HR'
     },
     {
       name: 'Charles Jeffrey Danoff',
-      role: 'Co-author, Peeragogy Handbook',
+      role: 'Co-autore, Manuale di Peeragogy',
       content: 'Questo progetto dimostra come l\'apprendimento peer-to-peer possa trasformare la conoscenza in azione.',
       avatar: 'CD'
     },
     {
       name: 'Paola Ricaurte',
-      role: 'Researcher, Digital Pedagogy',
+      role: 'Ricercatrice, Pedagogia Digitale',
       content: 'Un esempio perfetto di come la tecnologia possa servire l\'educazione democratica e inclusiva.',
       avatar: 'PR'
     }
@@ -80,22 +80,22 @@ const HomePage = () => {
 
   const handbookHighlights = [
     {
-      chapter: 'Introduction',
+      chapter: 'Introduzione',
       description: 'Scopri i principi fondamentali della peeragogy',
       icon: BookOpen
     },
     {
-      chapter: 'Patterns & Use Cases',
+      chapter: 'Pattern e Casi d\'Uso',
       description: 'Pattern ricorrenti e applicazioni pratiche',
       icon: Zap
     },
     {
-      chapter: 'Technologies',
+      chapter: 'Tecnologie',
       description: 'Strumenti digitali per l\'apprendimento collaborativo',
       icon: Brain
     },
     {
-      chapter: 'Assessment',
+      chapter: 'Valutazione',
       description: 'Metodologie di valutazione peer-to-peer',
       icon: Users
     }
@@ -120,7 +120,7 @@ const HomePage = () => {
             {/* Badge */}
             <div className="inline-flex items-center space-x-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20">
               <Star className="w-5 h-5 text-yellow-400" />
-              <span>Basato sul Peeragogy Handbook v4.0</span>
+              <span>Basato sul Manuale di Peeragogy v4.0 - Traduzione Italiana Completa</span>
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
             
@@ -134,7 +134,7 @@ const HomePage = () => {
               </h1>
               
               <p className="max-w-4xl mx-auto text-xl md:text-2xl text-white/80 leading-relaxed font-light">
-                La collezione completa del <strong>Peeragogy Handbook</strong> con AI etica e strumenti per 
+                La traduzione italiana completa del <strong>Manuale di Peeragogy</strong> con AI etica e strumenti per 
                 l'apprendimento peer-to-peer del futuro.
               </p>
             </div>
@@ -143,7 +143,7 @@ const HomePage = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
               <button className="group relative inline-flex items-center space-x-3 px-10 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/25">
                 <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Leggi il Handbook</span>
+                <span className="text-lg">Leggi il Manuale</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
               </button>
@@ -163,7 +163,7 @@ const HomePage = () => {
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-white mb-2">14</div>
-                <div className="text-white/70 font-medium">Capitoli</div>
+                <div className="text-white/70 font-medium">Capitoli Tradotti</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-white mb-2">350</div>
@@ -183,13 +183,13 @@ const HomePage = () => {
         <div className="text-center space-y-6 mb-20">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
             <BookOpen className="w-4 h-4" />
-            <span>Peeragogy Handbook</span>
+            <span>Manuale di Peeragogy</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
-            Contenuti Principali
+            Contenuti Principali Tradotti
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Esplora i capitoli chiave del Peeragogy Handbook, la guida definitiva all'apprendimento collaborativo
+            Esplora i capitoli chiave del Manuale di Peeragogy, ora disponibile in traduzione italiana completa
           </p>
         </div>
 
@@ -234,7 +234,7 @@ const HomePage = () => {
             Tecnologie all'Avanguardia
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Un ecosistema completo per l'apprendimento collaborativo con AI etica e contenuti curati dal Peeragogy Handbook
+            Un ecosistema completo per l'apprendimento collaborativo con AI etica e contenuti tradotti dal Manuale di Peeragogy
           </p>
         </div>
 
@@ -291,7 +291,7 @@ const HomePage = () => {
               Principi Fondamentali
             </h2>
             <p className="max-w-3xl mx-auto text-xl text-slate-300 leading-relaxed">
-              Basato sui valori del Peeragogy Handbook: democraticità, collaborazione e condivisione della conoscenza
+              Basato sui valori del Manuale di Peeragogy: democraticità, collaborazione e condivisione della conoscenza
             </p>
           </div>
 
@@ -332,7 +332,7 @@ const HomePage = () => {
             Cosa Dicono gli Autori
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Testimonianze dirette dai creatori del Peeragogy Handbook
+            Testimonianze dirette dai creatori del Manuale di Peeragogy
           </p>
         </div>
 
@@ -374,7 +374,7 @@ const HomePage = () => {
               Inizia il Tuo Viaggio Peeragogico
             </h2>
             <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto leading-relaxed">
-              Accedi gratuitamente al Peeragogy Handbook completo e scopri il futuro dell'apprendimento collaborativo
+              Accedi gratuitamente al Manuale di Peeragogy completo tradotto in italiano e scopri il futuro dell'apprendimento collaborativo
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
@@ -403,7 +403,7 @@ const HomePage = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Star className="w-5 h-5" />
-                  <span>Community Driven</span>
+                  <span>Traduzione Italiana Completa</span>
                 </div>
               </div>
             </div>

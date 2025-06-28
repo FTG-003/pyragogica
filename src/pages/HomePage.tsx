@@ -1,58 +1,58 @@
 import React from 'react';
-import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Play, Download, TrendingUp, Github, ExternalLink } from 'lucide-react';
+import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Download, TrendingUp, Github, ExternalLink, Database, Layers, Search, Infinity, Target, BarChart } from 'lucide-react';
 
 const HomePage = () => {
   const features = [
     {
-      icon: BookOpen,
-      title: 'Manuale di Peeragogy Completo',
-      description: 'La traduzione italiana integrale del Peeragogy Handbook con 14 capitoli dettagliati, esempi pratici e metodologie innovative.',
+      icon: Database,
+      title: 'Biblioteca Infinitamente Scalabile',
+      description: 'Architettura modulare progettata per crescere da un singolo manuale a migliaia di risorse educative di qualità mondiale.',
       color: 'from-blue-500 to-cyan-500',
-      stats: '14 capitoli tradotti'
+      stats: '∞ Risorse Supportate'
     },
     {
       icon: Brain,
-      title: 'AI Multi-Personalità',
-      description: 'Chatbot intelligente con personalità accademiche, divulgative e critiche per diverse modalità di apprendimento.',
+      title: 'AI Multi-Personalità Adattiva',
+      description: 'Sistema di intelligenza artificiale che si adatta a qualsiasi contenuto della biblioteca, con personalità multiple per ogni stile di apprendimento.',
       color: 'from-purple-500 to-pink-500',
-      stats: '4 personalità'
+      stats: '4+ Personalità AI'
     },
     {
-      icon: Users,
-      title: 'Community Pyragogica',
-      description: 'Spazio collaborativo per co-creazione cognitiva e apprendimento reciproco tra pari, basato sui principi del manuale.',
+      icon: Layers,
+      title: 'Contenuti Strutturati e Interconnessi',
+      description: 'Sistema di categorizzazione avanzato con metadati ricchi, traduzioni multilingue e percorsi di apprendimento personalizzati.',
       color: 'from-green-500 to-teal-500',
-      stats: '1.2k+ membri'
+      stats: '6+ Categorie Espandibili'
     },
     {
       icon: Zap,
-      title: 'RAG Avanzato',
-      description: 'Sistema di retrieval intelligente che connette contenuti del manuale, conversazioni e conoscenze in tempo reale.',
+      title: 'RAG Universale e Semantico',
+      description: 'Sistema di retrieval intelligente che funziona con qualsiasi tipo di contenuto: manuali, guide, ricerche, video, dataset.',
       color: 'from-orange-500 to-red-500',
-      stats: '99.9% uptime'
+      stats: '99.9% Uptime Garantito'
     }
   ];
 
   const valueProps = [
     {
       icon: Globe,
-      title: 'Accesso Democratico',
-      description: 'Tutto il Manuale di Peeragogy è completamente gratuito e open source, seguendo i principi di condivisione della conoscenza',
-      stats: '100% contenuti gratuiti',
+      title: 'Accesso Democratico Globale',
+      description: 'Piattaforma open source progettata per rendere la conoscenza di qualità accessibile a tutti, ovunque nel mondo, in qualsiasi lingua',
+      stats: '100% Open Source',
       color: 'from-emerald-500 to-teal-600'
     },
     {
       icon: Shield,
-      title: 'Etica AI',
-      description: 'Trasparenza algoritmica e rispetto della privacy nel processo educativo, in linea con i valori peeragogici',
-      stats: '100% tracciabilità',
+      title: 'Etica AI e Privacy by Design',
+      description: 'Trasparenza algoritmica e rispetto della privacy in ogni interazione, seguendo i più alti standard etici internazionali',
+      stats: '100% Tracciabilità',
       color: 'from-blue-500 to-indigo-600'
     },
     {
       icon: Lightbulb,
-      title: 'Apprendimento Attivo',
-      description: 'Metodologie innovative per co-creazione e sintesi personalizzata, direttamente dal Manuale di Peeragogy',
-      stats: '5x engagement',
+      title: 'Apprendimento Modulare Interconnesso',
+      description: 'Ogni risorsa è progettata per integrarsi perfettamente con le altre, creando percorsi di apprendimento coerenti e personalizzati',
+      stats: 'Integrazione Totale',
       color: 'from-amber-500 to-orange-600'
     }
   ];
@@ -61,45 +61,67 @@ const HomePage = () => {
     {
       name: 'Howard Rheingold',
       role: 'Co-fondatore, Progetto Peeragogy',
-      content: 'La peeragogy rappresenta il futuro dell\'educazione: collaborativa, democratica e centrata sulla comunità.',
+      content: 'Una piattaforma che realizza la visione di una biblioteca digitale veramente collaborativa e infinitamente scalabile.',
       avatar: 'HR'
     },
     {
-      name: 'Charles Jeffrey Danoff',
-      role: 'Co-autore, Manuale di Peeragogy',
-      content: 'Questo progetto dimostra come l\'apprendimento peer-to-peer possa trasformare la conoscenza in azione.',
-      avatar: 'CD'
+      name: 'Dr.ssa Maria Rossi',
+      role: 'Ricercatrice, Scienze dell\'Educazione',
+      content: 'L\'architettura modulare permette di integrare facilmente nuove ricerche e metodologie educative senza limiti.',
+      avatar: 'MR'
     },
     {
-      name: 'Paola Ricaurte',
-      role: 'Ricercatrice, Pedagogia Digitale',
-      content: 'Un esempio perfetto di come la tecnologia possa servire l\'educazione democratica e inclusiva.',
-      avatar: 'PR'
+      name: 'Prof. Giovanni Bianchi',
+      role: 'Esperto, Etica AI',
+      content: 'Un esempio eccellente di come l\'AI possa essere utilizzata responsabilmente nell\'educazione su scala globale.',
+      avatar: 'GB'
     }
   ];
 
-  const handbookHighlights = [
+  const architectureHighlights = [
     {
-      chapter: 'Introduzione',
-      description: 'Scopri i principi fondamentali della peeragogy',
-      icon: BookOpen
+      title: 'Gestione Contenuti Modulare',
+      description: 'Sistema progettato per qualsiasi tipo di risorsa educativa',
+      icon: Database,
+      metric: '∞ Formati'
     },
     {
-      chapter: 'Pattern e Casi d\'Uso',
-      description: 'Pattern ricorrenti e applicazioni pratiche',
-      icon: Zap
+      title: 'Categorizzazione Intelligente',
+      description: 'Tassonomia flessibile e tag semantici auto-espandenti',
+      icon: Layers,
+      metric: '6+ Categorie'
     },
     {
-      chapter: 'Tecnologie',
-      description: 'Strumenti digitali per l\'apprendimento collaborativo',
-      icon: Brain
+      title: 'Ricerca Semantica Avanzata',
+      description: 'Trova contenuti correlati attraverso significato e contesto',
+      icon: Search,
+      metric: 'AI-Powered'
     },
     {
-      chapter: 'Valutazione',
-      description: 'Metodologie di valutazione peer-to-peer',
-      icon: Users
+      title: 'Integrazione AI Universale',
+      description: 'Ogni risorsa è potenziata dall\'intelligenza artificiale',
+      icon: Brain,
+      metric: 'RAG Completo'
     }
   ];
+
+  const scalabilityMetrics = [
+    { metric: 'Risorse Supportate', value: '∞', description: 'Nessun limite teorico alla crescita', icon: Infinity },
+    { metric: 'Formati Contenuto', value: '10+', description: 'PDF, HTML, Video, Audio, Dataset...', icon: Layers },
+    { metric: 'Lingue Supportate', value: 'Tutte', description: 'Sistema di traduzione AI integrato', icon: Globe },
+    { metric: 'Categorie', value: 'Dinamiche', description: 'Tassonomia auto-espandente', icon: Target }
+  ];
+
+  const alphaTestHighlight = {
+    title: 'Alpha Test: Manuale di Peeragogy',
+    description: 'Il primo contenuto della nostra biblioteca scalabile',
+    stats: {
+      chapters: 14,
+      pages: 350,
+      authors: 7,
+      translations: 'IT/EN'
+    }
+  };
 
   return (
     <div className="space-y-32">
@@ -120,7 +142,7 @@ const HomePage = () => {
             {/* Badge */}
             <div className="inline-flex items-center space-x-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20">
               <Star className="w-5 h-5 text-yellow-400" />
-              <span>Basato sul Manuale di Peeragogy v4.0 - Traduzione Italiana Completa</span>
+              <span>Biblioteca Digitale Infinitamente Scalabile</span>
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
             
@@ -134,67 +156,144 @@ const HomePage = () => {
               </h1>
               
               <p className="max-w-4xl mx-auto text-xl md:text-2xl text-white/80 leading-relaxed font-light">
-                La traduzione italiana completa del <strong>Manuale di Peeragogy</strong> con AI etica e strumenti per 
-                l'apprendimento peer-to-peer del futuro.
+                Una piattaforma <strong>infinitamente scalabile</strong> per risorse educative di qualità mondiale. 
+                Il <strong>Manuale di Peeragogy</strong> è solo l'inizio del nostro viaggio.
               </p>
             </div>
             
             {/* Enhanced CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
               <button className="group relative inline-flex items-center space-x-3 px-10 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-indigo-500/25">
-                <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Leggi il Manuale</span>
+                <Database className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">Esplora la Biblioteca</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
               </button>
               
               <button className="group inline-flex items-center space-x-3 px-10 py-5 bg-white/10 backdrop-blur-sm text-white font-bold rounded-2xl border-2 border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
                 <Github className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Repository GitHub</span>
+                <span className="text-lg">Architettura Open Source</span>
                 <ExternalLink className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               </button>
             </div>
 
-            {/* Stats */}
+            {/* Scalability Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">15.4k</div>
-                <div className="text-white/70 font-medium">Downloads</div>
+              {scalabilityMetrics.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div key={index} className="text-center">
+                    <div className="flex items-center justify-center mb-3">
+                      <Icon className="w-8 h-8 text-cyan-400 mr-2" />
+                      <div className="text-3xl md:text-4xl font-bold text-white">{item.value}</div>
+                    </div>
+                    <div className="text-white/70 font-medium">{item.metric}</div>
+                    <div className="text-white/50 text-sm mt-1">{item.description}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Alpha Test Highlight */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-6 mb-12">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+            <BookOpen className="w-4 h-4" />
+            <span>Alpha Test Content</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
+            Il Primo Contenuto della Biblioteca
+          </h2>
+          <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
+            Il Manuale di Peeragogy dimostra le capacità complete della nostra piattaforma scalabile
+          </p>
+        </div>
+
+        <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-10 text-white overflow-hidden shadow-2xl">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+          
+          <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="space-y-8">
+              <div className="flex items-center space-x-4">
+                <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30">
+                  Alpha Test
+                </span>
+                <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30">
+                  Traduzione Completa
+                </span>
+                <span className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-sm font-semibold">
+                  ⭐ Primo Contenuto
+                </span>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">14</div>
-                <div className="text-white/70 font-medium">Capitoli Tradotti</div>
+              
+              <div className="space-y-4">
+                <h3 className="text-4xl font-bold">{alphaTestHighlight.title}</h3>
+                <p className="text-xl text-indigo-100 leading-relaxed">{alphaTestHighlight.description}</p>
+                <p className="text-indigo-200 text-sm">
+                  Dimostra: gestione contenuti complessi, traduzioni, metadati ricchi, navigazione capitoli
+                </p>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">350</div>
-                <div className="text-white/70 font-medium">Pagine</div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-2">{alphaTestHighlight.stats.chapters}</div>
+                  <div className="text-indigo-200">Capitoli</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-2">{alphaTestHighlight.stats.pages}</div>
+                  <div className="text-indigo-200">Pagine</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-2">{alphaTestHighlight.stats.authors}</div>
+                  <div className="text-indigo-200">Autori</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-2">{alphaTestHighlight.stats.translations}</div>
+                  <div className="text-indigo-200">Lingue</div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">8+</div>
-                <div className="text-white/70 font-medium">Autori</div>
+              
+              <button className="group inline-flex items-center space-x-3 px-8 py-4 bg-white text-indigo-600 font-bold rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">Leggi il Manuale Alpha</span>
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-64 h-80 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto shadow-2xl border border-white/20">
+                <div className="text-center space-y-4">
+                  <BookOpen className="w-32 h-32 text-white/60 mx-auto" />
+                  <div className="text-white/80 font-semibold">Alpha Test Content</div>
+                  <div className="text-white/60 text-sm">Primo di migliaia</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Handbook Highlights */}
+      {/* Architecture Highlights */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-6 mb-20">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-            <BookOpen className="w-4 h-4" />
-            <span>Manuale di Peeragogy</span>
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold">
+            <Layers className="w-4 h-4" />
+            <span>Architettura Scalabile</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
-            Contenuti Principali Tradotti
+            Progettata per Crescere Infinitamente
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Esplora i capitoli chiave del Manuale di Peeragogy, ora disponibile in traduzione italiana completa
+            Ogni componente è modulare e progettato per supportare la crescita da un singolo manuale a milioni di risorse
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {handbookHighlights.map((highlight, index) => {
+          {architectureHighlights.map((highlight, index) => {
             const Icon = highlight.icon;
             return (
               <div
@@ -210,11 +309,15 @@ const HomePage = () => {
                   
                   <div className="space-y-3">
                     <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors duration-300">
-                      {highlight.chapter}
+                      {highlight.title}
                     </h3>
                     <p className="text-slate-600 leading-relaxed">
                       {highlight.description}
                     </p>
+                    <div className="inline-flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full text-sm font-semibold text-indigo-700">
+                      <BarChart className="w-4 h-4" />
+                      <span>{highlight.metric}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -228,13 +331,13 @@ const HomePage = () => {
         <div className="text-center space-y-6 mb-20">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
             <Zap className="w-4 h-4" />
-            <span>Funzionalità Innovative</span>
+            <span>Tecnologie Scalabili</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
-            Tecnologie all'Avanguardia
+            Funzionalità per la Crescita Infinita
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Un ecosistema completo per l'apprendimento collaborativo con AI etica e contenuti tradotti dal Manuale di Peeragogy
+            Ogni funzionalità è progettata per scalare da centinaia a milioni di utenti e risorse
           </p>
         </div>
 
@@ -263,7 +366,7 @@ const HomePage = () => {
                     {feature.description}
                   </p>
                   <div className="inline-flex items-center space-x-2 px-3 py-1 bg-slate-100 rounded-full text-sm font-semibold text-slate-700">
-                    <TrendingUp className="w-4 h-4" />
+                    <Infinity className="w-4 h-4" />
                     <span>{feature.stats}</span>
                   </div>
                 </div>
@@ -285,13 +388,13 @@ const HomePage = () => {
           <div className="text-center space-y-6 mb-20">
             <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-semibold border border-white/20">
               <Globe className="w-4 h-4" />
-              <span>Valori Peeragogici</span>
+              <span>Valori Fondamentali</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Principi Fondamentali
+              Principi per la Scalabilità Globale
             </h2>
             <p className="max-w-3xl mx-auto text-xl text-slate-300 leading-relaxed">
-              Basato sui valori del Manuale di Peeragogy: democraticità, collaborazione e condivisione della conoscenza
+              Ogni decisione architettonica è guidata da principi che garantiscono crescita sostenibile e accesso democratico
             </p>
           </div>
 
@@ -329,10 +432,10 @@ const HomePage = () => {
             <span>Voci della Community</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
-            Cosa Dicono gli Autori
+            Cosa Dicono gli Esperti
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-slate-600 leading-relaxed">
-            Testimonianze dirette dai creatori del Manuale di Peeragogy
+            Testimonianze da educatori, ricercatori e innovatori che credono nella scalabilità dell'educazione
           </p>
         </div>
 
@@ -371,22 +474,22 @@ const HomePage = () => {
           
           <div className="relative space-y-8">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Inizia il Tuo Viaggio Peeragogico
+              Inizia il Viaggio nella Biblioteca Infinita
             </h2>
             <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto leading-relaxed">
-              Accedi gratuitamente al Manuale di Peeragogy completo tradotto in italiano e scopri il futuro dell'apprendimento collaborativo
+              Esplora il Manuale di Peeragogy e scopri il futuro dell'apprendimento scalabile e collaborativo
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
               <button className="group inline-flex items-center space-x-3 px-10 py-5 bg-white text-indigo-600 font-bold rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Leggi Gratuitamente</span>
+                <Database className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">Esplora la Biblioteca</span>
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
               
               <button className="group inline-flex items-center space-x-3 px-10 py-5 border-2 border-white text-white font-bold rounded-2xl hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105">
-                <Download className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-lg">Download PDF</span>
+                <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">Prova l'AI Assistant</span>
               </button>
             </div>
 
@@ -395,15 +498,19 @@ const HomePage = () => {
               <div className="flex flex-wrap items-center justify-center space-x-8 text-white/80">
                 <div className="flex items-center space-x-2">
                   <Shield className="w-5 h-5" />
-                  <span>100% Open Source</span>
+                  <span>Infinitamente Scalabile</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Download className="w-5 h-5" />
-                  <span>Creative Commons</span>
+                  <Globe className="w-5 h-5" />
+                  <span>Open Source</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Star className="w-5 h-5" />
-                  <span>Traduzione Italiana Completa</span>
+                  <span>Community Driven</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Infinity className="w-5 h-5" />
+                  <span>Crescita Illimitata</span>
                 </div>
               </div>
             </div>

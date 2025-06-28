@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Brain, Users, Menu, X, Sparkles } from 'lucide-react';
+import { BookOpen, Brain, Users, Menu, X, Sparkles, Database } from 'lucide-react';
 import HomePage from './pages/HomePage';
 import LibraryPage from './pages/LibraryPage';
 import ChatbotPage from './pages/ChatbotPage';
@@ -10,7 +10,7 @@ function App() {
 
   const navigation = [
     { id: 'home', name: 'Home', icon: Sparkles },
-    { id: 'library', name: 'Biblioteca', icon: BookOpen },
+    { id: 'library', name: 'Biblioteca Scalabile', icon: Database },
     { id: 'chatbot', name: 'AI Assistant', icon: Brain },
   ];
 
@@ -33,7 +33,7 @@ function App() {
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <BookOpen className="w-7 h-7 text-white" />
+                  <Database className="w-7 h-7 text-white" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                   <Sparkles className="w-2.5 h-2.5 text-white" />
@@ -43,7 +43,7 @@ function App() {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Biblioteca Pyragogica
                 </h1>
-                <p className="text-sm text-slate-500 font-medium">Digital Knowledge Hub</p>
+                <p className="text-sm text-slate-500 font-medium">Infinitamente Scalabile</p>
               </div>
             </div>
 
@@ -135,8 +135,18 @@ function App() {
             onClick={() => setCurrentPage('library')}
             className="group w-14 h-14 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
           >
-            <BookOpen className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
+            <Database className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
           </button>
+        </div>
+      </div>
+
+      {/* Scalability Indicator */}
+      <div className="fixed bottom-8 left-8 z-40">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border border-slate-200">
+          <div className="flex items-center space-x-2 text-sm">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-slate-600 font-medium">Biblioteca Scalabile</span>
+          </div>
         </div>
       </div>
     </div>

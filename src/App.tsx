@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { BookOpen, Brain, Users, Zap, ArrowRight, Menu, X } from 'lucide-react';
+import { BookOpen, Brain, Users, Menu, X } from 'lucide-react';
 import HomePage from './pages/HomePage';
 import LibraryPage from './pages/LibraryPage';
 import ChatbotPage from './pages/ChatbotPage';
-import AnalysisPage from './pages/AnalysisPage';
-import EconomicsPage from './pages/EconomicsPage';
-import ArchitecturePage from './pages/ArchitecturePage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -15,9 +12,6 @@ function App() {
     { id: 'home', name: 'Home', icon: BookOpen },
     { id: 'library', name: 'Biblioteca', icon: BookOpen },
     { id: 'chatbot', name: 'AI Assistant', icon: Brain },
-    { id: 'architecture', name: 'Architettura', icon: Zap },
-    { id: 'analysis', name: 'Analisi SWOT', icon: Users },
-    { id: 'economics', name: 'Modello Economico', icon: ArrowRight },
   ];
 
   const renderPage = () => {
@@ -25,9 +19,6 @@ function App() {
       case 'home': return <HomePage />;
       case 'library': return <LibraryPage />;
       case 'chatbot': return <ChatbotPage />;
-      case 'architecture': return <ArchitecturePage />;
-      case 'analysis': return <AnalysisPage />;
-      case 'economics': return <EconomicsPage />;
       default: return <HomePage />;
     }
   };

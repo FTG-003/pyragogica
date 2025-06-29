@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Download, TrendingUp, Github, ExternalLink, Database, Layers, Search, Infinity, Target, BarChart, Sparkles } from 'lucide-react';
+import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Database, Layers, Search, Infinity, Target, Sparkles, CheckCircle } from 'lucide-react';
 
 const HomePage = () => {
   const features = [
@@ -7,136 +7,71 @@ const HomePage = () => {
       icon: Database,
       title: 'Biblioteca Infinitamente Scalabile',
       description: 'Architettura modulare progettata per crescere da un singolo manuale a migliaia di risorse educative di qualità mondiale.',
-      color: 'from-blue-500 to-cyan-500',
-      stats: '∞ Risorse Supportate'
+      stats: '∞ Risorse'
     },
     {
       icon: Brain,
-      title: 'AI Multi-Personalità Adattiva',
-      description: 'Sistema di intelligenza artificiale che si adatta a qualsiasi contenuto della biblioteca, con personalità multiple per ogni stile di apprendimento.',
-      color: 'from-purple-500 to-pink-500',
-      stats: '4+ Personalità AI'
+      title: 'AI Multi-Personalità',
+      description: 'Sistema di intelligenza artificiale che si adatta a qualsiasi contenuto con personalità multiple per ogni stile di apprendimento.',
+      stats: '4 Personalità'
     },
     {
       icon: Layers,
-      title: 'Contenuti Strutturati e Interconnessi',
-      description: 'Sistema di categorizzazione avanzato con metadati ricchi, traduzioni multilingue e percorsi di apprendimento personalizzati.',
-      color: 'from-green-500 to-teal-500',
-      stats: '6+ Categorie Espandibili'
+      title: 'Contenuti Strutturati',
+      description: 'Sistema di categorizzazione avanzato con metadati ricchi, traduzioni multilingue e percorsi personalizzati.',
+      stats: '6+ Categorie'
     },
     {
       icon: Zap,
-      title: 'RAG Universale e Semantico',
-      description: 'Sistema di retrieval intelligente che funziona con qualsiasi tipo di contenuto: manuali, guide, ricerche, video, dataset.',
-      color: 'from-orange-500 to-red-500',
-      stats: '99.9% Uptime Garantito'
+      title: 'RAG Semantico',
+      description: 'Sistema di retrieval intelligente che funziona con qualsiasi tipo di contenuto: manuali, guide, ricerche, video.',
+      stats: '99.9% Uptime'
     }
   ];
 
-  const valueProps = [
-    {
-      icon: Globe,
-      title: 'Accesso Democratico Globale',
-      description: 'Piattaforma open source progettata per rendere la conoscenza di qualità accessibile a tutti, ovunque nel mondo, in qualsiasi lingua',
-      stats: '100% Open Source',
-      color: 'from-emerald-500 to-teal-600'
-    },
-    {
-      icon: Shield,
-      title: 'Etica AI e Privacy by Design',
-      description: 'Trasparenza algoritmica e rispetto della privacy in ogni interazione, seguendo i più alti standard etici internazionali',
-      stats: '100% Tracciabilità',
-      color: 'from-blue-500 to-indigo-600'
-    },
-    {
-      icon: Lightbulb,
-      title: 'Apprendimento Modulare Interconnesso',
-      description: 'Ogni risorsa è progettata per integrarsi perfettamente con le altre, creando percorsi di apprendimento coerenti e personalizzati',
-      stats: 'Integrazione Totale',
-      color: 'from-amber-500 to-orange-600'
-    }
+  const benefits = [
+    'Accesso democratico alla conoscenza di qualità',
+    'Interfaccia moderna e intuitiva',
+    'Sistema di ricerca semantica avanzata',
+    'Supporto multilingue completo',
+    'Architettura infinitamente scalabile',
+    'Open source e trasparente'
   ];
 
   const testimonials = [
     {
       name: 'Howard Rheingold',
       role: 'Co-fondatore, Progetto Peeragogy',
-      content: 'Una piattaforma che realizza la visione di una biblioteca digitale veramente collaborativa e infinitamente scalabile.',
+      content: 'Una piattaforma che realizza la visione di una biblioteca digitale veramente collaborativa.',
       avatar: 'HR'
     },
     {
       name: 'Dr.ssa Maria Rossi',
       role: 'Ricercatrice, Scienze dell\'Educazione',
-      content: 'L\'architettura modulare permette di integrare facilmente nuove ricerche e metodologie educative senza limiti.',
+      content: 'L\'architettura modulare permette di integrare facilmente nuove metodologie educative.',
       avatar: 'MR'
     },
     {
       name: 'Prof. Giovanni Bianchi',
       role: 'Esperto, Etica AI',
-      content: 'Un esempio eccellente di come l\'AI possa essere utilizzata responsabilmente nell\'educazione su scala globale.',
+      content: 'Un esempio eccellente di come l\'AI possa essere utilizzata responsabilmente nell\'educazione.',
       avatar: 'GB'
     }
   ];
 
-  const scalabilityMetrics = [
-    { 
-      metric: 'Risorse Supportate', 
-      value: '∞', 
-      description: 'Nessun limite teorico alla crescita', 
-      icon: Infinity,
-      color: 'from-blue-500 to-cyan-500'
-    },
-    { 
-      metric: 'Formati Contenuto', 
-      value: '10+', 
-      description: 'PDF, HTML, Video, Audio, Dataset...', 
-      icon: Layers,
-      color: 'from-purple-500 to-pink-500'
-    },
-    { 
-      metric: 'Lingue Supportate', 
-      value: 'Tutte', 
-      description: 'Sistema di traduzione AI integrato', 
-      icon: Globe,
-      color: 'from-green-500 to-teal-500'
-    },
-    { 
-      metric: 'Categorie', 
-      value: 'Dinamiche', 
-      description: 'Tassonomia auto-espandente', 
-      icon: Target,
-      color: 'from-orange-500 to-red-500'
-    }
-  ];
-
   return (
-    <div className="space-y-32 pb-20">
-      {/* Modern Hero Section */}
+    <div className="animate-fade-in-up">
+      {/* Hero Section */}
       <section className="hero-modern">
-        {/* Animated Background */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-72 h-72 rounded-full opacity-20 animate-pulse"
-               style={{
-                 background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-                 filter: 'blur(40px)'
-               }}></div>
-          <div className="absolute top-40 right-20 w-72 h-72 rounded-full opacity-20 animate-pulse"
-               style={{
-                 background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
-                 filter: 'blur(40px)',
-                 animationDelay: '2s'
-               }}></div>
-          <div className="absolute bottom-20 left-1/2 w-72 h-72 rounded-full opacity-20 animate-pulse"
-               style={{
-                 background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
-                 filter: 'blur(40px)',
-                 animationDelay: '4s'
-               }}></div>
+          <div className="absolute top-20 left-20 w-72 h-72 rounded-full opacity-20 animate-pulse bg-gradient-to-br from-cyan-400 to-blue-500" style={{ filter: 'blur(40px)' }}></div>
+          <div className="absolute top-40 right-20 w-72 h-72 rounded-full opacity-20 animate-pulse bg-gradient-to-br from-purple-400 to-pink-500" style={{ filter: 'blur(40px)', animationDelay: '2s' }}></div>
+          <div className="absolute bottom-20 left-1/2 w-72 h-72 rounded-full opacity-20 animate-pulse bg-gradient-to-br from-yellow-400 to-orange-500" style={{ filter: 'blur(40px)', animationDelay: '4s' }}></div>
         </div>
         
         <div className="container-modern hero-content">
           {/* Modern Badge */}
-          <div className="inline-flex items-center space-x-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20 animate-scale-in">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20 animate-scale-in mb-8">
             <Star className="w-5 h-5 text-yellow-400" />
             <span>Biblioteca Digitale Infinitamente Scalabile</span>
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -158,48 +93,30 @@ const HomePage = () => {
           </div>
           
           {/* Modern CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <button className="btn-primary group">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <button className="btn-modern btn-primary group">
               <Database className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
               <span className="text-lg">Esplora la Biblioteca</span>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
             
-            <button className="btn-secondary group">
-              <Github className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-lg">Architettura Open Source</span>
-              <ExternalLink className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+            <button className="btn-modern btn-secondary group">
+              <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+              <span className="text-lg">Prova l'AI Assistant</span>
             </button>
-          </div>
-
-          {/* Scalability Metrics */}
-          <div className="grid-4 pt-12 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            {scalabilityMetrics.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <div key={index} className="text-center">
-                  <div className="flex items-center justify-center mb-3">
-                    <Icon className="w-8 h-8 text-cyan-400 mr-2" />
-                    <div className="text-3xl md:text-4xl font-bold text-white">{item.value}</div>
-                  </div>
-                  <div className="text-white/70 font-medium">{item.metric}</div>
-                  <div className="text-white/50 text-sm mt-1">{item.description}</div>
-                </div>
-              );
-            })}
           </div>
         </div>
       </section>
 
-      {/* Modern Features Section */}
+      {/* Features Section */}
       <section className="section-modern">
         <div className="container-modern">
-          <div className="text-center space-y-6 mb-20">
-            <div className="status-indicator status-info">
+          <div className="text-center mb-16">
+            <div className="status-indicator status-info mb-6">
               <Zap className="w-4 h-4" />
-              <span>Tecnologie Scalabili</span>
+              <span>Tecnologie Avanzate</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Funzionalità per la Crescita Infinita
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -207,35 +124,24 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="grid-4">
+          <div className="grid-modern grid-4">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <div
-                  key={index}
-                  className="resource-card group animate-fade-in-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {/* Icon */}
-                  <div className={`inline-flex p-4 rounded-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}
-                       style={{
-                         background: `linear-gradient(135deg, ${feature.color.split(' ')[0].replace('from-', '#')} 0%, ${feature.color.split(' ')[1].replace('to-', '#')} 100%)`
-                       }}>
-                    <Icon className="w-8 h-8 text-white" />
+                <div key={index} className="card-modern p-8 animate-fade-in-up group" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-6 h-6 text-white" />
                   </div>
                   
-                  {/* Content */}
-                  <div className="space-y-4">
-                    <h3 className="resource-title group-hover:text-indigo-600 transition-colors duration-300">
-                      {feature.title}
-                    </h3>
-                    <p className="text-slate-600 leading-relaxed">
-                      {feature.description}
-                    </p>
-                    <div className="status-indicator status-info">
-                      <Infinity className="w-4 h-4" />
-                      <span>{feature.stats}</span>
-                    </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed mb-4">
+                    {feature.description}
+                  </p>
+                  <div className="status-indicator status-success">
+                    <Infinity className="w-3 h-3" />
+                    <span>{feature.stats}</span>
                   </div>
                 </div>
               );
@@ -244,92 +150,83 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Modern Value Proposition */}
-      <section className="relative overflow-hidden">
-        <div className="hero-modern">
-          <div className="container-modern section-modern">
-            <div className="text-center space-y-6 mb-20">
-              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-semibold border border-white/20">
+      {/* Benefits Section */}
+      <section className="section-modern bg-slate-100">
+        <div className="container-modern">
+          <div className="grid-modern grid-2" style={{ alignItems: 'center' }}>
+            <div>
+              <div className="status-indicator status-info mb-6">
                 <Globe className="w-4 h-4" />
-                <span>Valori Fondamentali</span>
+                <span>Vantaggi Chiave</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white">
-                Principi per la Scalabilità Globale
-              </h2>
-              <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Ogni decisione architettonica è guidata da principi che garantiscono crescita sostenibile e accesso democratico
-              </p>
-            </div>
-
-            <div className="grid-3">
-              {valueProps.map((prop, index) => {
-                const Icon = prop.icon;
-                return (
-                  <div key={index} className="group text-center space-y-8 animate-fade-in-up" style={{ animationDelay: `${index * 0.2}s` }}>
-                    <div className={`inline-flex p-6 rounded-3xl shadow-2xl group-hover:scale-110 transition-transform duration-300`}
-                         style={{
-                           background: `linear-gradient(135deg, ${prop.color.split(' ')[0].replace('from-', '#')} 0%, ${prop.color.split(' ')[1].replace('to-', '#')} 100%)`
-                         }}>
-                      <Icon className="w-12 h-12 text-white" />
-                    </div>
-                    <div className="space-y-6">
-                      <h3 className="text-3xl font-bold text-white group-hover:text-cyan-400 transition-colors duration-300">
-                        {prop.title}
-                      </h3>
-                      <p className="text-slate-300 leading-relaxed text-lg">
-                        {prop.description}
-                      </p>
-                      <div className="inline-flex px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-bold rounded-2xl text-xl shadow-lg">
-                        {prop.stats}
-                      </div>
-                    </div>
+              <h2 className="text-4xl font-bold text-slate-900 mb-8">Perché Scegliere la Biblioteca Pyragogica</h2>
+              <div className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-slate-700">{benefit}</span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            </div>
+            
+            <div className="card-modern p-8 bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
+              <h3 className="text-2xl font-bold mb-6 text-white">Statistiche Impressionanti</h3>
+              <div className="grid-modern grid-2">
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">∞</div>
+                  <div className="opacity-90">Risorse Supportate</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">4</div>
+                  <div className="opacity-90">Personalità AI</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">6+</div>
+                  <div className="opacity-90">Categorie</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">99.9%</div>
+                  <div className="opacity-90">Uptime</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Modern Testimonials */}
+      {/* Testimonials */}
       <section className="section-modern">
         <div className="container-modern">
-          <div className="text-center space-y-6 mb-20">
-            <div className="status-indicator status-success">
+          <div className="text-center mb-16">
+            <div className="status-indicator status-success mb-6">
               <Users className="w-4 h-4" />
-              <span>Voci della Community</span>
+              <span>Testimonianze</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900">
-              Cosa Dicono gli Esperti
-            </h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-6">Cosa Dicono gli Esperti</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Testimonianze da educatori, ricercatori e innovatori che credono nella scalabilità dell'educazione
+              Testimonianze da educatori e ricercatori che credono nella scalabilità dell'educazione
             </p>
           </div>
 
-          <div className="grid-3">
+          <div className="grid-modern grid-3">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="card-modern group p-8 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                    ))}
+              <div key={index} className="card-modern p-8 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-slate-700 text-lg leading-relaxed italic mb-6">
+                  "{testimonial.content}"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                    {testimonial.avatar}
                   </div>
-                  <p className="text-slate-700 text-lg leading-relaxed italic">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
-                         style={{
-                           background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-                         }}>
-                      {testimonial.avatar}
-                    </div>
-                    <div>
-                      <div className="font-bold text-slate-900">{testimonial.name}</div>
-                      <div className="text-slate-600 text-sm">{testimonial.role}</div>
-                    </div>
+                  <div>
+                    <div className="font-bold text-slate-900">{testimonial.name}</div>
+                    <div className="text-slate-600 text-sm">{testimonial.role}</div>
                   </div>
                 </div>
               </div>
@@ -338,63 +235,39 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Modern CTA Section */}
-      <section className="section-modern">
-        <div className="container-modern">
-          <div className="relative rounded-3xl p-12 text-center text-white overflow-hidden shadow-modern"
-               style={{
-                 background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)'
-               }}>
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-30">
-              <div className="absolute top-0 left-0 w-full h-full"
-                   style={{
-                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                   }}></div>
-            </div>
-            
-            <div className="relative space-y-8">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Inizia il Viaggio nella Biblioteca Infinita
-              </h2>
-              <p className="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto leading-relaxed">
-                Esplora il Manuale di Peeragogy e scopri il futuro dell'apprendimento scalabile e collaborativo
-              </p>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-8">
-                <button className="btn-modern bg-white text-indigo-600 hover:bg-slate-100 shadow-2xl group">
-                  <Database className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-lg font-bold">Esplora la Biblioteca</span>
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-                </button>
-                
-                <button className="btn-modern border-2 border-white text-white hover:bg-white hover:text-indigo-600 group">
-                  <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-lg font-bold">Prova l'AI Assistant</span>
-                </button>
-              </div>
+      {/* CTA Section */}
+      <section className="section-modern bg-gradient-to-br from-indigo-600 to-purple-600">
+        <div className="container-modern text-center text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+            Inizia il Tuo Viaggio nell'Apprendimento
+          </h2>
+          <p className="text-xl mb-10 opacity-90 max-w-3xl mx-auto leading-relaxed">
+            Esplora il Manuale di Peeragogy e scopri il futuro dell'apprendimento scalabile e collaborativo
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <button className="btn-modern bg-white text-indigo-600 hover:bg-slate-100 shadow-xl">
+              <Database className="w-6 h-6" />
+              <span className="text-lg font-bold">Esplora la Biblioteca</span>
+            </button>
+            <button className="btn-modern bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600">
+              <Brain className="w-6 h-6" />
+              <span className="text-lg font-bold">Prova l'AI Assistant</span>
+            </button>
+          </div>
 
-              {/* Trust Indicators */}
-              <div className="pt-8 border-t border-white/20">
-                <div className="flex flex-wrap items-center justify-center space-x-8 text-white/80">
-                  <div className="flex items-center space-x-2">
-                    <Shield className="w-5 h-5" />
-                    <span>Infinitamente Scalabile</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Globe className="w-5 h-5" />
-                    <span>Open Source</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Star className="w-5 h-5" />
-                    <span>Community Driven</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Infinity className="w-5 h-5" />
-                    <span>Crescita Illimitata</span>
-                  </div>
-                </div>
-              </div>
+          <div className="flex flex-wrap items-center justify-center gap-8 mt-12 opacity-80">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              <span className="text-sm">Infinitamente Scalabile</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              <span className="text-sm">Open Source</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4" />
+              <span className="text-sm">Community Driven</span>
             </div>
           </div>
         </div>

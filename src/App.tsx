@@ -50,18 +50,12 @@ function App() {
           <div className="container-modern">
             <div className="flex justify-between items-center h-20">
               {/* Modern Logo */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
-                       style={{
-                         background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-                       }}>
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600">
                     <Database className="w-7 h-7 text-white" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
-                       style={{
-                         background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)'
-                       }}>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500">
                     <Sparkles className="w-2.5 h-2.5 text-white" />
                   </div>
                 </div>
@@ -74,7 +68,7 @@ function App() {
               </div>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center space-x-2">
+              <div className="hidden md:flex items-center gap-2">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -113,7 +107,7 @@ function App() {
                       <button
                         key={item.id}
                         onClick={() => handlePageChange(item.id)}
-                        className={`flex items-center space-x-4 w-full px-6 py-4 rounded-2xl text-left transition-all duration-300 min-h-[44px] ${
+                        className={`flex items-center gap-4 w-full px-6 py-4 rounded-2xl text-left transition-all duration-300 min-h-[44px] ${
                           currentPage === item.id
                             ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
@@ -137,10 +131,7 @@ function App() {
             fallback={
               <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center space-y-6">
-                  <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center"
-                       style={{
-                         background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-                       }}>
+                  <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
                     <Zap className="w-8 h-8 text-white animate-pulse" />
                   </div>
                   <LoadingSpinner 

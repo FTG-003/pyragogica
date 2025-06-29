@@ -207,4 +207,4 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick, featured
   );
 };
 
-export default ResourceCard;
+export default React.memo(ResourceCard);

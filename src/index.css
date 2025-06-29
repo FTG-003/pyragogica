@@ -111,6 +111,16 @@
   .status-info {
     @apply bg-blue-50 text-blue-700 border-blue-200;
   }
+  
+  /* Modern Button */
+  .btn-modern {
+    @apply inline-flex items-center justify-center;
+    @apply px-8 py-4 rounded-2xl font-semibold;
+    @apply transition-all duration-300 ease-out;
+    @apply transform hover:scale-[1.02] active:scale-[0.98];
+    font-feature-settings: 'ss01';
+    letter-spacing: -0.01em;
+  }
 }
 
 /* Enhanced Animations */
@@ -194,6 +204,31 @@
   }
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
 /* Utility Classes */
 @layer utilities {
   .animate-fade-in-up {
@@ -222,6 +257,18 @@
   
   .animate-glow {
     animation: glow 2s ease-in-out infinite;
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
   
   .text-gradient {

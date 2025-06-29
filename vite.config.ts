@@ -39,10 +39,6 @@ export default defineConfig({
     }
   },
   server: {
-    // Ottimizzazioni development
-    hmr: {
-      timeout: 30000
-    },
     // Preload ottimizzato
     warmup: {
       clientFiles: [

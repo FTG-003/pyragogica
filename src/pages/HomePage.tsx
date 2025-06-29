@@ -189,7 +189,7 @@ const HomePage = () => {
               return (
                 <div
                   key={index}
-                  className="resource-card animate-fade-in-up"
+                  className="resource-card group animate-fade-in-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {/* Icon */}
@@ -285,7 +285,7 @@ const HomePage = () => {
 
           <div className="grid-3">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="card-modern p-8 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div key={index} className="card-modern group p-8 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className="space-y-6">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (

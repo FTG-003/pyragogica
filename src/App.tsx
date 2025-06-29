@@ -1,18 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { BookOpen, Brain, Users, Menu, X, Sparkles, Database } from 'lucide-react';
-import HomePage from './pages/HomePage';
-import LibraryPage from './pages/LibraryPage';
-import ChatbotPage from './pages/ChatbotPage';
+import LoadingSpinner from './components/LoadingSpinner';
+import { useToast } from './components/ToastNotification';
+
+// Lazy loading delle pagine principali
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const LibraryPage = React.lazy(() => import('./pages/LibraryPage'));
+const ChatbotPage = React.lazy(() => import('./pages/ChatbotPage'));
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { ToastContainer, success, error, info } = useToast();
 
   const navigation = [
     { id: 'home', name: 'Home', icon: Sparkles },
     { id: 'library', name: 'Biblioteca Scalabile', icon: Database },
     { id: 'chatbot', name: 'AI Assistant', icon: Brain },
   ];
+
+  const handlePageChange = (pageId: string) => {
+    setCurrentPage(pageId);
+    setMobileMenuOpen(false);
+    
+    // Mostra notifica di navigazione per demo
+    const pageNames = {
+      home: 'Homepage',
+      library: 'Biblioteca Digitale',
+      chatbot: 'AI Assistant'
+    };
+    
+    info('Navigazione', `Caricamento ${pageNames[pageId as keyof typeof pageNames]}...`, 2000);
+  };
 
   const renderPage = () => {
     switch (currentPage) {
@@ -43,7 +62,7 @@ function App() {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Biblioteca Pyragogica
                 </h1>
-                <p className="text-sm text-slate-500 font-medium">Infinitamente Scalabile</p>
+                <p className="text-sm text-slate-500 font-medium">Production Ready</p>
               </div>
             </div>
 
@@ -54,7 +73,7 @@ function App() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setCurrentPage(item.id)}
+                    onClick={() => handlePageChange(item.id)}
                     className={`group relative flex items-center space-x-3 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                       currentPage === item.id
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
@@ -78,6 +97,7 @@ function App() {
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-300"
+                aria-label="Toggle mobile menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -93,10 +113,7 @@ function App() {
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        setCurrentPage(item.id);
-                        setMobileMenuOpen(false);
-                      }}
+                      onClick={() => handlePageChange(item.id)}
                       className={`flex items-center space-x-4 w-full px-6 py-4 rounded-2xl text-left transition-all duration-300 ${
                         currentPage === item.id
                           ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
@@ -114,9 +131,21 @@ function App() {
         </div>
       </nav>
 
-      {/* Enhanced Page Content */}
+      {/* Enhanced Page Content with Suspense */}
       <main className="relative">
-        {renderPage()}
+        <Suspense 
+          fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <LoadingSpinner 
+                size="lg" 
+                text="Caricamento pagina..." 
+                className="py-20"
+              />
+            </div>
+          }
+        >
+          {renderPage()}
+        </Suspense>
       </main>
 
       {/* Floating Action Elements */}
@@ -124,21 +153,26 @@ function App() {
         <div className="flex flex-col space-y-4">
           {/* Quick AI Assistant */}
           <button
-            onClick={() => setCurrentPage('chatbot')}
+            onClick={() => handlePageChange('chatbot')}
             className="group w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
+            aria-label="Apri AI Assistant"
           >
             <Brain className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
           </button>
           
           {/* Quick Library Access */}
           <button
-            onClick={() => setCurrentPage('library')}
+            onClick={() => handlePageChange('library')}
             className="group w-14 h-14 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
+            aria-label="Apri Biblioteca"
           >
             <Database className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
           </button>
         </div>
       </div>
+
+      {/* Toast Notifications Container */}
+      <ToastContainer />
     </div>
   );
 }

@@ -1,0 +1,406 @@
+/* Rizzo AI Academy Inspired Design System */
+/* Modern, clean, professional aesthetic */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Rizzo-inspired Color Palette */
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-light: #3b82f6;
+  
+  --color-secondary: #64748b;
+  --color-secondary-dark: #475569;
+  --color-secondary-light: #94a3b8;
+  
+  --color-accent: #f59e0b;
+  --color-accent-dark: #d97706;
+  --color-accent-light: #fbbf24;
+  
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  --color-background: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-background-tertiary: #f1f5f9;
+  
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+  --color-text-inverse: #ffffff;
+  
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-border-dark: #cbd5e1;
+  
+  /* Typography Scale */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+  
+  /* Spacing Scale */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-32: 8rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-weight: var(--font-weight-normal);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: var(--font-size-5xl); }
+h2 { font-size: var(--font-size-4xl); }
+h3 { font-size: var(--font-size-3xl); }
+h4 { font-size: var(--font-size-2xl); }
+h5 { font-size: var(--font-size-xl); }
+h6 { font-size: var(--font-size-lg); }
+
+p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+/* Rizzo-style Components */
+.rizzo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+.rizzo-section {
+  padding: var(--spacing-24) 0;
+}
+
+.rizzo-card {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-8);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.rizzo-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.rizzo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.rizzo-button-primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.rizzo-button-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.rizzo-button-secondary {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.rizzo-button-secondary:hover {
+  background: var(--color-background-secondary);
+  border-color: var(--color-border-dark);
+}
+
+.rizzo-input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+  transition: all var(--transition-fast);
+}
+
+.rizzo-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.rizzo-nav {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-4) 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.rizzo-nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rizzo-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.rizzo-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+}
+
+.rizzo-nav-link {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.rizzo-nav-link:hover,
+.rizzo-nav-link.active {
+  color: var(--color-primary);
+}
+
+.rizzo-hero {
+  background: linear-gradient(135deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
+  padding: var(--spacing-32) 0;
+  text-align: center;
+}
+
+.rizzo-hero-title {
+  font-size: var(--font-size-6xl);
+  font-weight: var(--font-weight-extrabold);
+  margin-bottom: var(--spacing-6);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rizzo-hero-subtitle {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-8);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rizzo-grid {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.rizzo-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.rizzo-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.rizzo-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.rizzo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  background: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.rizzo-badge-primary {
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+}
+
+.rizzo-badge-success {
+  background: rgb(16 185 129 / 0.1);
+  color: var(--color-success);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rizzo-container {
+    padding: 0 var(--spacing-4);
+  }
+  
+  .rizzo-section {
+    padding: var(--spacing-16) 0;
+  }
+  
+  .rizzo-hero-title {
+    font-size: var(--font-size-4xl);
+  }
+  
+  .rizzo-hero-subtitle {
+    font-size: var(--font-size-lg);
+  }
+  
+  .rizzo-nav-menu {
+    gap: var(--spacing-4);
+  }
+  
+  .rizzo-grid-2,
+  .rizzo-grid-3,
+  .rizzo-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.rizzo-animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.rizzo-animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Utility Classes */
+.rizzo-text-center { text-align: center; }
+.rizzo-text-left { text-align: left; }
+.rizzo-text-right { text-align: right; }
+
+.rizzo-mb-4 { margin-bottom: var(--spacing-4); }
+.rizzo-mb-6 { margin-bottom: var(--spacing-6); }
+.rizzo-mb-8 { margin-bottom: var(--spacing-8); }
+
+.rizzo-mt-4 { margin-top: var(--spacing-4); }
+.rizzo-mt-6 { margin-top: var(--spacing-6); }
+.rizzo-mt-8 { margin-top: var(--spacing-8); }
+
+.rizzo-hidden { display: none; }
+.rizzo-block { display: block; }
+.rizzo-flex { display: flex; }
+.rizzo-inline-flex { display: inline-flex; }
+
+.rizzo-items-center { align-items: center; }
+.rizzo-justify-center { justify-content: center; }
+.rizzo-justify-between { justify-content: space-between; }
+
+.rizzo-gap-2 { gap: var(--spacing-2); }
+.rizzo-gap-4 { gap: var(--spacing-4); }
+.rizzo-gap-6 { gap: var(--spacing-6); }
+.rizzo-gap-8 { gap: var(--spacing-8); }

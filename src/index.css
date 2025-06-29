@@ -23,17 +23,30 @@
     letter-spacing: -0.011em;
   }
   
-  /* Enhanced Typography Hierarchy */
+  /* Enhanced Typography Hierarchy - FIX per lettere tagliate */
   h1, h2, h3, h4, h5, h6 {
     font-weight: 900;
-    line-height: 1.1;
+    line-height: 1.2;
     letter-spacing: -0.025em;
     font-feature-settings: 'ss01', 'ss02';
+    /* FIX: Padding per evitare taglio lettere */
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
   }
   
-  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
-  h2 { @apply text-3xl md:text-4xl lg:text-5xl; }
-  h3 { @apply text-2xl md:text-3xl; }
+  h1 { 
+    @apply text-4xl md:text-5xl lg:text-6xl; 
+    /* FIX: Line height maggiore per lettere grandi */
+    line-height: 1.1;
+  }
+  h2 { 
+    @apply text-3xl md:text-4xl lg:text-5xl; 
+    line-height: 1.15;
+  }
+  h3 { 
+    @apply text-2xl md:text-3xl; 
+    line-height: 1.2;
+  }
   h4 { @apply text-xl md:text-2xl; }
   h5 { @apply text-lg md:text-xl; }
   h6 { @apply text-base md:text-lg; }
@@ -110,6 +123,24 @@
   
   .status-info {
     @apply bg-blue-50 text-blue-700 border-blue-200;
+  }
+
+  /* FIX: Classe speciale per titoli grandi senza taglio */
+  .title-safe {
+    line-height: 1.1 !important;
+    padding-top: 0.15em !important;
+    padding-bottom: 0.15em !important;
+    overflow: visible !important;
+  }
+
+  /* FIX: Gradient text sicuro */
+  .text-gradient-safe {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    @apply bg-clip-text text-transparent;
+    line-height: 1.1 !important;
+    padding-top: 0.1em !important;
+    padding-bottom: 0.1em !important;
+    display: inline-block;
   }
 }
 
@@ -288,7 +319,7 @@
 
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
-  .text-gradient {
+  .text-gradient, .text-gradient-safe {
     @apply text-indigo-600;
     background: none;
   }
@@ -326,7 +357,7 @@
     @apply text-black bg-white;
   }
   
-  .text-gradient {
+  .text-gradient, .text-gradient-safe {
     @apply text-black;
     background: none;
   }

@@ -127,42 +127,42 @@ export class RAGService {
   }
 
   async login(username: string, password: string): Promise<boolean> {
-    // Demo mode login
-    if (this.demoMode || username === 'demo') {
-      if (username === 'demo' && password === 'pyragogica2025') {
-        this.saveAuthToken('demo-token-' + Date.now());
-        this.demoMode = true;
-        return true;
-      }
-      return false;
+    // SEMPRE accetta login demo, indipendentemente dall'ambiente
+    if (username === 'demo' && password === 'pyragogica2025') {
+      this.saveAuthToken('demo-token-' + Date.now());
+      this.demoMode = true;
+      console.log('✅ Login demo effettuato con successo');
+      return true;
     }
 
-    // Backend login (for local development)
-    try {
-      const response = await fetch(`${this.backendUrl}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      });
+    // Se non è demo mode e non siamo in ambiente statico, prova backend
+    if (!this.demoMode) {
+      try {
+        const response = await fetch(`${this.backendUrl}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        this.saveAuthToken(data.token);
-        return true;
+        if (response.ok) {
+          const data = await response.json();
+          this.saveAuthToken(data.token);
+          return true;
+        }
+      } catch (error) {
+        console.warn('Backend non disponibile, fallback a demo mode:', error);
+        // Fallback to demo mode if backend is not available
+        if (username === 'demo' && password === 'pyragogica2025') {
+          this.saveAuthToken('demo-token-' + Date.now());
+          this.demoMode = true;
+          return true;
+        }
       }
-      return false;
-    } catch (error) {
-      console.warn('Backend non disponibile, attivazione demo mode:', error);
-      // Fallback to demo mode if backend is not available
-      if (username === 'demo' && password === 'pyragogica2025') {
-        this.saveAuthToken('demo-token-' + Date.now());
-        this.demoMode = true;
-        return true;
-      }
-      return false;
     }
+
+    return false;
   }
 
   logout() {

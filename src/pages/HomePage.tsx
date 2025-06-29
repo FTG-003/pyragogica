@@ -146,11 +146,11 @@ const HomePage = () => {
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
             
-            {/* Main Title - FIXED VISIBILITY */}
-            <div className="space-y-6">
+            {/* Main Title - FIXED VISIBILITY AND SPACING */}
+            <div className="space-y-8">
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">
                 Biblioteca Digitale
-                <span className="block bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
+                <span className="block bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 bg-clip-text text-transparent drop-shadow-lg mt-6">
                   Pyragogica
                 </span>
               </h1>

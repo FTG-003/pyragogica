@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff, RotateCcw, Trash2 } from 'lucide-react';
+import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff, RotateCcw, Trash2, Globe } from 'lucide-react';
 import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource } from '../services/ragService';
 import { useToast } from '../components/ToastNotification';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -70,6 +70,16 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
           </div>
         );
       }
+
+      // Emoji bullet points
+      if (line.match(/^[🔹🤔✅❌⚠️🚀🎭📚🔐ℹ️🎯🏗️📊🌟]/)) {
+        return (
+          <div key={index} className="flex items-start space-x-2 mb-1">
+            <span className="mt-1">{line.charAt(0)}</span>
+            <span>{line.substring(2)}</span>
+          </div>
+        );
+      }
       
       // Empty lines
       if (line.trim() === '') {
@@ -89,7 +99,7 @@ const ChatbotPage = () => {
     {
       id: '1',
       role: 'system',
-      content: '🤖 **Benvenuto nel Sistema RAG Pyragogico!**\n\n**Vector Store Attivo:** Pinecone con Peeragogy Handbook completo\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Configura la tua API key con `/login demo pyragogica2025`\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• `/help` - Guida completa\n• `/status` - Verifica sistema\n• `/backend_info` - Info sul backend sicuro\n\nIl sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚',
+      content: '🤖 **Benvenuto nel Sistema RAG Pyragogico!**\n\n**🎭 Modalità Demo Attiva** - Perfetto per testing e dimostrazione!\n\n**Vector Store:** ✅ Simulazione locale con contenuti reali del Peeragogy Handbook\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Configura con `/login demo pyragogica2025`\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• `/help` - Guida completa\n• `/status` - Verifica sistema\n• `/demo_info` - Info modalità demo\n\nIl sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚\n\n🌟 **Modalità Demo**: Nessun backend richiesto, funziona ovunque!',
       timestamp: new Date()
     }
   ]);
@@ -99,6 +109,7 @@ const ChatbotPage = () => {
   const [apiStatus, setApiStatus] = useState({ configured: false, provider: '', model: '' });
   const [vectorStoreStatus, setVectorStoreStatus] = useState(true);
   const [showApiConfig, setShowApiConfig] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -106,6 +117,12 @@ const ChatbotPage = () => {
 
   useEffect(() => {
     checkApiStatus();
+    // Check if we're in demo mode
+    const isDemo = window.location.hostname.includes('netlify.app') || 
+                   window.location.hostname.includes('vercel.app') ||
+                   window.location.hostname.includes('github.io') ||
+                   !window.location.hostname.includes('localhost');
+    setIsDemoMode(isDemo);
   }, []);
 
   useEffect(() => {
@@ -129,7 +146,7 @@ const ChatbotPage = () => {
         {
           id: '1',
           role: 'system',
-          content: '🔄 **Chat Azzerata!**\n\n**Sistema RAG Pyragogico** pronto per una nuova conversazione.\n\n**Personalità Attiva:** ' + getCurrentPersonality().name + ' ' + getCurrentPersonality().emoji + '\n**Vector Store:** Pinecone con Peeragogy Handbook\n**API Status:** ' + (apiStatus.configured ? '✅ Configurata' : '⚠️ Da configurare') + '\n\nPuoi iniziare con una nuova domanda o cambiare personalità! 🚀',
+          content: '🔄 **Chat Azzerata!**\n\n**Sistema RAG Pyragogico** pronto per una nuova conversazione.\n\n**Personalità Attiva:** ' + getCurrentPersonality().name + ' ' + getCurrentPersonality().emoji + '\n**Vector Store:** ' + (isDemoMode ? 'Demo Mode' : 'Pinecone') + ' con Peeragogy Handbook\n**API Status:** ' + (apiStatus.configured ? '✅ Configurata' : '⚠️ Da configurare') + '\n\n' + (isDemoMode ? '🎭 **Modalità Demo Attiva** - Risposte simulate ma accurate!\n\n' : '') + 'Puoi iniziare con una nuova domanda o cambiare personalità! 🚀',
           timestamp: new Date()
         }
       ]);
@@ -180,7 +197,7 @@ const ChatbotPage = () => {
         // Show appropriate toast based on command
         if (commandResult.command === 'login') {
           if (response.includes('✅')) {
-            success('Login effettuato', 'Sistema RAG ora operativo');
+            success('Login effettuato', isDemoMode ? 'Modalità demo attivata' : 'Sistema RAG ora operativo');
           } else {
             error('Login fallito', 'Verifica le credenziali');
           }
@@ -190,7 +207,7 @@ const ChatbotPage = () => {
           const errorMessage: ChatMessage = {
             id: (Date.now() + 1).toString(),
             role: 'system',
-            content: '⚠️ **Autenticazione richiesta**\n\nPer utilizzare il sistema RAG, devi prima effettuare il login.\n\n**Login rapido:**\n`/login demo pyragogica2025`\n\n**Vector Store:** ✅ Pinecone attivo con Peeragogy Handbook\n**Autenticazione:** ❌ Richiesta per accesso AI',
+            content: '⚠️ **Autenticazione richiesta**\n\nPer utilizzare il sistema RAG, devi prima effettuare il login.\n\n**Login rapido:**\n`/login demo pyragogica2025`\n\n**Vector Store:** ✅ ' + (isDemoMode ? 'Demo mode' : 'Pinecone') + ' attivo con Peeragogy Handbook\n**Autenticazione:** ❌ Richiesta per accesso AI\n\n' + (isDemoMode ? '🎭 **Modalità Demo**: Perfetta per testing senza backend!' : ''),
             timestamp: new Date()
           };
           setMessages(prev => [...prev, errorMessage]);
@@ -213,14 +230,14 @@ const ChatbotPage = () => {
           };
 
           setMessages(prev => [...prev, assistantMessage]);
-          success('Risposta generata', 'Basata sui contenuti del Peeragogy Handbook');
+          success('Risposta generata', isDemoMode ? 'Risposta demo basata sul Peeragogy Handbook' : 'Basata sui contenuti del Peeragogy Handbook');
         }
       }
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'system',
-        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Effettua il login con \`/login demo pyragogica2025\`\n• Riprova con una domanda diversa`,
+        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Effettua il login con \`/login demo pyragogica2025\`\n• Riprova con una domanda diversa\n\n${isDemoMode ? '🎭 **Modalità Demo**: Se il problema persiste, ricarica la pagina' : ''}`,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -248,7 +265,7 @@ const ChatbotPage = () => {
       const changeMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'system',
-        content: `🎭 **Personalità cambiata!**\n\n**Da:** ${oldPersonality.name} ${oldPersonality.emoji} → **A:** ${newPersonality.name} ${newPersonality.emoji}\n\n**Nuovo stile:** ${newPersonality.description}\n\nLe prossime risposte seguiranno questo approccio. La conversazione precedente rimane invariata.`,
+        content: `🎭 **Personalità cambiata!**\n\n**Da:** ${oldPersonality.name} ${oldPersonality.emoji} → **A:** ${newPersonality.name} ${newPersonality.emoji}\n\n**Nuovo stile:** ${newPersonality.description}\n\nLe prossime risposte seguiranno questo approccio. La conversazione precedente rimane invariata.\n\n${isDemoMode ? '🌟 **Demo Mode**: Tutte le personalità sono completamente funzionali!' : ''}`,
         timestamp: new Date()
       };
       
@@ -272,7 +289,7 @@ const ChatbotPage = () => {
     "/status",
     "/help",
     "/personalities",
-    "/backend_info"
+    "/demo_info"
   ];
 
   return (
@@ -281,19 +298,28 @@ const ChatbotPage = () => {
       <div className="text-center mb-16">
         <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
           <Brain className="w-4 h-4" />
-          <span>Sistema RAG Production-Ready con Backend Sicuro</span>
+          <span>Sistema RAG {isDemoMode ? 'Demo Mode' : 'Production-Ready'} con Backend Sicuro</span>
+          {isDemoMode && <Globe className="w-4 h-4" />}
         </div>
         <h1 className="text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
         <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
           Sistema RAG (Retrieval-Augmented Generation) con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
-          Backend sicuro con autenticazione, rate limiting e gestione protetta delle API key.
+          {isDemoMode ? (
+            <span className="block mt-2 text-indigo-600 font-semibold">
+              🎭 Modalità Demo Attiva - Funziona ovunque senza backend esterno!
+            </span>
+          ) : (
+            <span>Backend sicuro con autenticazione, rate limiting e gestione protetta delle API key.</span>
+          )}
         </p>
         
         {/* System Status */}
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
             <Database className="w-4 h-4 text-green-600" />
-            <span className="text-green-800 font-semibold">Vector Store Pinecone</span>
+            <span className="text-green-800 font-semibold">
+              Vector Store {isDemoMode ? 'Demo' : 'Pinecone'}
+            </span>
             <Wifi className="w-4 h-4 text-green-600" />
           </div>
           <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border ${
@@ -307,8 +333,10 @@ const ChatbotPage = () => {
             </span>
           </div>
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-xl">
-            <Settings className="w-4 h-4 text-blue-600" />
-            <span className="text-blue-800 font-semibold">Backend Sicuro</span>
+            {isDemoMode ? <Globe className="w-4 h-4 text-blue-600" /> : <Settings className="w-4 h-4 text-blue-600" />}
+            <span className="text-blue-800 font-semibold">
+              {isDemoMode ? 'Demo Mode' : 'Backend Sicuro'}
+            </span>
           </div>
         </div>
       </div>
@@ -330,6 +358,17 @@ const ChatbotPage = () => {
             </div>
             
             <div className="space-y-4">
+              {/* Demo Mode Indicator */}
+              {isDemoMode && (
+                <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                  <Globe className="w-5 h-5 text-purple-500" />
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-purple-900">Modalità Demo</div>
+                    <div className="text-xs text-purple-600">Nessun backend richiesto</div>
+                  </div>
+                </div>
+              )}
+
               {/* Auth Status */}
               <div className="flex items-center space-x-3">
                 {apiStatus.configured ? (
@@ -343,7 +382,7 @@ const ChatbotPage = () => {
                   </div>
                   {apiStatus.configured && (
                     <div className="text-xs text-slate-600">
-                      Backend sicuro • Token valido
+                      {isDemoMode ? 'Demo mode • Token locale' : 'Backend sicuro • Token valido'}
                     </div>
                   )}
                 </div>
@@ -353,8 +392,12 @@ const ChatbotPage = () => {
               <div className="flex items-center space-x-3">
                 <CheckCircle className="w-5 h-5 text-green-500" />
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">Vector Store Pinecone</div>
-                  <div className="text-xs text-slate-600">Peeragogy Handbook • Attivo</div>
+                  <div className="text-sm font-medium text-slate-900">
+                    Vector Store {isDemoMode ? 'Demo' : 'Pinecone'}
+                  </div>
+                  <div className="text-xs text-slate-600">
+                    Peeragogy Handbook • {isDemoMode ? 'Simulazione' : 'Attivo'}
+                  </div>
                 </div>
               </div>
 
@@ -479,11 +522,11 @@ const ChatbotPage = () => {
                     </h3>
                     <span className="text-2xl">{getCurrentPersonality().emoji}</span>
                     <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                      PRODUCTION
+                      {isDemoMode ? 'DEMO' : 'PRODUCTION'}
                     </span>
                   </div>
                   <p className="text-slate-600 leading-relaxed">
-                    {getCurrentPersonality().description} • Backend sicuro attivo
+                    {getCurrentPersonality().description} • {isDemoMode ? 'Demo mode attivo' : 'Backend sicuro attivo'}
                   </p>
                 </div>
                 
@@ -536,7 +579,7 @@ const ChatbotPage = () => {
                         <div className="mt-4 pt-4 border-t border-slate-200">
                           <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
                             <Database className="w-4 h-4 mr-2" />
-                            📚 Fonti dal Vector Store:
+                            📚 Fonti dal Vector Store {isDemoMode ? '(Demo)' : ''}:
                           </h5>
                           <div className="space-y-2">
                             {message.sources.map((source: RetrievedSource, index: number) => (
@@ -567,7 +610,7 @@ const ChatbotPage = () => {
                           <div className="flex items-center space-x-4 text-xs text-slate-500">
                             <span>Input: {message.tokens.input} tokens</span>
                             <span>Output: {message.tokens.output} tokens</span>
-                            <span>Costo: ~${message.tokens.cost.toFixed(4)}</span>
+                            <span>Costo: {isDemoMode ? 'Gratuito' : `~$${message.tokens.cost.toFixed(4)}`}</span>
                           </div>
                         </div>
                       )}
@@ -584,7 +627,7 @@ const ChatbotPage = () => {
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                     <div className="p-6 rounded-3xl shadow-lg bg-white border border-slate-200">
-                      <LoadingSpinner size="sm" text="Interrogando vector store..." />
+                      <LoadingSpinner size="sm" text={isDemoMode ? "Generando risposta demo..." : "Interrogando vector store..."} />
                     </div>
                   </div>
                 </div>
@@ -640,7 +683,9 @@ const ChatbotPage = () => {
 
       {/* Enhanced RAG System Visualization */}
       <div className="mt-20 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-10 text-white shadow-2xl">
-        <h3 className="text-3xl font-bold mb-8 text-center">Sistema RAG Production-Ready</h3>
+        <h3 className="text-3xl font-bold mb-8 text-center">
+          Sistema RAG {isDemoMode ? 'Demo Mode' : 'Production-Ready'}
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
@@ -648,16 +693,23 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">1. Vector Store</h4>
-              <p className="text-slate-300 text-sm">Peeragogy Handbook completo indicizzato in Pinecone con embedding semantici</p>
+              <p className="text-slate-300 text-sm">
+                Peeragogy Handbook completo indicizzato {isDemoMode ? 'in simulazione locale' : 'in Pinecone'} con embedding semantici
+              </p>
             </div>
           </div>
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
-              <Zap className="w-10 h-10 text-white" />
+              {isDemoMode ? <Globe className="w-10 h-10 text-white" /> : <Zap className="w-10 h-10 text-white" />}
             </div>
             <div>
-              <h4 className="text-xl font-bold mb-2">2. Backend Sicuro</h4>
-              <p className="text-slate-300 text-sm">Proxy protetto per API AI con autenticazione, rate limiting e logging</p>
+              <h4 className="text-xl font-bold mb-2">2. {isDemoMode ? 'Demo Engine' : 'Backend Sicuro'}</h4>
+              <p className="text-slate-300 text-sm">
+                {isDemoMode 
+                  ? 'Simulazione locale completa senza dipendenze esterne'
+                  : 'Proxy protetto per API AI con autenticazione, rate limiting e logging'
+                }
+              </p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -666,7 +718,9 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">3. AI Personalities</h4>
-              <p className="text-slate-300 text-sm">Personalità multiple con prompt specializzati per diversi stili di apprendimento</p>
+              <p className="text-slate-300 text-sm">
+                Personalità multiple con prompt specializzati per diversi stili di apprendimento
+              </p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -675,28 +729,41 @@ const ChatbotPage = () => {
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">4. Smart Response</h4>
-              <p className="text-slate-300 text-sm">Generazione di risposte contestualizzate con fonti verificabili e formattazione markdown</p>
+              <p className="text-slate-300 text-sm">
+                Generazione di risposte contestualizzate con fonti verificabili e formattazione markdown
+              </p>
             </div>
           </div>
         </div>
 
         <div className="mt-12 p-6 bg-white/10 backdrop-blur-sm rounded-xl">
           <h4 className="text-lg font-bold mb-4 flex items-center">
-            <Key className="w-5 h-5 mr-2" />
-            Sicurezza e Controllo Completo
+            {isDemoMode ? <Globe className="w-5 h-5 mr-2" /> : <Key className="w-5 h-5 mr-2" />}
+            {isDemoMode ? 'Demo Mode - Funzionalità Complete' : 'Sicurezza e Controllo Completo'}
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
-              <h5 className="font-semibold mb-2">🔒 Backend Sicuro</h5>
-              <p className="text-slate-300">Tutte le API key protette sul server. Rate limiting 5 req/min. Logging completo delle attività.</p>
+              <h5 className="font-semibold mb-2">
+                {isDemoMode ? '🎭 Modalità Demo' : '🔒 Backend Sicuro'}
+              </h5>
+              <p className="text-slate-300">
+                {isDemoMode 
+                  ? 'Nessun backend richiesto. Funziona su qualsiasi hosting statico. Perfetto per testing e dimostrazione.'
+                  : 'Tutte le API key protette sul server. Rate limiting 5 req/min. Logging completo delle attività.'
+                }
+              </p>
             </div>
             <div>
               <h5 className="font-semibold mb-2">🎭 Personalità Avanzate</h5>
-              <p className="text-slate-300">4 personalità AI specializzate con prompt separati e configurazioni ottimizzate.</p>
+              <p className="text-slate-300">
+                4 personalità AI specializzate con prompt separati e configurazioni ottimizzate.
+              </p>
             </div>
             <div>
               <h5 className="font-semibold mb-2">📝 Markdown Rendering</h5>
-              <p className="text-slate-300">Formattazione intelligente di testo, codice, liste e headers per una lettura ottimale.</p>
+              <p className="text-slate-300">
+                Formattazione intelligente di testo, codice, liste e headers per una lettura ottimale.
+              </p>
             </div>
           </div>
         </div>

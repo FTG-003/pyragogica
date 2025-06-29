@@ -31,7 +31,7 @@
     font-feature-settings: 'ss01', 'ss02';
   }
   
-  h1 { @apply text-5xl md:text-6xl lg:text-7xl; }
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
   h2 { @apply text-3xl md:text-4xl lg:text-5xl; }
   h3 { @apply text-2xl md:text-3xl; }
   h4 { @apply text-xl md:text-2xl; }
@@ -60,65 +60,49 @@
 
 /* Modern Component System */
 @layer components {
-  /* Distinctive Button System */
+  /* Container System */
+  .container-modern {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Button System */
   .btn-modern {
-    @apply inline-flex items-center justify-center;
-    @apply px-8 py-4 rounded-2xl font-semibold;
+    @apply inline-flex items-center justify-center gap-2;
+    @apply px-6 py-3 rounded-xl font-semibold;
     @apply transition-all duration-300 ease-out;
     @apply focus:outline-none focus:ring-4 focus:ring-indigo-500/20;
-    @apply transform hover:scale-[1.02] active:scale-[0.98];
+    @apply transform hover:scale-105 active:scale-95;
+    @apply min-h-[44px];
     font-feature-settings: 'ss01';
     letter-spacing: -0.01em;
   }
   
   .btn-primary {
-    @apply btn-modern;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    @apply text-white shadow-lg hover:shadow-xl;
-    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
-  }
-  
-  .btn-primary:hover {
-    background: linear-gradient(135deg, #5855eb 0%, #7c3aed 100%);
-    box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.4);
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white;
+    @apply hover:from-indigo-700 hover:to-purple-700;
+    @apply shadow-lg hover:shadow-xl;
   }
   
   .btn-secondary {
-    @apply btn-modern;
-    @apply bg-white border-2 border-slate-200;
-    @apply text-slate-700 hover:text-slate-900;
-    @apply hover:bg-slate-50 hover:border-slate-300;
-    @apply hover:shadow-lg;
+    @apply bg-white border-2 border-slate-200 text-slate-700;
+    @apply hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900;
+    @apply shadow-md hover:shadow-lg;
   }
   
-  .btn-ghost {
-    @apply btn-modern;
-    @apply bg-transparent text-slate-600;
-    @apply hover:bg-slate-100 hover:text-slate-900;
-  }
-  
-  /* Modern Card System */
+  /* Card System */
   .card-modern {
-    @apply bg-white rounded-3xl shadow-sm border border-slate-100;
-    @apply transition-all duration-500 ease-out;
-    @apply hover:shadow-xl hover:-translate-y-1;
-    @apply relative overflow-hidden;
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:shadow-lg hover:-translate-y-1;
   }
   
-  .card-modern::before {
-    content: '';
-    @apply absolute inset-0 rounded-3xl;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
-    @apply opacity-0 group-hover:opacity-100;
-    @apply transition-opacity duration-500;
-  }
-  
-  /* Distinctive Input System */
+  /* Input System */
   .input-modern {
-    @apply w-full px-6 py-4 border-2 border-slate-200 rounded-2xl;
+    @apply w-full px-4 py-3 border-2 border-slate-200 rounded-xl;
     @apply focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500;
-    @apply transition-all duration-300 text-lg;
+    @apply transition-all duration-300 text-base;
     @apply bg-white hover:border-slate-300;
+    @apply min-h-[44px];
     font-feature-settings: 'ss01';
     letter-spacing: -0.01em;
   }
@@ -128,89 +112,66 @@
     font-weight: 400;
   }
   
-  /* Modern Navigation */
+  /* Navigation */
   .nav-modern {
-    @apply bg-white/80 backdrop-blur-xl border-b border-slate-200/50;
+    @apply bg-white/90 backdrop-blur-xl border-b border-slate-200/50;
     @apply sticky top-0 z-50 shadow-sm;
   }
   
   .nav-item {
-    @apply relative flex items-center space-x-3 px-6 py-3 rounded-2xl;
+    @apply flex items-center gap-3 px-4 py-2 rounded-xl;
     @apply text-sm font-semibold transition-all duration-300;
     @apply hover:bg-slate-100/80;
+    @apply min-h-[44px];
     font-feature-settings: 'ss01';
   }
   
   .nav-item.active {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    @apply text-white shadow-lg;
-    box-shadow: 0 8px 20px -5px rgba(99, 102, 241, 0.3);
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white;
+    @apply shadow-lg;
   }
   
-  /* Modern Chat Interface */
-  .chat-modern {
-    @apply bg-white rounded-3xl shadow-xl border border-slate-200;
-    @apply flex flex-col h-full;
+  /* Hero Section */
+  .hero-modern {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
   }
   
-  .chat-header {
-    @apply p-6 border-b border-slate-200;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    @apply rounded-t-3xl;
+  .hero-content {
+    @apply relative z-10 text-center py-20 md:py-32;
   }
   
-  .chat-messages {
-    @apply flex-1 p-6 overflow-y-auto space-y-6;
-    background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+  .hero-title {
+    @apply text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6;
+    font-feature-settings: 'ss01', 'ss02';
+    letter-spacing: -0.04em;
+    line-height: 0.9;
   }
   
-  .chat-input-area {
-    @apply p-6 border-t border-slate-200 bg-white rounded-b-3xl;
+  .hero-subtitle {
+    @apply text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8;
+    font-weight: 400;
+    line-height: 1.6;
   }
   
-  /* Message Bubbles */
-  .message-user {
-    @apply ml-auto max-w-2xl p-6 rounded-3xl;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    @apply text-white shadow-lg;
+  /* Grid System */
+  .grid-modern {
+    @apply grid gap-6 md:gap-8;
   }
   
-  .message-assistant {
-    @apply mr-auto max-w-3xl p-6 rounded-3xl;
-    @apply bg-white border border-slate-200 shadow-sm;
+  .grid-1 { @apply grid-cols-1; }
+  .grid-2 { @apply grid-cols-1 md:grid-cols-2; }
+  .grid-3 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3; }
+  .grid-4 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4; }
+  
+  /* Section Spacing */
+  .section-modern {
+    @apply py-16 md:py-24;
   }
   
-  .message-system {
-    @apply mx-auto max-w-2xl p-6 rounded-3xl;
-    @apply bg-slate-100 border border-slate-200;
-  }
-  
-  /* Modern Personality Indicators */
-  .personality-indicator {
-    @apply w-12 h-12 rounded-2xl flex items-center justify-center;
-    @apply shadow-lg border-2 border-white/20;
-    @apply transition-all duration-300 hover:scale-110;
-  }
-  
-  .personality-academic {
-    background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
-  }
-  
-  .personality-socratic {
-    background: linear-gradient(135deg, #7c2d12 0%, #92400e 100%);
-  }
-  
-  .personality-critical {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  }
-  
-  .personality-divulgative {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  }
-  
-  /* Modern Status Indicators */
+  /* Status Indicators */
   .status-indicator {
-    @apply inline-flex items-center space-x-2 px-4 py-2 rounded-full;
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full;
     @apply text-sm font-semibold border;
     font-feature-settings: 'ss01';
   }
@@ -230,110 +191,9 @@
   .status-info {
     @apply bg-blue-50 text-blue-700 border-blue-200;
   }
-  
-  /* Modern Loading States */
-  .loading-modern {
-    @apply relative overflow-hidden;
-  }
-  
-  .loading-modern::before {
-    content: '';
-    @apply absolute inset-0;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(99, 102, 241, 0.1),
-      transparent
-    );
-    animation: shimmer 2s ease-in-out infinite;
-  }
-  
-  /* Modern Sidebar */
-  .sidebar-modern {
-    @apply bg-white/90 backdrop-blur-xl border-r border-slate-200/50;
-    @apply shadow-sm;
-  }
-  
-  .sidebar-section {
-    @apply p-6 border-b border-slate-100;
-  }
-  
-  .sidebar-title {
-    @apply text-lg font-bold text-slate-900 mb-4;
-    font-feature-settings: 'ss01';
-    letter-spacing: -0.02em;
-  }
-  
-  /* Modern Resource Cards */
-  .resource-card {
-    @apply card-modern p-8 space-y-6;
-  }
-  
-  .resource-header {
-    @apply flex items-start justify-between;
-  }
-  
-  .resource-title {
-    @apply text-2xl font-bold text-slate-900;
-    font-feature-settings: 'ss01';
-    letter-spacing: -0.02em;
-  }
-  
-  .resource-meta {
-    @apply flex items-center space-x-4 text-slate-600 text-sm;
-    font-weight: 500;
-  }
-  
-  /* Modern Hero Section */
-  .hero-modern {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-    @apply relative overflow-hidden;
-  }
-  
-  .hero-content {
-    @apply relative z-10 text-center space-y-8 py-32;
-  }
-  
-  .hero-title {
-    @apply text-6xl md:text-7xl lg:text-8xl font-bold text-white;
-    font-feature-settings: 'ss01', 'ss02';
-    letter-spacing: -0.04em;
-    line-height: 0.9;
-  }
-  
-  .hero-subtitle {
-    @apply text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto;
-    font-weight: 400;
-    line-height: 1.6;
-  }
-  
-  /* Modern Grid System */
-  .grid-modern {
-    @apply grid gap-8;
-  }
-  
-  .grid-1 { @apply grid-cols-1; }
-  .grid-2 { @apply grid-cols-1 md:grid-cols-2; }
-  .grid-3 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3; }
-  .grid-4 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4; }
-  
-  /* Modern Spacing */
-  .section-modern {
-    @apply py-24 px-4 sm:px-6 lg:px-8;
-  }
-  
-  .container-modern {
-    @apply max-w-7xl mx-auto;
-  }
 }
 
-/* Modern Animations */
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(0%); }
-  100% { transform: translateX(100%); }
-}
-
+/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -371,58 +231,23 @@
     @apply bg-clip-text text-transparent;
   }
   
-  .bg-gradient-modern {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  }
-  
   .shadow-modern {
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .border-gradient {
-    border-image: linear-gradient(135deg, #6366f1, #8b5cf6) 1;
   }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .btn-modern {
-    @apply px-6 py-3 text-sm;
+    @apply px-4 py-2 text-sm min-h-[44px];
   }
   
   .hero-title {
-    @apply text-4xl;
+    @apply text-3xl;
   }
   
   .hero-subtitle {
-    @apply text-lg;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .card-modern {
-    @apply bg-slate-800 border-slate-700;
-  }
-  
-  .input-modern {
-    @apply bg-slate-800 border-slate-700 text-white;
-  }
-  
-  .nav-modern {
-    @apply bg-slate-900/80 border-slate-700/50;
-  }
-}
-
-/* Print Styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  
-  .card-modern {
-    @apply shadow-none border border-slate-300;
-    break-inside: avoid;
+    @apply text-base;
   }
 }
 

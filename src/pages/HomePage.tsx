@@ -124,7 +124,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="space-y-32">
+    <div className="space-y-32 pb-20">
       {/* Enhanced Hero Section */}
       <section className="relative overflow-hidden">
         {/* Animated Background */}
@@ -146,18 +146,18 @@ const HomePage = () => {
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
             
-            {/* Main Title */}
+            {/* Main Title - FIXED VISIBILITY */}
             <div className="space-y-6">
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">
                 Biblioteca Digitale
-                <span className="block bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                <span className="block bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
                   Pyragogica
                 </span>
               </h1>
               
-              <p className="max-w-4xl mx-auto text-xl md:text-2xl text-white/80 leading-relaxed font-light">
-                Una piattaforma <strong>infinitamente scalabile</strong> per risorse educative di qualità mondiale. 
-                Il <strong>Manuale di Peeragogy</strong> è solo l'inizio del nostro viaggio.
+              <p className="max-w-4xl mx-auto text-xl md:text-2xl text-white/90 leading-relaxed font-light">
+                Una piattaforma <strong className="text-yellow-300">infinitamente scalabile</strong> per risorse educative di qualità mondiale. 
+                Il <strong className="text-yellow-300">Manuale di Peeragogy</strong> è solo l'inizio del nostro viaggio.
               </p>
             </div>
             

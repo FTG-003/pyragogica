@@ -148,29 +148,6 @@ function App() {
         </Suspense>
       </main>
 
-      {/* Floating Action Elements */}
-      <div className="fixed bottom-8 right-8 z-40">
-        <div className="flex flex-col space-y-4">
-          {/* Quick AI Assistant */}
-          <button
-            onClick={() => handlePageChange('chatbot')}
-            className="group w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
-            aria-label="Apri AI Assistant"
-          >
-            <Brain className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
-          </button>
-          
-          {/* Quick Library Access */}
-          <button
-            onClick={() => handlePageChange('library')}
-            className="group w-14 h-14 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
-            aria-label="Apri Biblioteca"
-          >
-            <Database className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
-          </button>
-        </div>
-      </div>
-
       {/* Toast Notifications Container */}
       <ToastContainer />
     </div>

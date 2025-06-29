@@ -219,7 +219,7 @@ const HomePage = () => {
                   {/* Icon */}
                   <div className={`inline-flex p-4 rounded-2xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}
                        style={{
-                         background: `linear-gradient(135deg, ${feature.color.split(' ')[0].replace('from-', '#')} 0%, ${feature.color.split(' ')[2].replace('to-', '#')} 100%)`
+                         background: `linear-gradient(135deg, ${feature.color.split(' ')[0].replace('from-', '#')} 0%, ${feature.color.split(' ')[1].replace('to-', '#')} 100%)`
                        }}>
                     <Icon className="w-8 h-8 text-white" />
                   </div>
@@ -268,7 +268,7 @@ const HomePage = () => {
                   <div key={index} className="group text-center space-y-8 animate-fade-in-up" style={{ animationDelay: `${index * 0.2}s` }}>
                     <div className={`inline-flex p-6 rounded-3xl shadow-2xl group-hover:scale-110 transition-transform duration-300`}
                          style={{
-                           background: `linear-gradient(135deg, ${prop.color.split(' ')[0].replace('from-', '#')} 0%, ${prop.color.split(' ')[2].replace('to-', '#')} 100%)`
+                           background: `linear-gradient(135deg, ${prop.color.split(' ')[0].replace('from-', '#')} 0%, ${prop.color.split(' ')[1].replace('to-', '#')} 100%)`
                          }}>
                       <Icon className="w-12 h-12 text-white" />
                     </div>

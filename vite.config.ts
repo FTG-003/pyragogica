@@ -8,27 +8,63 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   build: {
-    // Fix timeout issues during build
-    chunkSizeWarningLimit: 1000,
+    // Ottimizzazioni per performance
+    target: 'es2020',
+    minify: 'terser',
+    sourcemap: false,
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
+          // Separazione vendor per caching ottimale
           vendor: ['react', 'react-dom'],
-          ui: ['lucide-react']
-        }
+          ui: ['lucide-react'],
+          // Separazione logica business
+          rag: ['./src/services/ragService.ts'],
+          data: ['./src/data/libraryContent.ts', './src/data/vectorStore.ts']
+        },
+        // Nomi file ottimizzati per caching
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
+      }
+    },
+    // Compressione aggressiva
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug']
       }
     }
   },
   server: {
-    // Prevent timeout issues in development
+    // Ottimizzazioni development
     hmr: {
-      timeout: 60000
+      timeout: 30000
+    },
+    // Preload ottimizzato
+    warmup: {
+      clientFiles: [
+        './src/App.tsx',
+        './src/pages/HomePage.tsx',
+        './src/components/ui/ModernButton.tsx'
+      ]
     }
   },
-  // Resolve potential module resolution issues
+  // Resolve ottimizzato
   resolve: {
     alias: {
       '@': '/src'
+    }
+  },
+  // CSS ottimizzazioni
+  css: {
+    devSourcemap: false,
+    postcss: {
+      plugins: [
+        // Autoprefixer già configurato in postcss.config.js
+      ]
     }
   }
 });

@@ -1,4 +1,4 @@
-# Biblioteca Digitale Pyragogica - Production Ready
+# Biblioteca Digitale Pyragogica - Core System
 
 Una piattaforma digitale scalabile per risorse educative di alta qualità con sistema RAG (Retrieval-Augmented Generation) integrato.
 
@@ -31,24 +31,33 @@ Una piattaforma digitale scalabile per risorse educative di alta qualità con si
 - **Build Tool**: Vite
 - **Icons**: Lucide React
 
-## 📁 Struttura del Progetto
+## 📁 Struttura del Progetto (Ottimizzata)
 
 ```
 src/
 ├── components/          # Componenti riutilizzabili
+│   ├── ui/             # UI components moderni
+│   ├── ErrorBoundary.tsx
+│   ├── LoadingSpinner.tsx
+│   ├── ResourceCard.tsx
+│   └── ToastNotification.tsx
 ├── pages/              # Pagine principali
+│   ├── HomePage.tsx
+│   ├── LibraryPage.tsx
+│   └── ChatbotPage.tsx
 ├── services/           # Servizi (RAG, API)
+│   └── ragService.ts
 ├── data/               # Contenuti e vector store
+│   ├── libraryContent.ts
+│   ├── peeragogyExtractor.ts
+│   └── vectorStore.ts
 ├── ai-prompts/         # Personalità AI
+│   ├── academic.ts
+│   ├── critical.ts
+│   ├── divulgative.ts
+│   └── socratic.ts
 └── hooks/              # Custom hooks
-
-public/
-└── resources/          # Risorse originali (PDF, EPUB, etc.)
-    └── original-documents/
-        ├── pdf/        # Documenti PDF
-        ├── epub/       # Libri elettronici
-        ├── audio/      # Contenuti audio
-        └── video/      # Contenuti video
+    └── useLibraryState.ts
 ```
 
 ## 🔧 Setup e Installazione
@@ -91,11 +100,6 @@ npm run dev
 - **Traduzione professionale** dall'inglese
 - **Metadati estesi** per ogni sezione
 
-### Risorse Aggiuntive
-- Guida Etica AI nell'Educazione
-- Ricerca sull'Apprendimento Collaborativo
-- Toolkit di Pedagogia Digitale
-
 ## 🤖 Sistema RAG
 
 ### Vector Store Locale
@@ -130,19 +134,6 @@ npm run dev
 - `/clear` - Cancella cronologia
 - `/help` - Guida completa
 
-## 🎨 Design System
-
-### Principi
-- **Minimalismo elegante** - Design pulito e funzionale
-- **Accessibilità** - WCAG 2.1 compliant
-- **Responsive** - Ottimizzato per tutti i dispositivi
-- **Performance** - Caricamento rapido e fluido
-
-### Palette Colori
-- **Primario**: Indigo 600 → Purple 600
-- **Secondario**: Slate 50 → Slate 900
-- **Accenti**: Green, Blue, Orange, Red per stati
-
 ## 🚀 Deployment
 
 ### Build Production
@@ -161,48 +152,40 @@ npm run preview
 - GitHub Pages
 - Qualsiasi hosting statico
 
-## 📈 Roadmap
+## 📈 Performance
 
-### Fase 1 (Attuale) ✅
-- Peeragogy Handbook V3 integrato
-- Sistema RAG funzionante
-- 4 personalità AI
-- Vector store locale
+### Ottimizzazioni Implementate
+- **Code splitting** automatico
+- **Lazy loading** per componenti e route
+- **Bundle optimization** con Vite
+- **React.memo** per componenti pesanti
+- **Vector store locale** per ricerca veloce
 
-### Fase 2 (Prossima)
-- Estrazione automatica PDF
-- Più contenuti tradotti
-- Miglioramenti vector store
-- API REST per integrazioni
+### Metriche Target
+- **First Contentful Paint**: < 1.5s
+- **Time to Interactive**: < 3s
+- **Bundle Size**: < 500KB (gzipped)
+- **Lighthouse Score**: > 90
 
-### Fase 3 (Futura)
-- 50+ risorse educative
-- Supporto multilingue esteso
-- Community features
-- Mobile app
+## 🗂️ Archivio
 
-## 🤝 Contribuzioni
+I seguenti elementi sono stati archiviati per ottimizzare le performance:
 
-1. Fork del repository
-2. Crea un branch per la feature (`git checkout -b feature/AmazingFeature`)
-3. Commit delle modifiche (`git commit -m 'Add AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Apri una Pull Request
+- **Documentazione**: Audit reports, roadmap, changelog
+- **Analisi**: Componenti di analisi business
+- **Backend**: Server Node.js (se non utilizzato)
+- **Stili alternativi**: CSS non utilizzati
+
+Questi file sono disponibili nella cartella `archive/` se necessari.
 
 ## 📄 Licenze
 
 - **Codice**: MIT License
 - **Contenuti Peeragogy**: Creative Commons Attribution-ShareAlike 4.0
-- **Risorse aggiuntive**: Varie (vedi `public/resources/original-documents/LICENSES.md`)
-
-## 📞 Supporto
-
-- **Issues**: [GitHub Issues]
-- **Documentazione**: [Link alla documentazione]
-- **Community**: [Link alla community]
+- **Risorse aggiuntive**: Varie (vedi documentazione archiviata)
 
 ---
 
-**Versione**: 1.3.0 - Production Ready con Contenuti Reali
+**Versione**: 2.0.0 - Core System Ottimizzato
 **Ultimo aggiornamento**: 2025-01-27
-**Status**: ✅ Stabile e pronto per la produzione
+**Status**: ✅ Production Ready - Ottimizzato per Performance

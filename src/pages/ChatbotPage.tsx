@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff, RotateCcw, Trash2, Globe } from 'lucide-react';
-import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource } from '../services/ragService';
+import { Send, Brain, User, Settings, Key, Database, AlertCircle, CheckCircle, Loader, Copy, RotateCcw, Trash2, Globe, Shield, Zap, Eye, EyeOff, ChevronDown, ExternalLink } from 'lucide-react';
+import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource, type APIProvider, type ModelInfo } from '../services/ragService';
 import { useToast } from '../components/ToastNotification';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 // Componente per renderizzare il markdown
 const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
   const renderContent = (text: string) => {
-    // Dividi il testo in righe
     const lines = text.split('\n');
     
     return lines.map((line, index) => {
-      // Headers
       if (line.startsWith('### ')) {
         return <h3 key={index} className="text-lg font-bold mt-4 mb-2">{line.substring(4)}</h3>;
       }
@@ -22,7 +20,6 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         return <h1 key={index} className="text-2xl font-bold mt-4 mb-2">{line.substring(2)}</h1>;
       }
       
-      // Bold text
       if (line.includes('**')) {
         const parts = line.split(/(\*\*.*?\*\*)/g);
         return (
@@ -37,7 +34,6 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         );
       }
       
-      // Code blocks
       if (line.startsWith('`') && line.endsWith('`')) {
         return (
           <code key={index} className="bg-slate-100 px-2 py-1 rounded text-sm font-mono block my-2">
@@ -46,7 +42,6 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         );
       }
       
-      // Inline code
       if (line.includes('`')) {
         const parts = line.split(/(`[^`]+`)/g);
         return (
@@ -61,7 +56,6 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         );
       }
       
-      // Bullet points
       if (line.startsWith('• ') || line.startsWith('- ')) {
         return (
           <div key={index} className="flex items-start space-x-2 mb-1">
@@ -71,8 +65,7 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         );
       }
 
-      // Emoji bullet points
-      if (line.match(/^[🔹🤔✅❌⚠️🚀🎭📚🔐ℹ️🎯🏗️📊🌟]/)) {
+      if (line.match(/^[🔹🤔✅❌⚠️🚀🎭📚🔐ℹ️🎯🏗️📊🌟💬⚙️📱🔌🤖🆓💰🗑️]/)) {
         return (
           <div key={index} className="flex items-start space-x-2 mb-1">
             <span className="mt-1">{line.charAt(0)}</span>
@@ -81,12 +74,10 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
         );
       }
       
-      // Empty lines
       if (line.trim() === '') {
         return <br key={index} />;
       }
       
-      // Regular paragraphs
       return <p key={index} className="mb-2">{line}</p>;
     });
   };
@@ -94,35 +85,301 @@ const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
   return <div className="prose prose-sm max-w-none">{renderContent(content)}</div>;
 };
 
-const ChatbotPage = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      role: 'system',
-      content: '🤖 **Benvenuto nel Sistema RAG Pyragogico!**\n\n**🎭 Modalità Demo Attiva** - Perfetto per testing e dimostrazione!\n\n**Vector Store:** ✅ Simulazione locale con contenuti reali del Peeragogy Handbook\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Configura con `/login demo pyragogica2025`\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• `/help` - Guida completa\n• `/status` - Verifica sistema\n• `/demo_info` - Info modalità demo\n\nIl sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚\n\n🌟 **Modalità Demo**: Nessun backend richiesto, funziona ovunque!',
-      timestamp: new Date()
+// API Configuration Component
+const APIConfigPanel: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onConfigUpdate: () => void;
+}> = ({ isOpen, onClose, onConfigUpdate }) => {
+  const [selectedProvider, setSelectedProvider] = useState(ragService.getCurrentProvider()?.id || 'openrouter');
+  const [selectedModel, setSelectedModel] = useState(ragService.getCurrentModel()?.id || '');
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
+  const { success, error } = useToast();
+
+  useEffect(() => {
+    const currentKey = ragService.getAPIKey(selectedProvider);
+    setApiKey(currentKey || '');
+  }, [selectedProvider]);
+
+  const handleProviderChange = (providerId: string) => {
+    setSelectedProvider(providerId);
+    ragService.setProvider(providerId);
+    setSelectedModel(ragService.getCurrentModel()?.id || '');
+    const currentKey = ragService.getAPIKey(providerId);
+    setApiKey(currentKey || '');
+  };
+
+  const handleModelChange = (modelId: string) => {
+    setSelectedModel(modelId);
+    ragService.setModel(modelId);
+  };
+
+  const handleSaveApiKey = () => {
+    if (ragService.setAPIKey(selectedProvider, apiKey)) {
+      success('API Key salvata', 'Configurazione aggiornata con successo');
+      onConfigUpdate();
+    } else {
+      error('Errore', 'API Key non valida');
     }
-  ]);
+  };
+
+  const handleRemoveApiKey = () => {
+    ragService.removeAPIKey(selectedProvider);
+    setApiKey('');
+    success('API Key rimossa', 'Configurazione aggiornata');
+    onConfigUpdate();
+  };
+
+  if (!isOpen) return null;
+
+  const currentProvider = API_PROVIDERS.find(p => p.id === selectedProvider);
+  const currentModel = currentProvider?.models.find(m => m.id === selectedModel);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-slate-900">Configurazione API</h2>
+            <button
+              onClick={onClose}
+              className="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-300"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Provider Selection */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Seleziona Provider</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {API_PROVIDERS.map((provider) => (
+                <button
+                  key={provider.id}
+                  onClick={() => handleProviderChange(provider.id)}
+                  className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
+                    selectedProvider === provider.id
+                      ? 'border-indigo-500 bg-indigo-50'
+                      : 'border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <h4 className="font-bold text-slate-900 mb-2">{provider.name}</h4>
+                  <p className="text-sm text-slate-600 mb-3">{provider.description}</p>
+                  <div className="text-xs text-slate-500">
+                    {provider.models.filter(m => m.free).length} modelli gratuiti
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Model Selection */}
+          {currentProvider && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Seleziona Modello</h3>
+              
+              {/* Free Models */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-green-700 mb-3 flex items-center">
+                  <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                  Modelli Gratuiti
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {currentProvider.models.filter(m => m.free).map((model) => (
+                    <button
+                      key={model.id}
+                      onClick={() => handleModelChange(model.id)}
+                      className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                        selectedModel === model.id
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-slate-200 hover:border-green-300'
+                      }`}
+                    >
+                      <div className="font-semibold text-slate-900">{model.name}</div>
+                      <div className="text-sm text-slate-600 mt-1">{model.description}</div>
+                      <div className="text-xs text-slate-500 mt-2">
+                        Context: {model.contextWindow.toLocaleString()} token
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Premium Models */}
+              {currentProvider.models.some(m => !m.free) && (
+                <div>
+                  <h4 className="text-lg font-semibold text-orange-700 mb-3 flex items-center">
+                    <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
+                    Modelli Premium
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {currentProvider.models.filter(m => !m.free).map((model) => (
+                      <button
+                        key={model.id}
+                        onClick={() => handleModelChange(model.id)}
+                        className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                          selectedModel === model.id
+                            ? 'border-orange-500 bg-orange-50'
+                            : 'border-slate-200 hover:border-orange-300'
+                        }`}
+                      >
+                        <div className="font-semibold text-slate-900">{model.name}</div>
+                        <div className="text-sm text-slate-600 mt-1">{model.description}</div>
+                        <div className="text-xs text-slate-500 mt-2">
+                          Context: {model.contextWindow.toLocaleString()} token
+                          {model.pricing && (
+                            <span className="ml-2">
+                              • ${model.pricing.input}/1K in, ${model.pricing.output}/1K out
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* API Key Configuration */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">API Key</h3>
+            <div className="bg-slate-50 rounded-2xl p-6">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  API Key per {currentProvider?.name}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder={currentProvider?.keyFormat}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showApiKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleSaveApiKey}
+                  disabled={!apiKey.trim()}
+                  className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                >
+                  Salva API Key
+                </button>
+                {ragService.getAPIKey(selectedProvider) && (
+                  <button
+                    onClick={handleRemoveApiKey}
+                    className="px-6 py-3 border border-red-300 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all duration-300"
+                  >
+                    Rimuovi
+                  </button>
+                )}
+              </div>
+
+              {/* Security Notice */}
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div className="flex items-start space-x-3">
+                  <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div className="text-sm text-blue-800">
+                    <strong>Sicurezza:</strong> Le API key sono memorizzate localmente nel tuo browser e non vengono mai inviate a server esterni. 
+                    Ogni sessione mantiene le proprie configurazioni separate.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Configuration Summary */}
+          {currentModel && (
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-200">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Configurazione Attuale</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-slate-700">Provider:</span>
+                  <span className="ml-2 text-slate-900">{currentProvider?.name}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-slate-700">Modello:</span>
+                  <span className="ml-2 text-slate-900">{currentModel.name}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-slate-700">Tipo:</span>
+                  <span className={`ml-2 font-semibold ${currentModel.free ? 'text-green-600' : 'text-orange-600'}`}>
+                    {currentModel.free ? 'Gratuito' : 'Premium'}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-medium text-slate-700">API Key:</span>
+                  <span className={`ml-2 font-semibold ${ragService.getAPIKey(selectedProvider) ? 'text-green-600' : 'text-red-600'}`}>
+                    {ragService.getAPIKey(selectedProvider) ? 'Configurata' : 'Mancante'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ChatbotPage = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [selectedPersonality, setSelectedPersonality] = useState('socratic');
   const [isTyping, setIsTyping] = useState(false);
-  const [apiStatus, setApiStatus] = useState({ configured: false, provider: '', model: '' });
-  const [vectorStoreStatus, setVectorStoreStatus] = useState(true);
   const [showApiConfig, setShowApiConfig] = useState(false);
-  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [systemStatus, setSystemStatus] = useState(ragService.getSystemStatus());
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { success, error, info } = useToast();
 
   useEffect(() => {
-    checkApiStatus();
-    // Check if we're in demo mode
-    const isDemo = window.location.hostname.includes('netlify.app') || 
-                   window.location.hostname.includes('vercel.app') ||
-                   window.location.hostname.includes('github.io') ||
-                   !window.location.hostname.includes('localhost');
-    setIsDemoMode(isDemo);
+    // Initialize with welcome message
+    const welcomeMessage: ChatMessage = {
+      id: '1',
+      role: 'system',
+      content: `🤖 **Benvenuto nel Sistema RAG Pyragogico Production-Ready!**
+
+**🎯 Sistema di Testing Completo** - Configurazione API personalizzabile
+
+**Vector Store:** ✅ Simulazione locale con contenuti reali del Peeragogy Handbook
+**Status:** Pronto per la configurazione
+
+**Per iniziare:**
+1. 🔧 Clicca su "Configurazione" per inserire la tua API key
+2. 🎭 Seleziona una personalità AI
+3. 💬 Inizia a chattare!
+
+**Comandi utili:**
+• \`/help\` - Guida completa
+• \`/status\` - Verifica configurazione
+• \`/providers\` - Lista provider disponibili
+
+**🆓 Modelli Gratuiti Disponibili:**
+• Phi-3 Mini/Medium (Microsoft)
+• Gemma 7B (Google)
+• Llama 3 8B (Meta)
+• Mistral 7B (Mistral AI)
+
+Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚`,
+      timestamp: new Date(),
+      sessionId: ragService.getSessionId()
+    };
+
+    setMessages([welcomeMessage]);
+    updateSystemStatus();
   }, []);
 
   useEffect(() => {
@@ -133,21 +390,22 @@ const ChatbotPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const checkApiStatus = () => {
-    const status = ragService.getAPIStatus();
-    setApiStatus(status);
+  const updateSystemStatus = () => {
+    setSystemStatus(ragService.getSystemStatus());
   };
 
   const resetChat = () => {
     const confirmReset = window.confirm('Sei sicuro di voler azzerare la conversazione? Tutti i messaggi verranno eliminati.');
     
     if (confirmReset) {
+      ragService.clearConversationHistory();
       setMessages([
         {
-          id: '1',
+          id: Date.now().toString(),
           role: 'system',
-          content: '🔄 **Chat Azzerata!**\n\n**Sistema RAG Pyragogico** pronto per una nuova conversazione.\n\n**Personalità Attiva:** ' + getCurrentPersonality().name + ' ' + getCurrentPersonality().emoji + '\n**Vector Store:** ' + (isDemoMode ? 'Demo Mode' : 'Pinecone') + ' con Peeragogy Handbook\n**API Status:** ' + (apiStatus.configured ? '✅ Configurata' : '⚠️ Da configurare') + '\n\n' + (isDemoMode ? '🎭 **Modalità Demo Attiva** - Risposte simulate ma accurate!\n\n' : '') + 'Puoi iniziare con una nuova domanda o cambiare personalità! 🚀',
-          timestamp: new Date()
+          content: '🔄 **Chat Azzerata!**\n\n**Sistema RAG Pyragogico** pronto per una nuova conversazione.\n\n**Personalità Attiva:** ' + getCurrentPersonality().name + ' ' + getCurrentPersonality().emoji + '\n**Configurazione:** ' + (systemStatus.configured ? '✅ Operativa' : '⚠️ Da configurare') + '\n\nPuoi iniziare con una nuova domanda o cambiare personalità! 🚀',
+          timestamp: new Date(),
+          sessionId: ragService.getSessionId()
         }
       ]);
       setInputValue('');
@@ -168,10 +426,12 @@ const ChatbotPage = () => {
       id: Date.now().toString(),
       role: 'user',
       content: inputValue,
-      timestamp: new Date()
+      timestamp: new Date(),
+      sessionId: ragService.getSessionId()
     };
 
     setMessages(prev => [...prev, userMessage]);
+    ragService.addMessageToHistory(userMessage);
     setInputValue('');
     setIsTyping(true);
 
@@ -188,35 +448,35 @@ const ChatbotPage = () => {
           id: (Date.now() + 1).toString(),
           role: 'system',
           content: response,
-          timestamp: new Date()
+          timestamp: new Date(),
+          sessionId: ragService.getSessionId()
         };
         
         setMessages(prev => [...prev, systemMessage]);
-        checkApiStatus();
+        ragService.addMessageToHistory(systemMessage);
+        updateSystemStatus();
         
-        // Show appropriate toast based on command
-        if (commandResult.command === 'login') {
-          if (response.includes('✅')) {
-            success('Login effettuato', isDemoMode ? 'Modalità demo attivata' : 'Sistema RAG ora operativo');
-          } else {
-            error('Login fallito', 'Verifica le credenziali');
-          }
+        if (commandResult.command === 'clear') {
+          setMessages([systemMessage]);
         }
+        
+        info('Comando eseguito', `Comando /${commandResult.command} completato`);
       } else {
-        if (!apiStatus.configured) {
+        if (!systemStatus.configured) {
           const errorMessage: ChatMessage = {
             id: (Date.now() + 1).toString(),
             role: 'system',
-            content: '⚠️ **Autenticazione richiesta**\n\nPer utilizzare il sistema RAG, devi prima effettuare il login.\n\n**Login rapido:**\n`/login demo pyragogica2025`\n\n**Vector Store:** ✅ ' + (isDemoMode ? 'Demo mode' : 'Pinecone') + ' attivo con Peeragogy Handbook\n**Autenticazione:** ❌ Richiesta per accesso AI\n\n' + (isDemoMode ? '🎭 **Modalità Demo**: Perfetta per testing senza backend!' : ''),
-            timestamp: new Date()
+            content: '⚠️ **Configurazione richiesta**\n\nPer utilizzare il sistema RAG, devi prima configurare una API key.\n\n**Passi necessari:**\n1. Clicca su "Configurazione" in alto a destra\n2. Seleziona un provider (consigliato: OpenRouter)\n3. Inserisci la tua API key\n4. Scegli un modello (disponibili opzioni gratuite)\n\n**Vector Store:** ✅ Pronto con contenuti del Peeragogy Handbook\n**API:** ❌ Richiede configurazione',
+            timestamp: new Date(),
+            sessionId: ragService.getSessionId()
           };
           setMessages(prev => [...prev, errorMessage]);
-          error('Autenticazione richiesta', 'Effettua il login per continuare');
+          ragService.addMessageToHistory(errorMessage);
+          error('Configurazione richiesta', 'Configura una API key per continuare');
         } else {
           const result = await ragService.generateResponse(
             inputValue,
-            selectedPersonality,
-            messages.filter(m => m.role !== 'system')
+            selectedPersonality
           );
 
           const assistantMessage: ChatMessage = {
@@ -226,21 +486,25 @@ const ChatbotPage = () => {
             personality: selectedPersonality,
             timestamp: new Date(),
             sources: result.sources,
-            tokens: result.tokens
+            tokens: result.tokens,
+            sessionId: ragService.getSessionId()
           };
 
           setMessages(prev => [...prev, assistantMessage]);
-          success('Risposta generata', isDemoMode ? 'Risposta demo basata sul Peeragogy Handbook' : 'Basata sui contenuti del Peeragogy Handbook');
+          ragService.addMessageToHistory(assistantMessage);
+          success('Risposta generata', `Basata sui contenuti del Peeragogy Handbook${systemStatus.modelIsFree ? ' (modello gratuito)' : ''}`);
         }
       }
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'system',
-        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Effettua il login con \`/login demo pyragogica2025\`\n• Riprova con una domanda diversa\n\n${isDemoMode ? '🎭 **Modalità Demo**: Se il problema persiste, ricarica la pagina' : ''}`,
-        timestamp: new Date()
+        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Controlla che la tua API key sia valida\n• Prova con un modello diverso\n• Riprova con una domanda diversa`,
+        timestamp: new Date(),
+        sessionId: ragService.getSessionId()
       };
       setMessages(prev => [...prev, errorMessage]);
+      ragService.addMessageToHistory(errorMessage);
       error('Errore sistema', error instanceof Error ? error.message : 'Errore sconosciuto');
     } finally {
       setIsTyping(false);
@@ -265,11 +529,13 @@ const ChatbotPage = () => {
       const changeMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'system',
-        content: `🎭 **Personalità cambiata!**\n\n**Da:** ${oldPersonality.name} ${oldPersonality.emoji} → **A:** ${newPersonality.name} ${newPersonality.emoji}\n\n**Nuovo stile:** ${newPersonality.description}\n\nLe prossime risposte seguiranno questo approccio. La conversazione precedente rimane invariata.\n\n${isDemoMode ? '🌟 **Demo Mode**: Tutte le personalità sono completamente funzionali!' : ''}`,
-        timestamp: new Date()
+        content: `🎭 **Personalità cambiata!**\n\n**Da:** ${oldPersonality.name} ${oldPersonality.emoji} → **A:** ${newPersonality.name} ${newPersonality.emoji}\n\n**Nuovo stile:** ${newPersonality.description}\n\nLe prossime risposte seguiranno questo approccio. La conversazione precedente rimane invariata.`,
+        timestamp: new Date(),
+        sessionId: ragService.getSessionId()
       };
       
       setMessages(prev => [...prev, changeMessage]);
+      ragService.addMessageToHistory(changeMessage);
       info('Personalità cambiata', `Ora attiva: ${newPersonality.name} ${newPersonality.emoji}`);
     }
   };
@@ -285,11 +551,11 @@ const ChatbotPage = () => {
   ];
 
   const commandExamples = [
-    "/login demo pyragogica2025",
     "/status",
+    "/providers",
+    "/models",
     "/help",
-    "/personalities",
-    "/demo_info"
+    "/clear"
   ];
 
   return (
@@ -298,46 +564,41 @@ const ChatbotPage = () => {
       <div className="text-center mb-16">
         <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
           <Brain className="w-4 h-4" />
-          <span>Sistema RAG {isDemoMode ? 'Demo Mode' : 'Production-Ready'} con Backend Sicuro</span>
-          {isDemoMode && <Globe className="w-4 h-4" />}
+          <span>Sistema RAG Production-Ready con API Personalizzabili</span>
         </div>
         <h1 className="text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
         <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
           Sistema RAG (Retrieval-Augmented Generation) con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
-          {isDemoMode ? (
-            <span className="block mt-2 text-indigo-600 font-semibold">
-              🎭 Modalità Demo Attiva - Funziona ovunque senza backend esterno!
-            </span>
-          ) : (
-            <span>Backend sicuro con autenticazione, rate limiting e gestione protetta delle API key.</span>
-          )}
+          Configurazione API flessibile con supporto per modelli gratuiti e premium.
         </p>
         
         {/* System Status */}
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
             <Database className="w-4 h-4 text-green-600" />
-            <span className="text-green-800 font-semibold">
-              Vector Store {isDemoMode ? 'Demo' : 'Pinecone'}
-            </span>
-            <Wifi className="w-4 h-4 text-green-600" />
+            <span className="text-green-800 font-semibold">Vector Store Locale</span>
+            <CheckCircle className="w-4 h-4 text-green-600" />
           </div>
           <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border ${
-            apiStatus.configured 
+            systemStatus.configured 
               ? 'bg-green-50 border-green-200 text-green-800' 
               : 'bg-orange-50 border-orange-200 text-orange-800'
           }`}>
             <Key className="w-4 h-4" />
             <span className="font-semibold">
-              {apiStatus.configured ? 'Autenticato' : 'Login Richiesto'}
+              {systemStatus.configured ? 'API Configurata' : 'API da Configurare'}
             </span>
           </div>
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-xl">
-            {isDemoMode ? <Globe className="w-4 h-4 text-blue-600" /> : <Settings className="w-4 h-4 text-blue-600" />}
-            <span className="text-blue-800 font-semibold">
-              {isDemoMode ? 'Demo Mode' : 'Backend Sicuro'}
-            </span>
+            <Shield className="w-4 h-4 text-blue-600" />
+            <span className="text-blue-800 font-semibold">Sicurezza Locale</span>
           </div>
+          {systemStatus.modelIsFree && (
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <Zap className="w-4 h-4 text-emerald-600" />
+              <span className="text-emerald-800 font-semibold">Modello Gratuito</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -347,84 +608,78 @@ const ChatbotPage = () => {
           {/* System Status */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">Stato Sistema RAG</h3>
+              <h3 className="text-lg font-bold text-slate-900">Stato Sistema</h3>
               <button
-                onClick={() => setShowApiConfig(!showApiConfig)}
+                onClick={() => setShowApiConfig(true)}
                 className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
-                aria-label="Configurazioni"
+                aria-label="Configurazione API"
               >
                 <Settings className="w-5 h-5" />
               </button>
             </div>
             
             <div className="space-y-4">
-              {/* Demo Mode Indicator */}
-              {isDemoMode && (
-                <div className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                  <Globe className="w-5 h-5 text-purple-500" />
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-purple-900">Modalità Demo</div>
-                    <div className="text-xs text-purple-600">Nessun backend richiesto</div>
-                  </div>
-                </div>
-              )}
-
-              {/* Auth Status */}
+              {/* Configuration Status */}
               <div className="flex items-center space-x-3">
-                {apiStatus.configured ? (
+                {systemStatus.configured ? (
                   <CheckCircle className="w-5 h-5 text-green-500" />
                 ) : (
                   <AlertCircle className="w-5 h-5 text-orange-500" />
                 )}
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-900">
-                    {apiStatus.configured ? 'Autenticato' : 'Login Richiesto'}
+                    {systemStatus.configured ? 'Sistema Configurato' : 'Configurazione Richiesta'}
                   </div>
-                  {apiStatus.configured && (
-                    <div className="text-xs text-slate-600">
-                      {isDemoMode ? 'Demo mode • Token locale' : 'Backend sicuro • Token valido'}
-                    </div>
-                  )}
+                  <div className="text-xs text-slate-600">
+                    {systemStatus.configured ? `${systemStatus.provider} • ${systemStatus.model}` : 'Inserisci API key per iniziare'}
+                  </div>
                 </div>
               </div>
               
+              {/* API Key Status */}
+              <div className="flex items-center space-x-3">
+                {systemStatus.hasApiKey ? (
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-orange-500" />
+                )}
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-slate-900">
+                    API Key {systemStatus.hasApiKey ? 'Configurata' : 'Mancante'}
+                  </div>
+                  <div className="text-xs text-slate-600">
+                    {systemStatus.hasApiKey ? 'Memorizzata localmente' : 'Richiesta per l\'accesso AI'}
+                  </div>
+                </div>
+              </div>
+
               {/* Vector Store Status */}
               <div className="flex items-center space-x-3">
                 <CheckCircle className="w-5 h-5 text-green-500" />
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    Vector Store {isDemoMode ? 'Demo' : 'Pinecone'}
-                  </div>
-                  <div className="text-xs text-slate-600">
-                    Peeragogy Handbook • {isDemoMode ? 'Simulazione' : 'Attivo'}
-                  </div>
+                  <div className="text-sm font-medium text-slate-900">Vector Store Locale</div>
+                  <div className="text-xs text-slate-600">Peeragogy Handbook • Attivo</div>
                 </div>
               </div>
 
-              {/* RAG Status */}
+              {/* Session Info */}
               <div className="flex items-center space-x-3">
-                {apiStatus.configured ? (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-orange-500" />
-                )}
+                <Globe className="w-5 h-5 text-blue-500" />
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    Sistema RAG {apiStatus.configured ? 'Operativo' : 'In Attesa'}
-                  </div>
-                  <div className="text-xs text-slate-600">
-                    {apiStatus.configured ? 'Pronto per query' : 'Effettua login per iniziare'}
+                  <div className="text-sm font-medium text-slate-900">Sessione Attiva</div>
+                  <div className="text-xs text-slate-600 font-mono">
+                    {systemStatus.sessionId.substring(0, 16)}...
                   </div>
                 </div>
               </div>
             </div>
 
-            {!apiStatus.configured && (
+            {!systemStatus.configured && (
               <button
-                onClick={() => setInputValue('/login demo pyragogica2025')}
+                onClick={() => setShowApiConfig(true)}
                 className="w-full mt-4 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-300"
               >
-                Login Demo
+                Configura API
               </button>
             )}
           </div>
@@ -522,11 +777,16 @@ const ChatbotPage = () => {
                     </h3>
                     <span className="text-2xl">{getCurrentPersonality().emoji}</span>
                     <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                      {isDemoMode ? 'DEMO' : 'PRODUCTION'}
+                      PRODUCTION
                     </span>
+                    {systemStatus.modelIsFree && (
+                      <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                        FREE
+                      </span>
+                    )}
                   </div>
                   <p className="text-slate-600 leading-relaxed">
-                    {getCurrentPersonality().description} • {isDemoMode ? 'Demo mode attivo' : 'Backend sicuro attivo'}
+                    {getCurrentPersonality().description} • {systemStatus.configured ? `${systemStatus.provider} attivo` : 'Configurazione richiesta'}
                   </p>
                 </div>
                 
@@ -561,7 +821,7 @@ const ChatbotPage = () => {
                       ) : message.role === 'system' ? (
                         <Settings className="w-5 h-5 text-white" />
                       ) : (
-                        <Bot className="w-5 h-5 text-white" />
+                        <Brain className="w-5 h-5 text-white" />
                       )}
                     </div>
                     <div className={`p-6 rounded-3xl shadow-lg max-w-3xl ${
@@ -571,7 +831,6 @@ const ChatbotPage = () => {
                         ? 'bg-slate-100 text-slate-700 border border-slate-200'
                         : 'bg-white text-slate-900 border border-slate-200'
                     }`}>
-                      {/* Render content with markdown support */}
                       <MarkdownRenderer content={message.content} />
                       
                       {/* Sources from Vector Store */}
@@ -579,7 +838,7 @@ const ChatbotPage = () => {
                         <div className="mt-4 pt-4 border-t border-slate-200">
                           <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
                             <Database className="w-4 h-4 mr-2" />
-                            📚 Fonti dal Vector Store {isDemoMode ? '(Demo)' : ''}:
+                            📚 Fonti dal Vector Store:
                           </h5>
                           <div className="space-y-2">
                             {message.sources.map((source: RetrievedSource, index: number) => (
@@ -610,7 +869,7 @@ const ChatbotPage = () => {
                           <div className="flex items-center space-x-4 text-xs text-slate-500">
                             <span>Input: {message.tokens.input} tokens</span>
                             <span>Output: {message.tokens.output} tokens</span>
-                            <span>Costo: {isDemoMode ? 'Gratuito' : `~$${message.tokens.cost.toFixed(4)}`}</span>
+                            <span>Costo: {message.tokens.cost === 0 ? 'Gratuito' : `~$${message.tokens.cost.toFixed(4)}`}</span>
                           </div>
                         </div>
                       )}
@@ -624,10 +883,10 @@ const ChatbotPage = () => {
                 <div className="flex justify-start">
                   <div className="flex items-start space-x-4 max-w-4xl">
                     <div className="p-3 rounded-2xl shadow-lg bg-gradient-to-r from-purple-500 to-pink-500">
-                      <Bot className="w-5 h-5 text-white" />
+                      <Brain className="w-5 h-5 text-white" />
                     </div>
                     <div className="p-6 rounded-3xl shadow-lg bg-white border border-slate-200">
-                      <LoadingSpinner size="sm" text={isDemoMode ? "Generando risposta demo..." : "Interrogando vector store..."} />
+                      <LoadingSpinner size="sm" text="Generando risposta..." />
                     </div>
                   </div>
                 </div>
@@ -641,9 +900,9 @@ const ChatbotPage = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder={apiStatus.configured 
+                  placeholder={systemStatus.configured 
                     ? `Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
-                    : 'Effettua il login con /login demo pyragogica2025...'
+                    : 'Configura una API key per iniziare...'
                   }
                   className="flex-1 px-6 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg"
                   value={inputValue}
@@ -681,11 +940,16 @@ const ChatbotPage = () => {
         </div>
       </div>
 
-      {/* Enhanced RAG System Visualization */}
+      {/* API Configuration Modal */}
+      <APIConfigPanel
+        isOpen={showApiConfig}
+        onClose={() => setShowApiConfig(false)}
+        onConfigUpdate={updateSystemStatus}
+      />
+
+      {/* Enhanced System Visualization */}
       <div className="mt-20 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-10 text-white shadow-2xl">
-        <h3 className="text-3xl font-bold mb-8 text-center">
-          Sistema RAG {isDemoMode ? 'Demo Mode' : 'Production-Ready'}
-        </h3>
+        <h3 className="text-3xl font-bold mb-8 text-center">Sistema RAG Production-Ready</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
@@ -694,21 +958,18 @@ const ChatbotPage = () => {
             <div>
               <h4 className="text-xl font-bold mb-2">1. Vector Store</h4>
               <p className="text-slate-300 text-sm">
-                Peeragogy Handbook completo indicizzato {isDemoMode ? 'in simulazione locale' : 'in Pinecone'} con embedding semantici
+                Peeragogy Handbook completo indicizzato localmente con embedding semantici
               </p>
             </div>
           </div>
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
-              {isDemoMode ? <Globe className="w-10 h-10 text-white" /> : <Zap className="w-10 h-10 text-white" />}
+              <Key className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h4 className="text-xl font-bold mb-2">2. {isDemoMode ? 'Demo Engine' : 'Backend Sicuro'}</h4>
+              <h4 className="text-xl font-bold mb-2">2. API Sicure</h4>
               <p className="text-slate-300 text-sm">
-                {isDemoMode 
-                  ? 'Simulazione locale completa senza dipendenze esterne'
-                  : 'Proxy protetto per API AI con autenticazione, rate limiting e logging'
-                }
+                Gestione sicura delle API key con memorizzazione locale e sessioni separate
               </p>
             </div>
           </div>
@@ -725,12 +986,12 @@ const ChatbotPage = () => {
           </div>
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
-              <MessageCircle className="w-10 h-10 text-white" />
+              <Zap className="w-10 h-10 text-white" />
             </div>
             <div>
               <h4 className="text-xl font-bold mb-2">4. Smart Response</h4>
               <p className="text-slate-300 text-sm">
-                Generazione di risposte contestualizzate con fonti verificabili e formattazione markdown
+                Generazione di risposte contestualizzate con fonti verificabili
               </p>
             </div>
           </div>
@@ -738,31 +999,26 @@ const ChatbotPage = () => {
 
         <div className="mt-12 p-6 bg-white/10 backdrop-blur-sm rounded-xl">
           <h4 className="text-lg font-bold mb-4 flex items-center">
-            {isDemoMode ? <Globe className="w-5 h-5 mr-2" /> : <Key className="w-5 h-5 mr-2" />}
-            {isDemoMode ? 'Demo Mode - Funzionalità Complete' : 'Sicurezza e Controllo Completo'}
+            <Shield className="w-5 h-5 mr-2" />
+            Sicurezza e Controllo Completo
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
-              <h5 className="font-semibold mb-2">
-                {isDemoMode ? '🎭 Modalità Demo' : '🔒 Backend Sicuro'}
-              </h5>
+              <h5 className="font-semibold mb-2">🔒 Sicurezza Locale</h5>
               <p className="text-slate-300">
-                {isDemoMode 
-                  ? 'Nessun backend richiesto. Funziona su qualsiasi hosting statico. Perfetto per testing e dimostrazione.'
-                  : 'Tutte le API key protette sul server. Rate limiting 5 req/min. Logging completo delle attività.'
-                }
+                API key memorizzate solo nel browser. Sessioni separate con ID univoci. Nessun dato condiviso.
               </p>
             </div>
             <div>
-              <h5 className="font-semibold mb-2">🎭 Personalità Avanzate</h5>
+              <h5 className="font-semibold mb-2">🆓 Modelli Gratuiti</h5>
               <p className="text-slate-300">
-                4 personalità AI specializzate con prompt separati e configurazioni ottimizzate.
+                Accesso a modelli gratuiti tramite OpenRouter: Phi-3, Gemma, Llama 3, Mistral.
               </p>
             </div>
             <div>
-              <h5 className="font-semibold mb-2">📝 Markdown Rendering</h5>
+              <h5 className="font-semibold mb-2">⚙️ Configurazione Flessibile</h5>
               <p className="text-slate-300">
-                Formattazione intelligente di testo, codice, liste e headers per una lettura ottimale.
+                Selezione provider e modelli personalizzabile. Supporto per OpenAI, Anthropic, OpenRouter.
               </p>
             </div>
           </div>

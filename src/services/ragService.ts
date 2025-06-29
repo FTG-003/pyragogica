@@ -2,9 +2,23 @@ export interface APIProvider {
   id: string;
   name: string;
   baseUrl: string;
-  models: string[];
+  models: ModelInfo[];
   keyFormat: string;
   description: string;
+  requiresKey: boolean;
+}
+
+export interface ModelInfo {
+  id: string;
+  name: string;
+  provider: string;
+  free: boolean;
+  contextWindow: number;
+  description: string;
+  pricing?: {
+    input: number;
+    output: number;
+  };
 }
 
 export interface ChatMessage {
@@ -19,6 +33,7 @@ export interface ChatMessage {
     output: number;
     cost: number;
   };
+  sessionId: string;
 }
 
 export interface RetrievedSource {
@@ -50,34 +65,164 @@ export interface PersonalityConfig {
   };
 }
 
-export const API_PROVIDERS: APIProvider[] = [
+export interface UserSession {
+  sessionId: string;
+  userId?: string;
+  apiKeys: Record<string, string>;
+  selectedProvider: string;
+  selectedModel: string;
+  conversationHistory: ChatMessage[];
+  createdAt: Date;
+  lastActivity: Date;
+}
+
+// OpenRouter Models with Free Tier Identification
+export const OPENROUTER_MODELS: ModelInfo[] = [
+  // Free Models
   {
-    id: 'demo',
-    name: 'Demo Mode',
-    baseUrl: '/demo',
-    models: ['demo-model'],
-    keyFormat: 'Demo - No API key required',
-    description: 'Modalità demo con risposte simulate basate sul Peeragogy Handbook'
+    id: 'microsoft/phi-3-mini-128k-instruct:free',
+    name: 'Phi-3 Mini 128K',
+    provider: 'openrouter',
+    free: true,
+    contextWindow: 128000,
+    description: 'Microsoft\'s efficient small model - Free tier',
+    pricing: { input: 0, output: 0 }
   },
   {
-    id: 'openai',
-    name: 'OpenAI',
-    baseUrl: '/api/ai/openai',
-    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-    keyFormat: 'Gestito dal backend',
-    description: 'Modelli GPT di OpenAI - Eccellenti per conversazioni naturali'
+    id: 'microsoft/phi-3-medium-128k-instruct:free',
+    name: 'Phi-3 Medium 128K',
+    provider: 'openrouter',
+    free: true,
+    contextWindow: 128000,
+    description: 'Microsoft\'s balanced model - Free tier',
+    pricing: { input: 0, output: 0 }
   },
   {
-    id: 'gemini',
-    name: 'Google Gemini',
-    baseUrl: '/api/ai/gemini',
-    models: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-pro'],
-    keyFormat: 'Gestito dal backend',
-    description: 'Modelli Gemini di Google - Ottimi per analisi e ragionamento'
+    id: 'google/gemma-7b-it:free',
+    name: 'Gemma 7B',
+    provider: 'openrouter',
+    free: true,
+    contextWindow: 8192,
+    description: 'Google\'s open model - Free tier',
+    pricing: { input: 0, output: 0 }
+  },
+  {
+    id: 'meta-llama/llama-3-8b-instruct:free',
+    name: 'Llama 3 8B',
+    provider: 'openrouter',
+    free: true,
+    contextWindow: 8192,
+    description: 'Meta\'s efficient model - Free tier',
+    pricing: { input: 0, output: 0 }
+  },
+  {
+    id: 'mistralai/mistral-7b-instruct:free',
+    name: 'Mistral 7B',
+    provider: 'openrouter',
+    free: true,
+    contextWindow: 32768,
+    description: 'Mistral\'s instruction-tuned model - Free tier',
+    pricing: { input: 0, output: 0 }
+  },
+  // Premium Models
+  {
+    id: 'openai/gpt-4o',
+    name: 'GPT-4o',
+    provider: 'openrouter',
+    free: false,
+    contextWindow: 128000,
+    description: 'OpenAI\'s most capable model',
+    pricing: { input: 0.005, output: 0.015 }
+  },
+  {
+    id: 'openai/gpt-4o-mini',
+    name: 'GPT-4o Mini',
+    provider: 'openrouter',
+    free: false,
+    contextWindow: 128000,
+    description: 'OpenAI\'s efficient model',
+    pricing: { input: 0.00015, output: 0.0006 }
+  },
+  {
+    id: 'anthropic/claude-3.5-sonnet',
+    name: 'Claude 3.5 Sonnet',
+    provider: 'openrouter',
+    free: false,
+    contextWindow: 200000,
+    description: 'Anthropic\'s most capable model',
+    pricing: { input: 0.003, output: 0.015 }
+  },
+  {
+    id: 'google/gemini-pro-1.5',
+    name: 'Gemini Pro 1.5',
+    provider: 'openrouter',
+    free: false,
+    contextWindow: 2000000,
+    description: 'Google\'s advanced model with huge context',
+    pricing: { input: 0.00125, output: 0.005 }
   }
 ];
 
-// Import delle personalità AI da file separati
+export const API_PROVIDERS: APIProvider[] = [
+  {
+    id: 'openrouter',
+    name: 'OpenRouter',
+    baseUrl: 'https://openrouter.ai/api/v1',
+    models: OPENROUTER_MODELS,
+    keyFormat: 'sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    description: 'Access to multiple AI models including free options',
+    requiresKey: true
+  },
+  {
+    id: 'openai',
+    name: 'OpenAI Direct',
+    baseUrl: 'https://api.openai.com/v1',
+    models: [
+      {
+        id: 'gpt-4o',
+        name: 'GPT-4o',
+        provider: 'openai',
+        free: false,
+        contextWindow: 128000,
+        description: 'Most capable GPT model',
+        pricing: { input: 0.005, output: 0.015 }
+      },
+      {
+        id: 'gpt-4o-mini',
+        name: 'GPT-4o Mini',
+        provider: 'openai',
+        free: false,
+        contextWindow: 128000,
+        description: 'Efficient and cost-effective',
+        pricing: { input: 0.00015, output: 0.0006 }
+      }
+    ],
+    keyFormat: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    description: 'Direct access to OpenAI models',
+    requiresKey: true
+  },
+  {
+    id: 'anthropic',
+    name: 'Anthropic',
+    baseUrl: 'https://api.anthropic.com/v1',
+    models: [
+      {
+        id: 'claude-3-5-sonnet-20241022',
+        name: 'Claude 3.5 Sonnet',
+        provider: 'anthropic',
+        free: false,
+        contextWindow: 200000,
+        description: 'Most capable Claude model',
+        pricing: { input: 0.003, output: 0.015 }
+      }
+    ],
+    keyFormat: 'sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    description: 'Direct access to Claude models',
+    requiresKey: true
+  }
+];
+
+// Import AI personalities
 import { academicPersonality } from '../ai-prompts/academic';
 import { divulgativePersonality } from '../ai-prompts/divulgative';
 import { criticalPersonality } from '../ai-prompts/critical';
@@ -91,96 +236,182 @@ export const PERSONALITIES: PersonalityConfig[] = [
 ];
 
 export class RAGService {
-  private authToken: string = '';
-  private backendUrl: string = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
-  private demoMode: boolean = false;
+  private currentSession: UserSession;
+  private sessionStorage: Map<string, UserSession> = new Map();
 
   constructor() {
-    this.loadAuthToken();
-    // Detect if we're in a deployed environment without backend
-    this.detectEnvironment();
+    this.currentSession = this.createNewSession();
+    this.loadSessionFromStorage();
   }
 
-  private detectEnvironment() {
-    // Check if we're on Netlify or similar static hosting
-    const isStaticDeploy = window.location.hostname.includes('netlify.app') || 
-                          window.location.hostname.includes('vercel.app') ||
-                          window.location.hostname.includes('github.io') ||
-                          !window.location.hostname.includes('localhost');
-    
-    if (isStaticDeploy) {
-      this.demoMode = true;
-      console.log('🎭 Demo mode attivato - ambiente di deploy statico rilevato');
-    }
-  }
-
-  private loadAuthToken() {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      this.authToken = token;
-    }
-  }
-
-  private saveAuthToken(token: string) {
-    this.authToken = token;
-    localStorage.setItem('auth_token', token);
-  }
-
-  async login(username: string, password: string): Promise<boolean> {
-    // SEMPRE accetta login demo, indipendentemente dall'ambiente
-    if (username === 'demo' && password === 'pyragogica2025') {
-      this.saveAuthToken('demo-token-' + Date.now());
-      this.demoMode = true;
-      console.log('✅ Login demo effettuato con successo');
-      return true;
-    }
-
-    // Se non è demo mode e non siamo in ambiente statico, prova backend
-    if (!this.demoMode) {
-      try {
-        const response = await fetch(`${this.backendUrl}/api/auth/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          this.saveAuthToken(data.token);
-          return true;
-        }
-      } catch (error) {
-        console.warn('Backend non disponibile, fallback a demo mode:', error);
-        // Fallback to demo mode if backend is not available
-        if (username === 'demo' && password === 'pyragogica2025') {
-          this.saveAuthToken('demo-token-' + Date.now());
-          this.demoMode = true;
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  logout() {
-    this.authToken = '';
-    this.demoMode = false;
-    localStorage.removeItem('auth_token');
-  }
-
-  getAPIStatus(): { configured: boolean; provider?: string; model?: string } {
+  private createNewSession(): UserSession {
+    const sessionId = this.generateSessionId();
     return {
-      configured: !!this.authToken,
-      provider: this.demoMode ? 'Demo Mode' : 'Backend Proxy',
-      model: this.demoMode ? 'Simulazione Locale' : 'Multiple Models Available'
+      sessionId,
+      apiKeys: {},
+      selectedProvider: 'openrouter',
+      selectedModel: 'microsoft/phi-3-mini-128k-instruct:free',
+      conversationHistory: [],
+      createdAt: new Date(),
+      lastActivity: new Date()
     };
   }
 
+  private generateSessionId(): string {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  private loadSessionFromStorage() {
+    try {
+      const savedSession = localStorage.getItem('rag_session');
+      if (savedSession) {
+        const parsed = JSON.parse(savedSession);
+        this.currentSession = {
+          ...parsed,
+          createdAt: new Date(parsed.createdAt),
+          lastActivity: new Date(parsed.lastActivity),
+          conversationHistory: parsed.conversationHistory.map((msg: any) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp)
+          }))
+        };
+      }
+    } catch (error) {
+      console.warn('Failed to load session from storage:', error);
+      this.currentSession = this.createNewSession();
+    }
+  }
+
+  private saveSessionToStorage() {
+    try {
+      this.currentSession.lastActivity = new Date();
+      localStorage.setItem('rag_session', JSON.stringify(this.currentSession));
+    } catch (error) {
+      console.warn('Failed to save session to storage:', error);
+    }
+  }
+
+  // API Key Management
+  setAPIKey(provider: string, apiKey: string): boolean {
+    if (!apiKey || apiKey.trim().length === 0) {
+      return false;
+    }
+
+    // Validate API key format
+    const providerConfig = API_PROVIDERS.find(p => p.id === provider);
+    if (!providerConfig) {
+      return false;
+    }
+
+    // Store encrypted in production (for now, just store directly)
+    this.currentSession.apiKeys[provider] = apiKey.trim();
+    this.saveSessionToStorage();
+    return true;
+  }
+
+  getAPIKey(provider: string): string | null {
+    return this.currentSession.apiKeys[provider] || null;
+  }
+
+  removeAPIKey(provider: string): void {
+    delete this.currentSession.apiKeys[provider];
+    this.saveSessionToStorage();
+  }
+
+  // Provider and Model Selection
+  setProvider(providerId: string): boolean {
+    const provider = API_PROVIDERS.find(p => p.id === providerId);
+    if (!provider) return false;
+
+    this.currentSession.selectedProvider = providerId;
+    // Auto-select first free model if available
+    const freeModel = provider.models.find(m => m.free);
+    if (freeModel) {
+      this.currentSession.selectedModel = freeModel.id;
+    } else {
+      this.currentSession.selectedModel = provider.models[0]?.id || '';
+    }
+    
+    this.saveSessionToStorage();
+    return true;
+  }
+
+  setModel(modelId: string): boolean {
+    const provider = API_PROVIDERS.find(p => p.id === this.currentSession.selectedProvider);
+    if (!provider) return false;
+
+    const model = provider.models.find(m => m.id === modelId);
+    if (!model) return false;
+
+    this.currentSession.selectedModel = modelId;
+    this.saveSessionToStorage();
+    return true;
+  }
+
+  getCurrentProvider(): APIProvider | null {
+    return API_PROVIDERS.find(p => p.id === this.currentSession.selectedProvider) || null;
+  }
+
+  getCurrentModel(): ModelInfo | null {
+    const provider = this.getCurrentProvider();
+    if (!provider) return null;
+    return provider.models.find(m => m.id === this.currentSession.selectedModel) || null;
+  }
+
+  getFreeModels(): ModelInfo[] {
+    return OPENROUTER_MODELS.filter(model => model.free);
+  }
+
+  // Session Management
+  getSessionId(): string {
+    return this.currentSession.sessionId;
+  }
+
+  clearSession(): void {
+    this.currentSession = this.createNewSession();
+    localStorage.removeItem('rag_session');
+  }
+
+  getConversationHistory(): ChatMessage[] {
+    return this.currentSession.conversationHistory;
+  }
+
+  addMessageToHistory(message: ChatMessage): void {
+    message.sessionId = this.currentSession.sessionId;
+    this.currentSession.conversationHistory.push(message);
+    this.saveSessionToStorage();
+  }
+
+  clearConversationHistory(): void {
+    this.currentSession.conversationHistory = [];
+    this.saveSessionToStorage();
+  }
+
+  // System Status
+  getSystemStatus(): {
+    configured: boolean;
+    provider: string;
+    model: string;
+    hasApiKey: boolean;
+    modelIsFree: boolean;
+    sessionId: string;
+  } {
+    const provider = this.getCurrentProvider();
+    const model = this.getCurrentModel();
+    const hasApiKey = !!this.getAPIKey(this.currentSession.selectedProvider);
+
+    return {
+      configured: !!provider && !!model && hasApiKey,
+      provider: provider?.name || 'None',
+      model: model?.name || 'None',
+      hasApiKey,
+      modelIsFree: model?.free || false,
+      sessionId: this.currentSession.sessionId
+    };
+  }
+
+  // Vector Store Simulation (for testing without external dependencies)
   private async createEmbedding(text: string): Promise<number[]> {
-    // Simulazione embedding per fallback
     const words = text.toLowerCase().split(' ');
     const embedding = new Array(1536).fill(0);
     
@@ -203,156 +434,117 @@ export class RAGService {
     return Math.abs(hash);
   }
 
-  private async queryVectorStore(queryEmbedding: number[], topK: number = 5): Promise<any[]> {
-    if (this.demoMode) {
-      return this.getDemoVectorResults(topK);
-    }
-
-    try {
-      const response = await fetch(`${this.backendUrl}/api/vector/query`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.authToken}`
-        },
-        body: JSON.stringify({
-          vector: queryEmbedding,
-          topK: topK,
-          includeMetadata: true
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Vector store error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.matches || [];
-    } catch (error) {
-      console.warn('Error querying vector store, using demo data:', error);
-      return this.getDemoVectorResults(topK);
-    }
-  }
-
-  private getDemoVectorResults(topK: number): any[] {
-    const demoData = [
+  private async queryVectorStore(query: string, topK: number = 3): Promise<RetrievedSource[]> {
+    // Simulated vector store with real Peeragogy content
+    const knowledgeBase = [
       {
         id: 'peeragogy-intro-1',
-        score: 0.95,
+        title: 'Introduzione alla Peeragogy',
+        chapter: 'Capitolo 1: Introduzione',
+        content: 'La peeragogy è un framework flessibile di tecniche per l\'apprendimento tra pari e la produzione collaborativa di conoscenza. Come amiamo dire, la peeragogy non riguarda solo "l\'apprendimento tra pari" o la "produzione tra pari" in astratto, ma l\'apprendere e lavorare insieme su problemi che sono personalmente significativi e che vogliamo risolvere.',
         metadata: {
-          title: 'Introduzione alla Peeragogy',
-          chapter: 'Capitolo 1: Introduzione',
           author: 'Howard Rheingold',
           page: '1-15',
           section: 'Che cos\'è la Peeragogy?',
-          content: 'La peeragogy è un framework flessibile di tecniche per l\'apprendimento tra pari e la produzione collaborativa di conoscenza. Come amiamo dire, la peeragogy non riguarda solo "l\'apprendimento tra pari" o la "produzione tra pari" in astratto, ma l\'apprendere e lavorare insieme su problemi che sono personalmente significativi e che vogliamo risolvere.'
-        }
+          source: 'Peeragogy Handbook'
+        },
+        keywords: ['peeragogy', 'apprendimento', 'collaborativo', 'peer', 'principi', 'definizione']
       },
       {
         id: 'peeragogy-motivation-1',
-        score: 0.88,
+        title: 'Motivazione e Demotivazione',
+        chapter: 'Capitolo 2: Motivazione',
+        content: 'La motivazione è un fattore chiave nell\'apprendimento. Nella peeragogy, siamo particolarmente interessati a come le persone possano essere motivate ad imparare con e dagli altri. Questo implica comprendere sia le motivazioni intrinseche (spinta interna, curiosità, soddisfazione) che quelle estrinseche (ricompense, riconoscimento, voti).',
         metadata: {
-          title: 'Motivazione e Demotivazione',
-          chapter: 'Capitolo 2: Motivazione',
           author: 'Paola Ricaurte',
           page: '16-35',
           section: 'Motivazione Intrinseca vs Estrinseca',
-          content: 'La motivazione è un fattore chiave nell\'apprendimento. Nella peeragogy, siamo particolarmente interessati a come le persone possano essere motivate ad imparare con e dagli altri. Questo implica comprendere sia le motivazioni intrinseche (spinta interna, curiosità, soddisfazione) che quelle estrinseche (ricompense, riconoscimento, voti).'
-        }
+          source: 'Peeragogy Handbook'
+        },
+        keywords: ['motivazione', 'intrinseca', 'estrinseca', 'apprendimento', 'curiosità']
       },
       {
         id: 'peeragogy-patterns-1',
-        score: 0.82,
+        title: 'Pattern e Casi d\'Uso',
+        chapter: 'Capitolo 4: Pattern, Casi d\'Uso ed Esempi',
+        content: 'I pattern nella peeragogy sono soluzioni ricorrenti a problemi comuni nell\'apprendimento collaborativo. Questi pattern includono la facilitazione distribuita, la rotazione dei ruoli, la documentazione condivisa e la valutazione tra pari. Ogni pattern può essere adattato al contesto specifico della comunità di apprendimento.',
         metadata: {
-          title: 'Pattern e Casi d\'Uso',
-          chapter: 'Capitolo 4: Pattern, Casi d\'Uso ed Esempi',
           author: 'Anna Keune',
           page: '56-85',
           section: 'Pattern di Facilitazione',
-          content: 'I pattern nella peeragogy sono soluzioni ricorrenti a problemi comuni nell\'apprendimento collaborativo. Questi pattern includono la facilitazione distribuita, la rotazione dei ruoli, la documentazione condivisa e la valutazione tra pari. Ogni pattern può essere adattato al contesto specifico della comunità di apprendimento.'
-        }
+          source: 'Peeragogy Handbook'
+        },
+        keywords: ['pattern', 'facilitazione', 'ruoli', 'documentazione', 'valutazione', 'casi uso']
       },
       {
         id: 'peeragogy-practice-1',
-        score: 0.79,
+        title: 'Peeragogy in Pratica',
+        chapter: 'Capitolo 5: Peeragogy in Pratica',
+        content: 'Organizzare progetti peeragogici richiede attenzione alla struttura, ai processi e alle relazioni. È importante creare spazi sicuri per l\'apprendimento, stabilire obiettivi chiari ma flessibili, e mantenere un equilibrio tra struttura e spontaneità. La chiave è permettere l\'emergere naturale della leadership e della collaborazione.',
         metadata: {
-          title: 'Peeragogy in Pratica',
-          chapter: 'Capitolo 5: Peeragogy in Pratica',
           author: 'Howard Rheingold',
           page: '86-120',
           section: 'Organizzazione di Progetti',
-          content: 'Organizzare progetti peeragogici richiede attenzione alla struttura, ai processi e alle relazioni. È importante creare spazi sicuri per l\'apprendimento, stabilire obiettivi chiari ma flessibili, e mantenere un equilibrio tra struttura e spontaneità. La chiave è permettere l\'emergere naturale della leadership e della collaborazione.'
-        }
+          source: 'Peeragogy Handbook'
+        },
+        keywords: ['pratica', 'progetti', 'organizzazione', 'leadership', 'collaborazione', 'implementare']
       },
       {
         id: 'peeragogy-technology-1',
-        score: 0.75,
+        title: 'Tecnologie per la Peeragogy',
+        chapter: 'Capitolo 13: Tecnologie per la Peeragogy',
+        content: 'Le tecnologie digitali offrono nuove opportunità per l\'apprendimento collaborativo. Dalle piattaforme wiki ai sistemi di videoconferenza, dagli strumenti di annotazione collaborativa ai sistemi di gestione dell\'apprendimento, la tecnologia può facilitare la connessione, la comunicazione e la co-creazione tra i partecipanti.',
         metadata: {
-          title: 'Tecnologie per la Peeragogy',
-          chapter: 'Capitolo 13: Tecnologie per la Peeragogy',
           author: 'Roland Legrand',
           page: '311-335',
           section: 'Strumenti Collaborativi',
-          content: 'Le tecnologie digitali offrono nuove opportunità per l\'apprendimento collaborativo. Dalle piattaforme wiki ai sistemi di videoconferenza, dagli strumenti di annotazione collaborativa ai sistemi di gestione dell\'apprendimento, la tecnologia può facilitare la connessione, la comunicazione e la co-creazione tra i partecipanti.'
-        }
+          source: 'Peeragogy Handbook'
+        },
+        keywords: ['tecnologie', 'digitali', 'strumenti', 'wiki', 'videoconferenza', 'collaborativa']
       }
     ];
 
-    return demoData.slice(0, topK);
-  }
-
-  private async retrieveRelevantSources(query: string, topK: number = 3): Promise<RetrievedSource[]> {
-    try {
-      const queryEmbedding = await this.createEmbedding(query);
-      const matches = await this.queryVectorStore(queryEmbedding, topK);
-      
-      return matches.map(match => ({
-        id: match.id,
-        title: match.metadata.title || 'Peeragogy Handbook',
-        chapter: match.metadata.chapter || 'Unknown Chapter',
-        content: match.metadata.content || 'Content not available',
-        similarity: match.score || 0,
-        metadata: {
-          author: match.metadata.author || 'Peeragogy Community',
-          page: match.metadata.page || 'Unknown',
-          section: match.metadata.section || 'Unknown Section',
-          source: 'Peeragogy Handbook'
+    // Simple keyword matching for relevance
+    const queryWords = query.toLowerCase().split(' ');
+    const scored = knowledgeBase.map(item => {
+      let score = 0;
+      queryWords.forEach(word => {
+        if (item.keywords.some(keyword => keyword.includes(word) || word.includes(keyword))) {
+          score += 1;
         }
+        if (item.content.toLowerCase().includes(word)) {
+          score += 0.5;
+        }
+      });
+      return { ...item, similarity: Math.min(score / queryWords.length, 1) };
+    });
+
+    return scored
+      .filter(item => item.similarity > 0)
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, topK)
+      .map(item => ({
+        id: item.id,
+        title: item.title,
+        chapter: item.chapter,
+        content: item.content,
+        similarity: item.similarity,
+        metadata: item.metadata
       }));
-    } catch (error) {
-      console.error('Error retrieving sources:', error);
-      return [];
-    }
   }
 
-  private buildRAGPrompt(query: string, sources: RetrievedSource[], personality: PersonalityConfig): string {
-    const sourceContext = sources.map(source => 
-      `[${source.title} - ${source.chapter}]
-${source.content}
-(Autore: ${source.metadata.author}, Pagina: ${source.metadata.page}, Sezione: ${source.metadata.section})`
-    ).join('\n\n');
-
-    return `${personality.systemPrompt}
-
-CONTESTO DAL PEERAGOGY HANDBOOK (Vector Store):
-${sourceContext}
-
-DOMANDA DELL'UTENTE: ${query}
-
-Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peeragogy Handbook, mantenendo la personalità ${personality.name} (${personality.emoji}).`;
-  }
-
+  // Main RAG Generation
   async generateResponse(
-    query: string, 
-    personalityId: string, 
-    conversationHistory: ChatMessage[] = []
+    query: string,
+    personalityId: string
   ): Promise<{
     response: string;
     sources: RetrievedSource[];
     tokens?: { input: number; output: number; cost: number };
   }> {
-    if (!this.authToken) {
-      throw new Error('Autenticazione richiesta. Effettua il login per utilizzare il sistema RAG.');
+    const status = this.getSystemStatus();
+    if (!status.configured) {
+      throw new Error('Sistema non configurato. Inserisci una API key valida e seleziona un modello.');
     }
 
     const personality = PERSONALITIES.find(p => p.id === personalityId);
@@ -360,262 +552,137 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
       throw new Error(`Personalità "${personalityId}" non trovata.`);
     }
 
-    const sources = await this.retrieveRelevantSources(query);
-    
+    // Retrieve relevant sources
+    const sources = await this.queryVectorStore(query);
     if (sources.length === 0) {
       throw new Error('Nessuna fonte rilevante trovata nel Peeragogy Handbook per questa domanda.');
     }
 
-    let response: string;
+    // Build RAG prompt
+    const sourceContext = sources.map(source => 
+      `[${source.title} - ${source.chapter}]
+${source.content}
+(Autore: ${source.metadata.author}, Pagina: ${source.metadata.page})`
+    ).join('\n\n');
 
-    if (this.demoMode) {
-      response = await this.generateDemoResponse(query, sources, personality);
-    } else {
-      const ragPrompt = this.buildRAGPrompt(query, sources, personality);
-      response = await this.callBackendAPI(ragPrompt, personality, 'openai');
-    }
+    const ragPrompt = `${personality.systemPrompt}
 
-    return {
-      response,
-      sources,
-      tokens: {
-        input: Math.ceil(query.length / 4),
-        output: Math.ceil(response.length / 4),
-        cost: this.estimateCost(query.length, response.length)
-      }
+CONTESTO DAL PEERAGOGY HANDBOOK:
+${sourceContext}
+
+DOMANDA DELL'UTENTE: ${query}
+
+Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peeragogy Handbook, mantenendo la personalità ${personality.name} (${personality.emoji}).`;
+
+    // Call AI API
+    const response = await this.callAIAPI(ragPrompt, personality);
+
+    const tokens = {
+      input: Math.ceil(ragPrompt.length / 4),
+      output: Math.ceil(response.length / 4),
+      cost: this.calculateCost(ragPrompt.length, response.length)
     };
+
+    return { response, sources, tokens };
   }
 
-  private async generateDemoResponse(query: string, sources: RetrievedSource[], personality: PersonalityConfig): Promise<string> {
-    // Simulate AI response based on personality and sources
-    const lowerQuery = query.toLowerCase();
-    
-    // Generate contextual response based on query keywords and personality
-    let response = '';
-    
-    if (personality.id === 'academic') {
-      response = this.generateAcademicResponse(lowerQuery, sources);
-    } else if (personality.id === 'divulgative') {
-      response = this.generateDivulgativeResponse(lowerQuery, sources);
-    } else if (personality.id === 'critical') {
-      response = this.generateCriticalResponse(lowerQuery, sources);
-    } else if (personality.id === 'socratic') {
-      response = this.generateSocraticResponse(lowerQuery, sources);
-    } else {
-      response = this.generateGenericResponse(lowerQuery, sources);
+  private async callAIAPI(prompt: string, personality: PersonalityConfig): Promise<string> {
+    const provider = this.getCurrentProvider();
+    const model = this.getCurrentModel();
+    const apiKey = this.getAPIKey(this.currentSession.selectedProvider);
+
+    if (!provider || !model || !apiKey) {
+      throw new Error('Configurazione API incompleta');
     }
 
-    // Add demo mode disclaimer
-    response += '\n\n---\n*🎭 Modalità Demo Attiva - Risposta simulata basata sui contenuti del Peeragogy Handbook*';
-    
-    return response;
-  }
-
-  private generateAcademicResponse(query: string, sources: RetrievedSource[]): string {
-    const relevantSource = sources[0];
-    
-    if (query.includes('principi') || query.includes('definizione') || query.includes('cos\'è')) {
-      return `## Analisi Accademica: Principi Fondamentali della Peeragogy
-
-Secondo il framework teorico presentato nel Peeragogy Handbook, la peeragogy si configura come un paradigma educativo innovativo che trascende i modelli tradizionali di trasmissione unidirezionale della conoscenza.
-
-### Definizione Operativa
-
-${relevantSource.content}
-
-### Base Teorica
-
-La peeragogy si fonda su tre pilastri metodologici:
-
-1. **Apprendimento Reciproco**: Ogni partecipante assume simultaneamente il ruolo di discente e docente
-2. **Costruzione Collaborativa**: La conoscenza emerge attraverso processi di co-creazione
-3. **Responsabilità Distribuita**: L'autorità educativa è condivisa tra tutti i membri della comunità
-
-### Implicazioni per la Ricerca
-
-Questo approccio richiede nuove metodologie di valutazione e assessment che tengano conto della natura distribuita e emergente dell'apprendimento peeragogico.
-
-**Fonte**: ${relevantSource.title}, ${relevantSource.metadata.author}`;
-    }
-    
-    return `## Analisi Accademica
-
-Basandomi sui contenuti del Peeragogy Handbook, posso fornire un'analisi rigorosa del tema richiesto.
-
-${relevantSource.content}
-
-Questa prospettiva teorica evidenzia l'importanza di un approccio metodologico strutturato nell'implementazione di pratiche peeragogiche.
-
-**Riferimento**: ${relevantSource.title} - ${relevantSource.metadata.author}`;
-  }
-
-  private generateDivulgativeResponse(query: string, sources: RetrievedSource[]): string {
-    const relevantSource = sources[0];
-    
-    if (query.includes('come') || query.includes('implementare') || query.includes('pratica')) {
-      return `# Come Funziona la Peeragogy? 💡
-
-Immagina di essere in una cucina con altri aspiranti cuochi. Invece di avere un solo chef che insegna a tutti, ognuno condivide le proprie ricette e tecniche. Questo è esattamente lo spirito della peeragogy!
-
-## In Parole Semplici
-
-${relevantSource.content}
-
-## Esempi Pratici
-
-🔹 **In una classe**: Gli studenti si insegnano a vicenda, creando gruppi di studio dove ognuno spiega ciò che sa meglio
-
-🔹 **Online**: Comunità come Wikipedia dove tutti contribuiscono alla conoscenza collettiva
-
-🔹 **Sul lavoro**: Team che condividono competenze e imparano insieme nuovi strumenti
-
-## Perché Funziona?
-
-Quando insegni qualcosa a qualcun altro, la impari meglio tu stesso. È come dire: "Se vuoi imparare qualcosa, insegnala!"
-
-**Fonte**: ${relevantSource.title} - Una guida pratica per tutti`;
-    }
-    
-    return `# Scopriamo Insieme! 🌟
-
-${relevantSource.content}
-
-Pensa alla peeragogy come a un grande cerchio di amici che si aiutano a vicenda a crescere e imparare. Nessuno è il "professore" e nessuno è solo "studente" - siamo tutti e due le cose!
-
-**Dal Peeragogy Handbook**: ${relevantSource.title}`;
-  }
-
-  private generateCriticalResponse(query: string, sources: RetrievedSource[]): string {
-    const relevantSource = sources[0];
-    
-    return `## Analisi Critica: Questioni Aperte 🧠
-
-Ma cosa succederebbe se questa teoria fosse incompleta? Esaminiamo criticamente:
-
-### Il Contenuto del Handbook
-
-${relevantSource.content}
-
-### Domande Provocatorie
-
-🤔 **Hai mai considerato che** la peeragogy potrebbe nascondere nuove forme di esclusione? Chi decide chi può partecipare a questi "gruppi di pari"?
-
-🤔 **Quali sono le implicazioni non dette** di un sistema dove tutti sono insegnanti? Non rischiamo di perdere l'expertise specializzata?
-
-🤔 **Cosa accade quando** i "pari" hanno livelli di conoscenza molto diversi? La collaborazione diventa davvero equa?
-
-### Contraddizioni da Esplorare
-
-- **Paradosso dell'autorità**: Chi facilita un gruppo "senza leader"?
-- **Bias di conferma**: I gruppi di pari tendono a rafforzare le proprie convinzioni?
-- **Scalabilità**: Funziona davvero con migliaia di partecipanti?
-
-### Domande per la Riflessione
-
-Quale potrebbe essere il lato oscuro della peeragogy che il handbook non menziona? Come possiamo essere sicuri che non stiamo semplicemente sostituendo una forma di autorità con un'altra più sottile?
-
-**Fonte critica**: ${relevantSource.title} - Analisi indipendente`;
-  }
-
-  private generateSocraticResponse(query: string, sources: RetrievedSource[]): string {
-    const relevantSource = sources[0];
-    
-    return `## Dialogo Socratico: Esploriamo Insieme 🤔
-
-Caro amico del sapere, permettimi di guidarti attraverso una riflessione sul contenuto che abbiamo davanti:
-
-### Il Testo ci Dice
-
-${relevantSource.content}
-
-### Ma Ora, Dimmi...
-
-**Riflessione iniziale**: Come spiegheresti questo concetto a qualcuno che non ne ha mai sentito parlare? Quali parole useresti?
-
-**Verifica cognitiva**: Secondo te, l'autore sta affermando una verità assoluta, o stiamo riempiendo noi i vuoti con le nostre interpretazioni?
-
-**Analogia esplorativa**: Questa situazione non ti ricorda forse quel saggio che, pur conoscendo la via della virtù, si lasciava deviare dalle passioni? Quale confronto dalla tua esperienza potrebbe illuminare questo argomento?
-
-### Domanda Guida
-
-Se quest'idea fosse un seme, quale frutto - di saggezza o di illusione - credi che produrrebbe nella tua vita quotidiana?
-
-**Ricorda**: *Non sono le cose a turbare gli uomini, ma le opinioni che essi hanno delle cose.*
-
-Quale singola domanda questo frammento lascia risuonare nella tua mente?
-
-**Fonte del nostro dialogo**: ${relevantSource.title} - ${relevantSource.metadata.author}`;
-  }
-
-  private generateGenericResponse(query: string, sources: RetrievedSource[]): string {
-    const relevantSource = sources[0];
-    
-    return `## Risposta dal Peeragogy Handbook
-
-${relevantSource.content}
-
-Questo estratto dal handbook ci offre una prospettiva interessante sul tema che hai sollevato. La peeragogy, come framework educativo, ci invita a ripensare i ruoli tradizionali nell'apprendimento.
-
-**Fonte**: ${relevantSource.title} - ${relevantSource.metadata.author}`;
-  }
-
-  private estimateCost(inputLength: number, outputLength: number): number {
-    if (this.demoMode) return 0;
-    
-    const inputTokens = Math.ceil(inputLength / 4);
-    const outputTokens = Math.ceil(outputLength / 4);
-    
-    const modelCost = { input: 0.00015, output: 0.0006 }; // GPT-4o-mini pricing
-    return (inputTokens / 1000) * modelCost.input + (outputTokens / 1000) * modelCost.output;
-  }
-
-  private async callBackendAPI(prompt: string, personality: PersonalityConfig, provider: string): Promise<string> {
     try {
-      const endpoint = provider === 'openai' ? '/api/ai/openai' : '/api/ai/gemini';
-      
-      const requestBody = provider === 'openai' ? {
-        messages: [{ role: 'system', content: prompt }],
-        model: 'gpt-4o-mini',
-        temperature: personality.temperature,
-        maxTokens: personality.maxTokens,
-        query: prompt // Per validazione backend
-      } : {
-        contents: [{ parts: [{ text: prompt }] }],
-        model: 'gemini-1.5-flash',
-        generationConfig: {
-          temperature: personality.temperature,
-          maxOutputTokens: personality.maxTokens
-        },
-        query: prompt // Per validazione backend
-      };
+      let response: Response;
 
-      const response = await fetch(`${this.backendUrl}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.authToken}`
-        },
-        body: JSON.stringify(requestBody)
-      });
+      if (provider.id === 'openrouter') {
+        response = await fetch(`${provider.baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+            'HTTP-Referer': window.location.origin,
+            'X-Title': 'Pyragogica RAG System'
+          },
+          body: JSON.stringify({
+            model: model.id,
+            messages: [
+              { role: 'system', content: prompt }
+            ],
+            temperature: personality.temperature,
+            max_tokens: personality.maxTokens
+          })
+        });
+      } else if (provider.id === 'openai') {
+        response = await fetch(`${provider.baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: model.id,
+            messages: [
+              { role: 'system', content: prompt }
+            ],
+            temperature: personality.temperature,
+            max_tokens: personality.maxTokens
+          })
+        });
+      } else if (provider.id === 'anthropic') {
+        response = await fetch(`${provider.baseUrl}/messages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: model.id,
+            max_tokens: personality.maxTokens,
+            temperature: personality.temperature,
+            messages: [
+              { role: 'user', content: prompt }
+            ]
+          })
+        });
+      } else {
+        throw new Error(`Provider ${provider.id} non supportato`);
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Backend API Error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+        throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const data = await response.json();
-      
-      if (provider === 'openai') {
-        return data.choices[0]?.message?.content || 'Nessuna risposta generata';
+
+      if (provider.id === 'anthropic') {
+        return data.content[0]?.text || 'Nessuna risposta generata';
       } else {
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Nessuna risposta generata';
+        return data.choices[0]?.message?.content || 'Nessuna risposta generata';
       }
+
     } catch (error) {
-      console.error('Errore chiamata backend:', error);
+      console.error('AI API Error:', error);
       throw new Error(`Errore nella chiamata API: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`);
     }
   }
 
+  private calculateCost(inputLength: number, outputLength: number): number {
+    const model = this.getCurrentModel();
+    if (!model || model.free || !model.pricing) return 0;
+
+    const inputTokens = Math.ceil(inputLength / 4);
+    const outputTokens = Math.ceil(outputLength / 4);
+
+    return (inputTokens / 1000) * model.pricing.input + (outputTokens / 1000) * model.pricing.output;
+  }
+
+  // Command System
   parseCommand(message: string): { isCommand: boolean; command?: string; args?: string[] } {
     if (!message.startsWith('/')) {
       return { isCommand: false };
@@ -630,172 +697,121 @@ Questo estratto dal handbook ci offre una prospettiva interessante sul tema che 
 
   async handleCommand(command: string, args: string[]): Promise<string> {
     switch (command) {
-      case 'login':
-        if (args.length < 2) {
-          return `❌ **Formato comando errato**
-
-**Uso corretto:**
-\`/login <username> <password>\`
-
-**Credenziali demo:**
-Username: \`demo\`
-Password: \`pyragogica2025\`
-
-**Esempio:**
-\`/login demo pyragogica2025\``;
-        }
-
-        const [username, password] = args;
-        const success = await this.login(username, password);
-        
-        if (success) {
-          const modeText = this.demoMode ? 'Demo Mode' : 'Backend Mode';
-          return `✅ **Login effettuato con successo!**
-
-**Utente:** ${username}
-**Modalità:** ${modeText}
-**Token:** Configurato e sicuro
-**Vector Store:** ${this.demoMode ? 'Simulazione locale' : 'Pinecone'} attivo
-
-🚀 **Sistema RAG completamente operativo!** Ora puoi chattare con l'AI e ricevere risposte basate sui contenuti reali del Peeragogy Handbook.
-
-${this.demoMode ? '🎭 **Modalità Demo**: Risposte simulate ma basate sui contenuti reali del handbook.' : ''}
-
-**Test rapido:** Prova a chiedere "Spiegami i principi della peeragogy"`;
-        } else {
-          return `❌ **Login fallito**
-
-Credenziali non valide. Usa le credenziali demo:
-- Username: \`demo\`
-- Password: \`pyragogica2025\``;
-        }
-
-      case 'logout':
-        this.logout();
-        return `✅ **Logout effettuato**
-
-Sei stato disconnesso dal sistema. Per utilizzare nuovamente il RAG, effettua il login con \`/login demo pyragogica2025\``;
-
       case 'status':
-        const status = this.getAPIStatus();
-        if (status.configured) {
-          const modeText = this.demoMode ? 'Demo Mode (Simulazione)' : 'Backend Mode (Produzione)';
-          return `✅ **Sistema RAG Completamente Operativo**
+        const status = this.getSystemStatus();
+        return `📊 **Stato Sistema RAG**
 
-**🔐 Autenticazione:**
-• Status: ✅ Autenticato
-• Modalità: ${modeText}
-• Token: Valido
-
-**📚 Vector Store:**
-• Database: ${this.demoMode ? 'Simulazione locale' : 'Pinecone (via backend)'}
-• Contenuto: Peeragogy Handbook (completo)
-• Embedding: Semantico
+**🔐 Configurazione:**
+• Provider: ${status.provider}
+• Modello: ${status.model} ${status.modelIsFree ? '(GRATUITO)' : '(A PAGAMENTO)'}
+• API Key: ${status.hasApiKey ? '✅ Configurata' : '❌ Mancante'}
+• Sistema: ${status.configured ? '✅ Operativo' : '⚠️ Richiede configurazione'}
 
 **🎭 Personalità disponibili:** ${PERSONALITIES.length}
 • 🎓 Accademico • 💡 Divulgatore • 🧠 Critico • 🤔 Socratico
 
-${this.demoMode ? '🎭 **Demo Mode Attivo**: Perfetto per testing e dimostrazione!' : ''}
+**📱 Sessione:**
+• ID: \`${status.sessionId}\`
+• Cronologia: ${this.getConversationHistory().length} messaggi
 
-**🚀 Tutto pronto!** Fai una domanda sul Peeragogy Handbook per testare il sistema.`;
-        } else {
-          return `⚠️ **Autenticazione richiesta**
+${status.configured ? '**🚀 Sistema pronto per l\'uso!**' : '**⚙️ Configura API key per iniziare**'}`;
 
-**Vector Store:** ✅ Disponibile
-**Autenticazione:** ❌ Non effettuata
+      case 'providers':
+        return `🔌 **Provider AI Disponibili**
 
-**Per accedere al sistema:**
-\`/login demo pyragogica2025\``;
+${API_PROVIDERS.map(provider => {
+  const freeModels = provider.models.filter(m => m.free).length;
+  const totalModels = provider.models.length;
+  return `**${provider.name}**
+• Modelli: ${totalModels} (${freeModels} gratuiti)
+• Formato chiave: \`${provider.keyFormat}\`
+• ${provider.description}
+`;
+}).join('\n')}
+
+**🆓 Modelli Gratuiti Raccomandati:**
+${this.getFreeModels().map(model => `• **${model.name}** - ${model.description}`).join('\n')}
+
+Usa l'interfaccia per configurare provider e modelli!`;
+
+      case 'models':
+        const currentProvider = this.getCurrentProvider();
+        if (!currentProvider) {
+          return '❌ Nessun provider selezionato';
         }
 
+        return `🤖 **Modelli Disponibili - ${currentProvider.name}**
+
+**🆓 Modelli Gratuiti:**
+${currentProvider.models.filter(m => m.free).map(model => 
+  `• **${model.name}** (${model.contextWindow.toLocaleString()} token context)
+  ${model.description}`
+).join('\n')}
+
+**💰 Modelli Premium:**
+${currentProvider.models.filter(m => !m.free).map(model => 
+  `• **${model.name}** (${model.contextWindow.toLocaleString()} token context)
+  ${model.description}
+  Costo: $${model.pricing?.input}/1K input, $${model.pricing?.output}/1K output`
+).join('\n')}
+
+Seleziona un modello dall'interfaccia di configurazione!`;
+
+      case 'clear':
+        this.clearConversationHistory();
+        return '🗑️ **Cronologia conversazione cancellata**\n\nLa cronologia è stata rimossa dalla sessione corrente.';
+
+      case 'session':
+        return `📱 **Informazioni Sessione**
+
+**ID Sessione:** \`${this.getSessionId()}\`
+**Creata:** ${this.currentSession.createdAt.toLocaleString()}
+**Ultima attività:** ${this.currentSession.lastActivity.toLocaleString()}
+**Messaggi:** ${this.getConversationHistory().length}
+**Provider:** ${this.currentSession.selectedProvider}
+**Modello:** ${this.currentSession.selectedModel}
+
+Ogni sessione mantiene la propria cronologia e configurazione separate.`;
+
       case 'help':
-        return `🤖 **Sistema RAG Peeragogy - Guida Completa**
+        return `🤖 **Sistema RAG Pyragogico - Guida Completa**
 
-**🔐 Autenticazione:**
-• \`/login demo pyragogica2025\` - Accedi al sistema
-• \`/logout\` - Disconnettiti
-• \`/status\` - Verifica stato autenticazione
+**⚙️ Configurazione:**
+• Usa l'interfaccia per inserire le tue API key
+• Seleziona provider e modello preferiti
+• Scegli una personalità AI
 
-**ℹ️ Informazioni:**
-• \`/help\` - Mostra questa guida
-• \`/personalities\` - Lista personalità AI disponibili
-• \`/demo_info\` - Informazioni sulla modalità demo
+**💬 Comandi Sistema:**
+• \`/status\` - Stato configurazione
+• \`/providers\` - Lista provider disponibili
+• \`/models\` - Modelli del provider corrente
+• \`/clear\` - Cancella cronologia conversazione
+• \`/session\` - Info sessione corrente
+• \`/help\` - Questa guida
 
-**📚 Come funziona il RAG:**
-1. **Effettua il login** con le credenziali demo
-2. **Scrivi una domanda** sul Peeragogy Handbook
-3. **Il sistema cerca** nei contenuti indicizzati
-4. **L'AI risponde** usando le fonti più rilevanti
-5. **Vedi le fonti** utilizzate per la risposta
+**🆓 Modelli Gratuiti:**
+Usa OpenRouter con modelli gratuiti per testing senza costi!
 
-**🎭 Modalità Demo:**
-- Funziona senza backend esterno
-- Risposte simulate ma accurate
-- Basate sui contenuti reali del handbook
-- Perfetta per testing e dimostrazione
+**🔐 Sicurezza:**
+• Le API key sono memorizzate localmente nel browser
+• Ogni sessione ha un ID univoco
+• Nessun dato viene condiviso tra sessioni
 
-**🚀 Inizia subito:** \`/login demo pyragogica2025\``;
-
-      case 'personalities':
-        return `🎭 **Personalità AI Disponibili**
-
-${PERSONALITIES.map(p => `**${p.emoji} ${p.name}**
-*Descrizione:* ${p.description}
-*Stile:* ${p.style.tone}
-*Approccio:* ${p.style.approach}
-*Temperatura:* ${p.temperature} (creatività)
-*Max Token:* ${p.maxTokens}
-`).join('\n')}
-
-**🎯 Come scegliere:**
-• **Accademico** per analisi rigorose e citazioni precise
-• **Divulgatore** per spiegazioni semplici e pratiche  
-• **Critico** per stimolare il pensiero critico
-• **Socratico** per conversazioni guidate e riflessioni collaborative
-
-Seleziona una personalità dall'interfaccia e inizia a chattare! 🚀`;
-
-      case 'demo_info':
-        return `🎭 **Modalità Demo - Informazioni Tecniche**
-
-**🏗️ Architettura Demo:**
-• **Frontend:** React + TypeScript (statico)
-• **Backend:** Simulazione locale (no server esterno)
-• **Vector Store:** Database simulato con contenuti reali
-• **AI:** Risposte generate localmente
-
-**🔐 Sicurezza Demo:**
-• **Nessuna API key richiesta**
-• **Dati locali:** Tutto rimane nel browser
-• **Privacy totale:** Nessun dato inviato a server esterni
-• **Offline ready:** Funziona anche senza connessione
-
-**📊 Contenuti Disponibili:**
-• **Peeragogy Handbook completo** (metadati)
-• **5 capitoli** con contenuto simulato
-• **Fonti reali** dal handbook originale
-• **Personalità AI** completamente funzionali
-
-**🎯 Perfetto per:**
-• Testing delle funzionalità
-• Dimostrazione del sistema
-• Sviluppo e debug
-• Deploy su hosting statico (Netlify, Vercel)
-
-**🚀 Produzione:** Per l'ambiente di produzione completo, configura il backend Node.js con API reali.
-
-La modalità demo offre un'esperienza completa del sistema RAG! 🌟`;
+**🚀 Per iniziare:**
+1. Configura una API key nell'interfaccia
+2. Seleziona un modello (consigliati quelli gratuiti)
+3. Fai una domanda sul Peeragogy Handbook!`;
 
       default:
         return `❌ **Comando non riconosciuto:** \`/${command}\`
 
 **Comandi disponibili:**
-• \`/login demo pyragogica2025\` - Accedi al sistema
-• \`/logout\` - Disconnettiti
 • \`/status\` - Stato sistema
+• \`/providers\` - Lista provider
+• \`/models\` - Modelli disponibili
+• \`/clear\` - Cancella cronologia
+• \`/session\` - Info sessione
 • \`/help\` - Guida completa
-• \`/personalities\` - Lista personalità
-• \`/demo_info\` - Info modalità demo
 
 Usa \`/help\` per la guida completa! 🤖`;
     }

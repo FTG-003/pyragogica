@@ -48,22 +48,22 @@ function App() {
         {/* Modern Navigation */}
         <nav className="nav-modern">
           <div className="container-modern">
-            <div className="flex justify-between items-center h-16"> {/* Reduced height from h-20 to h-16 */}
+            <div className="flex justify-between items-center h-20">
               {/* Modern Logo */}
-              <div className="flex items-center gap-3"> {/* Reduced gap from gap-4 to gap-3 */}
+              <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600"> {/* Reduced from w-12 h-12 */}
-                    <Database className="w-6 h-6 text-white" /> {/* Reduced from w-7 h-7 */}
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600">
+                    <Database className="w-7 h-7 text-white" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500"> {/* Reduced from w-4 h-4 */}
-                    <Sparkles className="w-2 h-2 text-white" /> {/* Reduced from w-2.5 h-2.5 */}
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500">
+                    <Sparkles className="w-2.5 h-2.5 text-white" />
                   </div>
                 </div>
-                <div style={{ lineHeight: '1.3', paddingBottom: '0.1em' }}> {/* Fix for descender clipping */}
-                  <h1 className="text-lg font-bold text-gradient"> {/* Reduced from text-2xl */}
+                <div>
+                  <h1 className="text-2xl font-bold text-gradient">
                     Biblioteca Pyragogica
                   </h1>
-                  <p className="text-xs text-slate-500 font-medium">Modern Interface</p> {/* Reduced from text-sm */}
+                  <p className="text-sm text-slate-500 font-medium">Modern Interface</p>
                 </div>
               </div>
 
@@ -78,7 +78,7 @@ function App() {
                       className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
                       aria-label={`Naviga a ${item.name}`}
                     >
-                      <Icon className="w-4 h-4" /> {/* Reduced from w-5 h-5 */}
+                      <Icon className="w-5 h-5" />
                       <span>{item.name}</span>
                     </button>
                   );
@@ -92,31 +92,30 @@ function App() {
                   className="p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-300 min-h-[44px] min-w-[44px]"
                   aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
                 >
-                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />} {/* Reduced from w-6 h-6 */}
+                  {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
               </div>
             </div>
 
             {/* Mobile Navigation */}
             {mobileMenuOpen && (
-              <div className="md:hidden border-t border-slate-200/50 py-4 bg-white/95 backdrop-blur-xl"> {/* Reduced padding */}
-                <div className="space-y-2"> {/* Reduced space */}
+              <div className="md:hidden border-t border-slate-200/50 py-6 bg-white/95 backdrop-blur-xl">
+                <div className="space-y-3">
                   {navigation.map((item) => {
                     const Icon = item.icon;
                     return (
                       <button
                         key={item.id}
                         onClick={() => handlePageChange(item.id)}
-                        className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-left transition-all duration-300 min-h-[44px] ${
+                        className={`flex items-center gap-4 w-full px-6 py-4 rounded-2xl text-left transition-all duration-300 min-h-[44px] ${
                           currentPage === item.id
                             ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                         }`}
                         aria-label={`Naviga a ${item.name}`}
-                        style={{ lineHeight: '1.3', paddingBottom: '0.1em' }}
                       >
-                        <Icon className="w-5 h-5" />
-                        <span className="font-semibold text-base">{item.name}</span> {/* Reduced from text-lg */}
+                        <Icon className="w-6 h-6" />
+                        <span className="font-semibold text-lg">{item.name}</span>
                       </button>
                     );
                   })}
@@ -131,9 +130,9 @@ function App() {
           <Suspense 
             fallback={
               <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center space-y-4"> {/* Reduced space */}
-                  <div className="w-12 h-12 rounded-xl mx-auto flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600"> {/* Reduced from w-16 h-16 */}
-                    <Zap className="w-6 h-6 text-white animate-pulse" /> {/* Reduced from w-8 h-8 */}
+                <div className="text-center space-y-6">
+                  <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
+                    <Zap className="w-8 h-8 text-white animate-pulse" />
                   </div>
                   <LoadingSpinner 
                     size="lg" 

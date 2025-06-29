@@ -124,11 +124,12 @@ const HomePage = () => {
           
           {/* CTA Buttons Ridimensionati */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-12 animate-fade-in-up" style={{ animationDelay: '0.4s' }}> {/* Reduced gap and margin */}
+            {/* Reduced icon size */}
             <ModernButton
               variant="primary"
               size="lg"
-              icon={<Database className="w-6 h-6" />} {/* Reduced icon size */}
-              className="text-lg px-10 py-5 shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-500 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700" /* Reduced text and padding */
+              icon={<Database className="w-6 h-6" />}
+              className="text-lg px-10 py-5 shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-500 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
             >
               🚀 Esplora la Biblioteca
             </ModernButton>
@@ -350,7 +351,7 @@ const HomePage = () => {
               variant="secondary"
               size="lg"
               icon={<Database className="w-6 h-6" />}
-              className="text-lg px-12 py-6 bg-white text-indigo-600 hover:bg-slate-100 shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-500 font-black" /* Reduced sizes */
+              className="text-lg px-12 py-6 bg-white text-indigo-600 hover:bg-slate-100 shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-500 font-black"
             >
               🚀 Esplora la Biblioteca
             </ModernButton>

@@ -1,90 +1,447 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Settings, Info, X, Check, AlertCircle, Zap, Database, Brain, User, Bot, Copy, RefreshCw, Trash2, HelpCircle, Command } from 'lucide-react';
-import { ragService, type ChatMessage, type PersonalityConfig, PERSONALITIES } from '../services/ragService';
+import { Send, Brain, User, Settings, Key, Database, AlertCircle, CheckCircle, Loader, Copy, RotateCcw, Trash2, Globe, Shield, Zap, Eye, EyeOff, ChevronDown, ExternalLink, Sparkles, Star, Award, TrendingUp, Heart, Infinity } from 'lucide-react';
+import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource, type APIProvider, type ModelInfo } from '../services/ragService';
+import { useToast } from '../components/ToastNotification';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ModernButton from '../components/ui/ModernButton';
-import ModernInput from '../components/ui/ModernInput';
 import ModernCard from '../components/ui/ModernCard';
-import PersonalityAvatar from '../components/ui/PersonalityAvatar';
-import { useToast } from '../components/ToastNotification';
+import ModernInput from '../components/ui/ModernInput';
+
+// Componente per renderizzare il markdown
+const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
+  const renderContent = (text: string) => {
+    const lines = text.split('\n');
+    
+    return lines.map((line, index) => {
+      if (line.startsWith('### ')) {
+        return <h3 key={index} className="text-2xl font-black mt-6 mb-3 text-slate-900">{line.substring(4)}</h3>;
+      }
+      if (line.startsWith('## ')) {
+        return <h2 key={index} className="text-3xl font-black mt-8 mb-4 text-slate-900">{line.substring(3)}</h2>;
+      }
+      if (line.startsWith('# ')) {
+        return <h1 key={index} className="text-4xl font-black mt-10 mb-5 text-slate-900">{line.substring(2)}</h1>;
+      }
+      
+      if (line.includes('**')) {
+        const parts = line.split(/(\*\*.*?\*\*)/g);
+        return (
+          <p key={index} className="mb-3 text-lg leading-relaxed">
+            {parts.map((part, partIndex) => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={partIndex} className="font-black text-slate-900">{part.slice(2, -2)}</strong>;
+              }
+              return part;
+            })}
+          </p>
+        );
+      }
+      
+      if (line.startsWith('`') && line.endsWith('`')) {
+        return (
+          <code key={index} className="bg-slate-100 px-3 py-2 rounded-xl text-lg font-mono block my-3 border-2 border-slate-200">
+            {line.slice(1, -1)}
+          </code>
+        );
+      }
+      
+      if (line.includes('`')) {
+        const parts = line.split(/(`[^`]+`)/g);
+        return (
+          <p key={index} className="mb-3 text-lg leading-relaxed">
+            {parts.map((part, partIndex) => {
+              if (part.startsWith('`') && part.endsWith('`')) {
+                return <code key={partIndex} className="bg-slate-100 px-2 py-1 rounded-lg text-base font-mono border border-slate-200">{part.slice(1, -1)}</code>;
+              }
+              return part;
+            })}
+          </p>
+        );
+      }
+      
+      if (line.startsWith('• ') || line.startsWith('- ')) {
+        return (
+          <div key={index} className="flex items-start space-x-3 mb-2">
+            <span className="text-indigo-500 mt-1 text-xl">•</span>
+            <span className="text-lg leading-relaxed">{line.substring(2)}</span>
+          </div>
+        );
+      }
+
+      if (line.match(/^[🔹🤔✅❌⚠️🚀🎭📚🔐ℹ️🎯🏗️📊🌟💬⚙️📱🔌🤖🆓💰🗑️]/)) {
+        return (
+          <div key={index} className="flex items-start space-x-3 mb-2">
+            <span className="mt-1 text-xl">{line.charAt(0)}</span>
+            <span className="text-lg leading-relaxed">{line.substring(2)}</span>
+          </div>
+        );
+      }
+      
+      if (line.trim() === '') {
+        return <br key={index} />;
+      }
+      
+      return <p key={index} className="mb-3 text-lg leading-relaxed">{line}</p>;
+    });
+  };
+
+  return <div className="prose prose-lg max-w-none">{renderContent(content)}</div>;
+};
+
+// API Configuration Component
+const APIConfigPanel: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onConfigUpdate: () => void;
+}> = ({ isOpen, onClose, onConfigUpdate }) => {
+  const [selectedProvider, setSelectedProvider] = useState(ragService.getCurrentProvider()?.id || 'openrouter');
+  const [selectedModel, setSelectedModel] = useState(ragService.getCurrentModel()?.id || '');
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
+  const { success, error } = useToast();
+
+  useEffect(() => {
+    const currentKey = ragService.getAPIKey(selectedProvider);
+    setApiKey(currentKey || '');
+  }, [selectedProvider]);
+
+  const handleProviderChange = (providerId: string) => {
+    setSelectedProvider(providerId);
+    ragService.setProvider(providerId);
+    setSelectedModel(ragService.getCurrentModel()?.id || '');
+    const currentKey = ragService.getAPIKey(providerId);
+    setApiKey(currentKey || '');
+  };
+
+  const handleModelChange = (modelId: string) => {
+    setSelectedModel(modelId);
+    ragService.setModel(modelId);
+  };
+
+  const handleSaveApiKey = () => {
+    if (ragService.setAPIKey(selectedProvider, apiKey)) {
+      success('API Key salvata', 'Configurazione aggiornata con successo');
+      onConfigUpdate();
+    } else {
+      error('Errore', 'API Key non valida');
+    }
+  };
+
+  const handleRemoveApiKey = () => {
+    ragService.removeAPIKey(selectedProvider);
+    setApiKey('');
+    success('API Key rimossa', 'Configurazione aggiornata');
+    onConfigUpdate();
+  };
+
+  if (!isOpen) return null;
+
+  const currentProvider = API_PROVIDERS.find(p => p.id === selectedProvider);
+  const currentModel = currentProvider?.models.find(m => m.id === selectedModel);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto border-4 border-indigo-200/50">
+        <div className="p-10">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-4xl font-black text-slate-900 flex items-center gap-4">
+              <Settings className="w-8 h-8 text-indigo-600" />
+              Configurazione API Spettacolare
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-4 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-2xl transition-all duration-300 text-2xl font-bold"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Provider Selection */}
+          <div className="mb-12">
+            <h3 className="text-3xl font-black text-slate-900 mb-6 flex items-center gap-3">
+              <Zap className="w-6 h-6 text-yellow-500" />
+              Seleziona Provider
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {API_PROVIDERS.map((provider) => (
+                <button
+                  key={provider.id}
+                  onClick={() => handleProviderChange(provider.id)}
+                  className={`p-8 rounded-3xl border-4 transition-all duration-500 text-left transform hover:scale-105 shadow-xl hover:shadow-2xl ${
+                    selectedProvider === provider.id
+                      ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-2xl scale-105'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                  }`}
+                >
+                  <h4 className="font-black text-slate-900 mb-3 text-xl">{provider.name}</h4>
+                  <p className="text-lg text-slate-600 mb-4 leading-relaxed">{provider.description}</p>
+                  <div className="text-sm text-slate-500 font-bold">
+                    🆓 {provider.models.filter(m => m.free).length} modelli gratuiti
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Model Selection */}
+          {currentProvider && (
+            <div className="mb-12">
+              <h3 className="text-3xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                <Brain className="w-6 h-6 text-purple-500" />
+                Seleziona Modello
+              </h3>
+              
+              {/* Free Models */}
+              <div className="mb-8">
+                <h4 className="text-2xl font-black text-green-700 mb-4 flex items-center gap-3">
+                  <span className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></span>
+                  🆓 Modelli Gratuiti
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {currentProvider.models.filter(m => m.free).map((model) => (
+                    <button
+                      key={model.id}
+                      onClick={() => handleModelChange(model.id)}
+                      className={`p-6 rounded-2xl border-4 transition-all duration-500 text-left transform hover:scale-105 shadow-lg hover:shadow-xl ${
+                        selectedModel === model.id
+                          ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50 shadow-xl scale-105'
+                          : 'border-slate-200 hover:border-green-300 bg-white'
+                      }`}
+                    >
+                      <div className="font-black text-slate-900 text-lg">{model.name}</div>
+                      <div className="text-slate-600 mt-2 leading-relaxed">{model.description}</div>
+                      <div className="text-sm text-slate-500 mt-3 font-bold">
+                        📊 Context: {model.contextWindow.toLocaleString()} token
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Premium Models */}
+              {currentProvider.models.some(m => !m.free) && (
+                <div>
+                  <h4 className="text-2xl font-black text-orange-700 mb-4 flex items-center gap-3">
+                    <span className="w-4 h-4 bg-orange-500 rounded-full animate-pulse"></span>
+                    💰 Modelli Premium
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {currentProvider.models.filter(m => !m.free).map((model) => (
+                      <button
+                        key={model.id}
+                        onClick={() => handleModelChange(model.id)}
+                        className={`p-6 rounded-2xl border-4 transition-all duration-500 text-left transform hover:scale-105 shadow-lg hover:shadow-xl ${
+                          selectedModel === model.id
+                            ? 'border-orange-500 bg-gradient-to-br from-orange-50 to-yellow-50 shadow-xl scale-105'
+                            : 'border-slate-200 hover:border-orange-300 bg-white'
+                        }`}
+                      >
+                        <div className="font-black text-slate-900 text-lg">{model.name}</div>
+                        <div className="text-slate-600 mt-2 leading-relaxed">{model.description}</div>
+                        <div className="text-sm text-slate-500 mt-3 font-bold">
+                          📊 Context: {model.contextWindow.toLocaleString()} token
+                          {model.pricing && (
+                            <span className="ml-2">
+                              💵 ${model.pricing.input}/1K in, ${model.pricing.output}/1K out
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* API Key Configuration */}
+          <div className="mb-12">
+            <h3 className="text-3xl font-black text-slate-900 mb-6 flex items-center gap-3">
+              <Key className="w-6 h-6 text-indigo-500" />
+              API Key
+            </h3>
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl p-8 border-4 border-slate-200">
+              <div className="mb-6">
+                <label className="block text-xl font-black text-slate-700 mb-3">
+                  🔑 API Key per {currentProvider?.name}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder={currentProvider?.keyFormat}
+                    className="w-full px-6 py-4 border-4 border-slate-300 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 pr-16 text-lg font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-all duration-300"
+                  >
+                    {showApiKey ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex space-x-4">
+                <ModernButton
+                  variant="primary"
+                  onClick={handleSaveApiKey}
+                  disabled={!apiKey.trim()}
+                  className="text-xl px-8 py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-500"
+                >
+                  💾 Salva API Key
+                </ModernButton>
+                {ragService.getAPIKey(selectedProvider) && (
+                  <ModernButton
+                    variant="secondary"
+                    onClick={handleRemoveApiKey}
+                    className="text-xl px-8 py-4 border-4 border-red-300 text-red-600 hover:bg-red-50 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-500"
+                  >
+                    🗑️ Rimuovi
+                  </ModernButton>
+                )}
+              </div>
+
+              {/* Security Notice */}
+              <div className="mt-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-4 border-blue-200 rounded-2xl">
+                <div className="flex items-start space-x-4">
+                  <Shield className="w-8 h-8 text-blue-600 mt-1" />
+                  <div className="text-lg text-blue-800">
+                    <strong className="font-black">🔒 Sicurezza Totale:</strong> Le API key sono memorizzate localmente nel tuo browser e non vengono mai inviate a server esterni. 
+                    Ogni sessione mantiene le proprie configurazioni separate per la massima privacy.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Configuration Summary */}
+          {currentModel && (
+            <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl">
+              <h3 className="text-2xl font-black mb-6 text-white flex items-center gap-3">
+                <CheckCircle className="w-6 h-6" />
+                ✨ Configurazione Attuale
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                <div>
+                  <span className="font-bold text-white/80">Provider:</span>
+                  <span className="ml-3 text-white font-black">{currentProvider?.name}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-white/80">Modello:</span>
+                  <span className="ml-3 text-white font-black">{currentModel.name}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-white/80">Tipo:</span>
+                  <span className={`ml-3 font-black ${currentModel.free ? 'text-green-300' : 'text-orange-300'}`}>
+                    {currentModel.free ? '🆓 Gratuito' : '💰 Premium'}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-bold text-white/80">API Key:</span>
+                  <span className={`ml-3 font-black ${ragService.getAPIKey(selectedProvider) ? 'text-green-300' : 'text-red-300'}`}>
+                    {ragService.getAPIKey(selectedProvider) ? '✅ Configurata' : '❌ Mancante'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ChatbotPage = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedPersonality, setSelectedPersonality] = useState<string>('academic');
-  const [showConfig, setShowConfig] = useState(false);
-  const [apiKey, setApiKey] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState('openrouter');
-  const [selectedModel, setSelectedModel] = useState('');
+  const [selectedPersonality, setSelectedPersonality] = useState('socratic');
+  const [isTyping, setIsTyping] = useState(false);
+  const [showApiConfig, setShowApiConfig] = useState(false);
+  const [systemStatus, setSystemStatus] = useState(ragService.getSystemStatus());
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const { success, error, info } = useToast();
 
-  // Load messages from service on mount
   useEffect(() => {
-    const storedMessages = ragService.getConversationHistory();
-    setMessages(storedMessages);
-    
-    // Get system status
-    const status = ragService.getSystemStatus();
-    setSelectedProvider(status.provider);
-    setSelectedModel(status.model);
-    
-    // Check if API key is set
-    if (!status.configured) {
-      setShowConfig(true);
-      info('Configurazione necessaria', 'Inserisci una API key per iniziare', 5000);
-    }
-  }, [info]);
+    // Initialize with welcome message
+    const welcomeMessage: ChatMessage = {
+      id: '1',
+      role: 'system',
+      content: `🤖 **Benvenuto nel Sistema RAG Pyragogico Spettacolare!**
 
-  // Scroll to bottom when messages change
+**🎯 Sistema di Testing Completo** - Configurazione API personalizzabile
+
+**Vector Store:** ✅ Simulazione locale con contenuti reali del Peeragogy Handbook
+**Status:** 🚀 Pronto per la configurazione
+
+**Per iniziare:**
+1. 🔧 Clicca su "Configurazione" per inserire la tua API key
+2. 🎭 Seleziona una personalità AI
+3. 💬 Inizia a chattare!
+
+**Comandi utili:**
+• \`/help\` - Guida completa
+• \`/status\` - Verifica configurazione
+• \`/providers\` - Lista provider disponibili
+
+**🆓 Modelli Gratuiti Disponibili:**
+• Phi-3 Mini/Medium (Microsoft)
+• Gemma 7B (Google)
+• Llama 3 8B (Meta)
+• Mistral 7B (Mistral AI)
+
+Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚`,
+      timestamp: new Date(),
+      sessionId: ragService.getSessionId()
+    };
+
+    setMessages([welcomeMessage]);
+    updateSystemStatus();
+  }, []);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollToBottom();
   }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const updateSystemStatus = () => {
+    setSystemStatus(ragService.getSystemStatus());
+  };
+
+  const resetChat = () => {
+    const confirmReset = window.confirm('Sei sicuro di voler azzerare la conversazione? Tutti i messaggi verranno eliminati.');
+    
+    if (confirmReset) {
+      ragService.clearConversationHistory();
+      setMessages([
+        {
+          id: Date.now().toString(),
+          role: 'system',
+          content: '🔄 **Chat Azzerata!**\n\n**Sistema RAG Pyragogico** pronto per una nuova conversazione.\n\n**Personalità Attiva:** ' + getCurrentPersonality().name + ' ' + getCurrentPersonality().emoji + '\n**Configurazione:** ' + (systemStatus.configured ? '✅ Operativa' : '⚠️ Da configurare') + '\n\nPuoi iniziare con una nuova domanda o cambiare personalità! 🚀',
+          timestamp: new Date(),
+          sessionId: ragService.getSessionId()
+        }
+      ]);
+      setInputValue('');
+      setIsTyping(false);
+      
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+      
+      success('Chat azzerata', 'Conversazione resettata con successo');
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
-    
-    // Check if it's a command
-    const { isCommand, command, args } = ragService.parseCommand(inputValue);
-    
-    if (isCommand && command) {
-      setIsLoading(true);
-      try {
-        const response = await ragService.handleCommand(command, args || []);
-        
-        const commandMessage: ChatMessage = {
-          id: Date.now().toString(),
-          role: 'user',
-          content: inputValue,
-          timestamp: new Date(),
-          sessionId: ragService.getSessionId()
-        };
-        
-        const responseMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: response,
-          timestamp: new Date(),
-          personality: 'system',
-          sessionId: ragService.getSessionId()
-        };
-        
-        ragService.addMessageToHistory(commandMessage);
-        ragService.addMessageToHistory(responseMessage);
-        
-        setMessages([...messages, commandMessage, responseMessage]);
-        setInputValue('');
-        success('Comando eseguito', `/${command} completato con successo`);
-      } catch (err) {
-        error('Errore comando', err instanceof Error ? err.message : 'Errore sconosciuto');
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-    
-    // Regular message
+
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -92,493 +449,631 @@ const ChatbotPage = () => {
       timestamp: new Date(),
       sessionId: ragService.getSessionId()
     };
-    
-    setMessages([...messages, userMessage]);
+
+    setMessages(prev => [...prev, userMessage]);
     ragService.addMessageToHistory(userMessage);
     setInputValue('');
-    setIsLoading(true);
-    
+    setIsTyping(true);
+
     try {
-      const { response, sources, tokens } = await ragService.generateResponse(
-        inputValue,
-        selectedPersonality
-      );
+      const commandResult = ragService.parseCommand(inputValue);
       
-      const assistantMessage: ChatMessage = {
+      if (commandResult.isCommand) {
+        const response = await ragService.handleCommand(
+          commandResult.command!,
+          commandResult.args || []
+        );
+        
+        const systemMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'system',
+          content: response,
+          timestamp: new Date(),
+          sessionId: ragService.getSessionId()
+        };
+        
+        setMessages(prev => [...prev, systemMessage]);
+        ragService.addMessageToHistory(systemMessage);
+        updateSystemStatus();
+        
+        if (commandResult.command === 'clear') {
+          setMessages([systemMessage]);
+        }
+        
+        info('Comando eseguito', `Comando /${commandResult.command} completato`);
+      } else {
+        if (!systemStatus.configured) {
+          const errorMessage: ChatMessage = {
+            id: (Date.now() + 1).toString(),
+            role: 'system',
+            content: '⚠️ **Configurazione richiesta**\n\nPer utilizzare il sistema RAG, devi prima configurare una API key.\n\n**Passi necessari:**\n1. Clicca su "Configurazione" in alto a destra\n2. Seleziona un provider (consigliato: OpenRouter)\n3. Inserisci la tua API key\n4. Scegli un modello (disponibili opzioni gratuite)\n\n**Vector Store:** ✅ Pronto con contenuti del Peeragogy Handbook\n**API:** ❌ Richiede configurazione',
+            timestamp: new Date(),
+            sessionId: ragService.getSessionId()
+          };
+          setMessages(prev => [...prev, errorMessage]);
+          ragService.addMessageToHistory(errorMessage);
+          error('Configurazione richiesta', 'Configura una API key per continuare');
+        } else {
+          const result = await ragService.generateResponse(
+            inputValue,
+            selectedPersonality
+          );
+
+          const assistantMessage: ChatMessage = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: result.response,
+            personality: selectedPersonality,
+            timestamp: new Date(),
+            sources: result.sources,
+            tokens: result.tokens,
+            sessionId: ragService.getSessionId()
+          };
+
+          setMessages(prev => [...prev, assistantMessage]);
+          ragService.addMessageToHistory(assistantMessage);
+          success('Risposta generata', `Basata sui contenuti del Peeragogy Handbook${systemStatus.modelIsFree ? ' (modello gratuito)' : ''}`);
+        }
+      }
+    } catch (error) {
+      const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response,
-        personality: selectedPersonality,
+        role: 'system',
+        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Controlla che la tua API key sia valida\n• Prova con un modello diverso\n• Riprova con una domanda diversa`,
         timestamp: new Date(),
-        sources,
-        tokens,
+        sessionId: ragService.getSessionId()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      ragService.addMessageToHistory(errorMessage);
+      error('Errore sistema', error instanceof Error ? error.message : 'Errore sconosciuto');
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const getCurrentPersonality = (): PersonalityConfig => {
+    return PERSONALITIES.find(p => p.id === selectedPersonality) || PERSONALITIES[0];
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    info('Copiato', 'Testo copiato negli appunti');
+  };
+
+  const handlePersonalityChange = (personalityId: string) => {
+    const oldPersonality = getCurrentPersonality();
+    setSelectedPersonality(personalityId);
+    const newPersonality = PERSONALITIES.find(p => p.id === personalityId);
+    
+    if (newPersonality && oldPersonality.id !== personalityId) {
+      const changeMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'system',
+        content: `🎭 **Personalità cambiata!**\n\n**Da:** ${oldPersonality.name} ${oldPersonality.emoji} → **A:** ${newPersonality.name} ${newPersonality.emoji}\n\n**Nuovo stile:** ${newPersonality.description}\n\nLe prossime risposte seguiranno questo approccio. La conversazione precedente rimane invariata.`,
+        timestamp: new Date(),
         sessionId: ragService.getSessionId()
       };
       
-      setMessages(prev => [...prev, assistantMessage]);
-      ragService.addMessageToHistory(assistantMessage);
-      
-      if (tokens) {
-        info(
-          'Tokens utilizzati',
-          `Input: ${tokens.input}, Output: ${tokens.output}, Costo: $${tokens.cost.toFixed(6)}`,
-          3000
-        );
-      }
-    } catch (err) {
-      error('Errore generazione risposta', err instanceof Error ? err.message : 'Errore sconosciuto');
-    } finally {
-      setIsLoading(false);
+      setMessages(prev => [...prev, changeMessage]);
+      ragService.addMessageToHistory(changeMessage);
+      info('Personalità cambiata', `Ora attiva: ${newPersonality.name} ${newPersonality.emoji}`);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
+  const quickPrompts = [
+    "Spiegami i principi fondamentali della peeragogy",
+    "Come posso implementare l'apprendimento peer-to-peer?",
+    "Quali sono i pattern ricorrenti nella peeragogy?",
+    "Come gestire i conflitti in un gruppo di apprendimento?",
+    "Che ruolo ha la motivazione nell'apprendimento collaborativo?",
+    "Come creare spazi sicuri per l'apprendimento?",
+    "Quali tecnologie supportano la peeragogy?"
+  ];
 
-  const handleClearChat = () => {
-    ragService.clearConversationHistory();
-    setMessages([]);
-    success('Chat cancellata', 'La cronologia è stata rimossa');
-  };
-
-  const handleSaveConfig = () => {
-    // Set API key
-    if (apiKey) {
-      const keySet = ragService.setAPIKey(selectedProvider, apiKey);
-      if (!keySet) {
-        error('API Key non valida', 'Controlla il formato della chiave API');
-        return;
-      }
-    }
-    
-    // Set provider and model
-    ragService.setProvider(selectedProvider);
-    if (selectedModel) {
-      ragService.setModel(selectedModel);
-    }
-    
-    setShowConfig(false);
-    success('Configurazione salvata', 'Le impostazioni sono state aggiornate');
-    
-    // Clear input field for security
-    setApiKey('');
-  };
-
-  const getPersonalityConfig = (id: string): PersonalityConfig | undefined => {
-    return PERSONALITIES.find(p => p.id === id);
-  };
-
-  const formatMessageContent = (content: string) => {
-    // Basic markdown-like formatting
-    return content
-      .split('\n\n')
-      .map((paragraph, i) => {
-        // Code blocks
-        if (paragraph.startsWith('```') && paragraph.endsWith('```')) {
-          const code = paragraph.slice(3, -3);
-          return (
-            <pre key={i} className="bg-slate-800 text-white p-4 rounded-lg overflow-x-auto my-4">
-              <code>{code}</code>
-            </pre>
-          );
-        }
-        
-        // Headers
-        if (paragraph.startsWith('# ')) {
-          return <h2 key={i} className="text-2xl font-bold mt-6 mb-4">{paragraph.slice(2)}</h2>;
-        }
-        if (paragraph.startsWith('## ')) {
-          return <h3 key={i} className="text-xl font-bold mt-5 mb-3">{paragraph.slice(3)}</h3>;
-        }
-        
-        // Bold
-        const boldFormatted = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        
-        // Lists
-        if (paragraph.startsWith('- ') || paragraph.startsWith('• ')) {
-          return (
-            <ul key={i} className="list-disc pl-5 my-3 space-y-2">
-              <li dangerouslySetInnerHTML={{ __html: boldFormatted.slice(2) }} />
-            </ul>
-          );
-        }
-        
-        return <p key={i} className="my-3" dangerouslySetInnerHTML={{ __html: boldFormatted }} />;
-      });
-  };
-
-  const renderSources = (sources?: any[]) => {
-    if (!sources || sources.length === 0) return null;
-    
-    return (
-      <div className="mt-4 pt-4 border-t border-slate-200">
-        <h4 className="text-sm font-semibold text-slate-700 mb-2">Fonti:</h4>
-        <div className="space-y-2">
-          {sources.map((source, index) => (
-            <div key={index} className="text-xs bg-slate-50 p-3 rounded-lg">
-              <div className="font-semibold text-slate-800">{source.title}</div>
-              <div className="text-slate-600 mt-1">{source.chapter}</div>
-              <div className="text-slate-500 mt-1 text-xs">
-                Autore: {source.metadata.author} • 
-                Pagina: {source.metadata.page} • 
-                Versione: {source.metadata.version}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderChatMessage = (message: ChatMessage) => {
-    const isUser = message.role === 'user';
-    const personality = isUser ? undefined : getPersonalityConfig(message.personality || 'academic');
-    
-    return (
-      <div
-        key={message.id}
-        className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`}
-      >
-        <div
-          className={`flex ${isUser ? 'flex-row-reverse' : 'flex-row'} max-w-[85%] gap-3`}
-        >
-          {/* Avatar */}
-          <div className="flex-shrink-0">
-            {isUser ? (
-              <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                <User className="w-6 h-6 text-indigo-600" />
-              </div>
-            ) : (
-              <PersonalityAvatar 
-                personality={message.personality || 'academic'} 
-                size="md"
-                showGlow={true}
-              />
-            )}
-          </div>
-          
-          {/* Message Content */}
-          <div
-            className={`rounded-2xl px-6 py-4 ${
-              isUser
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
-                : 'bg-white border border-slate-200 shadow-md'
-            }`}
-          >
-            {/* Personality Label for AI */}
-            {!isUser && personality && (
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-semibold text-slate-700">
-                  {personality.emoji} {personality.name}
-                </span>
-              </div>
-            )}
-            
-            {/* Message Text */}
-            <div className={`${isUser ? 'text-white' : 'text-slate-700'}`}>
-              {formatMessageContent(message.content)}
-            </div>
-            
-            {/* Sources for AI responses */}
-            {!isUser && message.sources && renderSources(message.sources)}
-            
-            {/* Timestamp */}
-            <div className={`text-xs mt-2 ${isUser ? 'text-indigo-100' : 'text-slate-400'}`}>
-              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const commandExamples = [
+    "/status",
+    "/providers",
+    "/models",
+    "/help",
+    "/clear"
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 py-8">
-      <div className="container-modern">
-        <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <Brain className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">AI Assistant</h1>
-                <p className="text-slate-600">Powered by Peeragogy Handbook V3</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <ModernButton
-                variant="secondary"
-                onClick={() => setShowConfig(true)}
-                icon={<Settings className="w-5 h-5" />}
-                ariaLabel="Configurazione"
-              >
-                Configurazione
-              </ModernButton>
-              
-              <ModernButton
-                variant="outline"
-                onClick={() => info('Informazioni', 'AI Assistant con contenuti reali del Peeragogy Handbook V3')}
-                icon={<Info className="w-5 h-5" />}
-                ariaLabel="Informazioni"
-              >
-                Info
-              </ModernButton>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      <div className="container-modern py-12">
+        {/* Enhanced Header Spettacolare */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-xl font-black mb-8 shadow-2xl border-4 border-purple-200 animate-pulse">
+            <Brain className="w-6 h-6 animate-spin" style={{ animationDuration: '3s' }} />
+            <span>Sistema RAG Production-Ready con API Personalizzabili</span>
+            <Sparkles className="w-6 h-6 animate-pulse" />
           </div>
+          <h1 className="text-6xl md:text-7xl font-black text-slate-900 mb-8 leading-tight">
+            AI Assistant 
+            <span className="block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-pulse">
+              Pyragogico
+            </span>
+          </h1>
+          <p className="text-2xl text-slate-600 max-w-5xl mx-auto leading-relaxed font-light">
+            Sistema RAG (Retrieval-Augmented Generation) con <strong className="text-slate-900 font-black">personalità multiple</strong> basato sul 
+            <strong className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"> Peeragogy Handbook completo</strong>. 
+            Configurazione API flessibile con supporto per <strong className="text-slate-900 font-black">modelli gratuiti e premium</strong>.
+          </p>
           
-          {/* Personality Selector */}
-          <div className="bg-white rounded-2xl shadow-lg p-4 mb-8">
-            <div className="flex flex-wrap items-center gap-4">
-              <span className="text-slate-700 font-semibold">Personalità:</span>
-              
-              {PERSONALITIES.map((personality) => (
-                <button
-                  key={personality.id}
-                  onClick={() => setSelectedPersonality(personality.id)}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 ${
-                    selectedPersonality === personality.id
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  <PersonalityAvatar 
-                    personality={personality.id} 
-                    size="sm"
-                    showGlow={selectedPersonality === personality.id}
-                  />
-                  <span>{personality.name}</span>
-                </button>
-              ))}
+          {/* System Status Spettacolare */}
+          <div className="mt-12 flex flex-wrap justify-center gap-6">
+            <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-green-50 to-emerald-50 border-4 border-green-200 rounded-2xl shadow-xl">
+              <Database className="w-6 h-6 text-green-600 animate-pulse" />
+              <span className="text-green-800 font-black text-lg">Vector Store Locale</span>
+              <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
-          </div>
-          
-          {/* Chat Container */}
-          <ModernCard className="mb-6 min-h-[500px] max-h-[70vh] overflow-y-auto" padding="lg">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-[500px] text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center mb-6">
-                  <Database className="w-10 h-10 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-4">
-                  Benvenuto nell'AI Assistant
-                </h2>
-                <p className="text-slate-600 max-w-md mb-8">
-                  Fai una domanda sul Peeragogy Handbook V3 e riceverai risposte basate su contenuti reali con citazioni precise.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
-                  <ModernButton
-                    variant="secondary"
-                    onClick={() => setInputValue('/status')}
-                    icon={<Info className="w-5 h-5" />}
-                  >
-                    Stato Sistema
-                  </ModernButton>
-                  <ModernButton
-                    variant="secondary"
-                    onClick={() => setInputValue('/help')}
-                    icon={<HelpCircle className="w-5 h-5" />}
-                  >
-                    Guida Comandi
-                  </ModernButton>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {messages.map(renderChatMessage)}
-                <div ref={messagesEndRef} />
+            <div className={`inline-flex items-center space-x-3 px-6 py-3 rounded-2xl border-4 shadow-xl ${
+              systemStatus.configured 
+                ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 text-green-800' 
+                : 'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 text-orange-800'
+            }`}>
+              <Key className="w-6 h-6" />
+              <span className="font-black text-lg">
+                {systemStatus.configured ? '✅ API Configurata' : '⚠️ API da Configurare'}
+              </span>
+            </div>
+            <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-4 border-blue-200 rounded-2xl shadow-xl">
+              <Shield className="w-6 h-6 text-blue-600" />
+              <span className="text-blue-800 font-black text-lg">Sicurezza Locale</span>
+            </div>
+            {systemStatus.modelIsFree && (
+              <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-emerald-50 to-green-50 border-4 border-emerald-200 rounded-2xl shadow-xl">
+                <Zap className="w-6 h-6 text-emerald-600 animate-pulse" />
+                <span className="text-emerald-800 font-black text-lg">Modello Gratuito</span>
               </div>
             )}
-          </ModernCard>
-          
-          {/* Input Area */}
-          <div className="flex items-end gap-4">
-            <div className="flex-1">
-              <ModernInput
-                type="text"
-                placeholder="Fai una domanda sul Peeragogy Handbook..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isLoading || showConfig}
-                icon={<Command className="w-5 h-5" />}
-                ariaLabel="Messaggio"
-              />
-              <div className="mt-2 text-xs text-slate-500 flex items-center gap-2">
-                <Command className="w-3 h-3" /> 
-                <span>Prova <code>/help</code> per i comandi disponibili</span>
-              </div>
-            </div>
-            
-            <ModernButton
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isLoading || showConfig}
-              loading={isLoading}
-              icon={<Send className="w-5 h-5" />}
-              ariaLabel="Invia messaggio"
-            >
-              Invia
-            </ModernButton>
-            
-            <ModernButton
-              variant="outline"
-              onClick={handleClearChat}
-              disabled={messages.length === 0 || isLoading || showConfig}
-              icon={<Trash2 className="w-5 h-5" />}
-              ariaLabel="Cancella chat"
-            >
-              Cancella
-            </ModernButton>
           </div>
         </div>
-      </div>
-      
-      {/* Configuration Modal */}
-      {showConfig && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <ModernCard className="w-full max-w-2xl max-h-[90vh] overflow-y-auto" padding="lg">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-slate-900">Configurazione AI</h2>
-              <button
-                onClick={() => setShowConfig(false)}
-                className="p-2 text-slate-500 hover:text-slate-700 rounded-full"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            
-            <div className="space-y-8">
-              {/* Provider Selection */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Provider AI</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {ragService.API_PROVIDERS.map((provider) => (
-                    <button
-                      key={provider.id}
-                      onClick={() => {
-                        setSelectedProvider(provider.id);
-                        setSelectedModel('');
-                      }}
-                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                        selectedProvider === provider.id
-                          ? 'border-indigo-500 bg-indigo-50'
-                          : 'border-slate-200 hover:border-slate-300'
-                      }`}
-                    >
-                      <h4 className="font-semibold text-slate-900">{provider.name}</h4>
-                      <p className="text-sm text-slate-600 mt-1">{provider.description}</p>
-                    </button>
-                  ))}
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+          {/* Enhanced Sidebar Spettacolare */}
+          <div className="lg:col-span-1 space-y-10">
+            {/* System Status */}
+            <ModernCard className="shadow-2xl border-4 border-indigo-200/50">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3">
+                  <TrendingUp className="w-6 h-6 text-indigo-600" />
+                  Stato Sistema
+                </h3>
+                <button
+                  onClick={() => setShowApiConfig(true)}
+                  className="p-3 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-110"
+                  aria-label="Configurazione API"
+                >
+                  <Settings className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="space-y-6">
+                {/* Configuration Status */}
+                <div className="flex items-center space-x-4">
+                  {systemStatus.configured ? (
+                    <CheckCircle className="w-8 h-8 text-green-500 animate-pulse" />
+                  ) : (
+                    <AlertCircle className="w-8 h-8 text-orange-500 animate-pulse" />
+                  )}
+                  <div className="flex-1">
+                    <div className="text-lg font-black text-slate-900">
+                      {systemStatus.configured ? '✅ Sistema Configurato' : '⚠️ Configurazione Richiesta'}
+                    </div>
+                    <div className="text-sm text-slate-600 font-semibold">
+                      {systemStatus.configured ? `${systemStatus.provider} • ${systemStatus.model}` : 'Inserisci API key per iniziare'}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              {/* API Key Input */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">API Key</h3>
-                <ModernInput
-                  type="password"
-                  placeholder={`Inserisci ${selectedProvider} API key`}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  icon={<Key className="w-5 h-5" />}
-                />
-                <p className="text-sm text-slate-500 mt-2">
-                  La tua API key è memorizzata solo localmente nel browser e non viene mai condivisa.
-                </p>
-              </div>
-              
-              {/* Model Selection */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Modello AI</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {ragService.API_PROVIDERS.find(p => p.id === selectedProvider)?.models.map((model) => (
-                    <button
-                      key={model.id}
-                      onClick={() => setSelectedModel(model.id)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                        selectedModel === model.id
-                          ? 'border-indigo-500 bg-indigo-50'
-                          : 'border-slate-200 hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-slate-900">{model.name}</h4>
-                        {model.free && (
-                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                            Free
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-slate-600">{model.description}</p>
-                      {!model.free && model.pricing && (
-                        <p className="text-xs text-slate-500 mt-2">
-                          ${model.pricing.input}/1K input, ${model.pricing.output}/1K output
-                        </p>
-                      )}
-                    </button>
-                  ))}
+                
+                {/* API Key Status */}
+                <div className="flex items-center space-x-4">
+                  {systemStatus.hasApiKey ? (
+                    <CheckCircle className="w-8 h-8 text-green-500" />
+                  ) : (
+                    <AlertCircle className="w-8 h-8 text-orange-500" />
+                  )}
+                  <div className="flex-1">
+                    <div className="text-lg font-black text-slate-900">
+                      🔑 API Key {systemStatus.hasApiKey ? 'Configurata' : 'Mancante'}
+                    </div>
+                    <div className="text-sm text-slate-600 font-semibold">
+                      {systemStatus.hasApiKey ? 'Memorizzata localmente' : 'Richiesta per l\'accesso AI'}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              {/* Free Models Info */}
-              <div className="bg-blue-50 p-4 rounded-xl">
-                <div className="flex items-start gap-3">
-                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-blue-800">Modelli Gratuiti Disponibili</h4>
-                    <p className="text-sm text-blue-700 mt-1">
-                      OpenRouter offre modelli gratuiti come Phi-3, Gemma, Llama 3 e Mistral.
-                      Perfetti per testare senza costi!
-                    </p>
+
+                {/* Vector Store Status */}
+                <div className="flex items-center space-x-4">
+                  <CheckCircle className="w-8 h-8 text-green-500" />
+                  <div className="flex-1">
+                    <div className="text-lg font-black text-slate-900">📚 Vector Store Locale</div>
+                    <div className="text-sm text-slate-600 font-semibold">Peeragogy Handbook • Attivo</div>
+                  </div>
+                </div>
+
+                {/* Session Info */}
+                <div className="flex items-center space-x-4">
+                  <Globe className="w-8 h-8 text-blue-500" />
+                  <div className="flex-1">
+                    <div className="text-lg font-black text-slate-900">🌐 Sessione Attiva</div>
+                    <div className="text-sm text-slate-600 font-mono font-bold">
+                      {systemStatus.sessionId.substring(0, 16)}...
+                    </div>
                   </div>
                 </div>
               </div>
-              
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-4 pt-4 border-t border-slate-200">
+
+              {!systemStatus.configured && (
                 <ModernButton
-                  variant="secondary"
-                  onClick={() => setShowConfig(false)}
+                  variant="primary"
+                  onClick={() => setShowApiConfig(true)}
+                  className="w-full mt-6 text-xl py-4 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-500"
                 >
-                  Annulla
+                  🚀 Configura API
                 </ModernButton>
-                <ModernButton
-                  onClick={handleSaveConfig}
-                  icon={<Check className="w-5 h-5" />}
-                >
-                  Salva Configurazione
-                </ModernButton>
+              )}
+            </ModernCard>
+
+            {/* Enhanced Personality Selector */}
+            <ModernCard className="shadow-2xl border-4 border-purple-200/50">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3">
+                  <Brain className="w-6 h-6 text-purple-600" />
+                  Personalità AI
+                </h3>
+                <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-sm font-black border-2 border-green-200">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>ATTIVA</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {PERSONALITIES.map((personality) => (
+                  <button
+                    key={personality.id}
+                    onClick={() => handlePersonalityChange(personality.id)}
+                    className={`w-full p-6 rounded-2xl text-left transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl ${
+                      selectedPersonality === personality.id
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-2xl ring-4 ring-indigo-500/20 scale-105'
+                        : 'bg-white hover:bg-slate-50 text-slate-900 border-4 border-transparent hover:border-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4 mb-3">
+                      <span className="text-4xl">{personality.emoji}</span>
+                      <div className="flex-1">
+                        <h4 className="font-black flex items-center space-x-3 text-xl">
+                          <span>{personality.name}</span>
+                          {selectedPersonality === personality.id && (
+                            <span className="text-sm bg-white/20 px-3 py-1 rounded-full font-black">ATTIVA</span>
+                          )}
+                        </h4>
+                      </div>
+                    </div>
+                    <p className="text-lg opacity-90 mb-3 leading-relaxed">{personality.description}</p>
+                    <div className="text-sm opacity-75 font-bold">
+                      🌡️ Temp: {personality.temperature} • 🎯 Max: {personality.maxTokens} token
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </ModernCard>
+
+            {/* Quick Prompts */}
+            <ModernCard className="shadow-2xl border-4 border-green-200/50">
+              <h4 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-green-600" />
+                📚 Domande sul Peeragogy Handbook
+              </h4>
+              <div className="space-y-3">
+                {quickPrompts.map((prompt, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setInputValue(prompt)}
+                    className="w-full p-4 text-left text-lg text-slate-600 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 rounded-2xl transition-all duration-300 border-2 border-slate-200 hover:border-indigo-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </ModernCard>
+
+            {/* Command Examples */}
+            <ModernCard className="shadow-2xl border-4 border-blue-200/50">
+              <h4 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                <Zap className="w-6 h-6 text-blue-600" />
+                ⚡ Comandi Sistema
+              </h4>
+              <div className="space-y-3">
+                {commandExamples.map((command, index) => (
+                  <div key={index} className="group flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl border-2 border-slate-200 hover:border-blue-300 transition-all duration-300">
+                    <code className="flex-1 text-lg text-slate-700 font-mono font-bold">{command}</code>
+                    <button
+                      onClick={() => copyToClipboard(command)}
+                      className="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-slate-600 transition-all duration-300 rounded-lg hover:bg-slate-100"
+                      aria-label="Copia comando"
+                    >
+                      <Copy className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </ModernCard>
+          </div>
+
+          {/* Enhanced Chat Interface Spettacolare */}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-3xl shadow-2xl h-[900px] flex flex-col border-4 border-indigo-200/50">
+              {/* Enhanced Chat Header */}
+              <div className="p-8 border-b-4 border-slate-200 bg-gradient-to-r from-slate-50 to-white rounded-t-3xl">
+                <div className="flex items-center space-x-6">
+                  <div className="relative p-4 rounded-3xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-2xl">
+                    <Brain className="w-10 h-10 text-white" />
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white animate-pulse"></div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-4">
+                      <h3 className="font-black text-slate-900 text-3xl">
+                        🤖 RAG System • {getCurrentPersonality().name}
+                      </h3>
+                      <span className="text-4xl">{getCurrentPersonality().emoji}</span>
+                      <span className="px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-lg font-black border-2 border-green-200">
+                        PRODUCTION
+                      </span>
+                      {systemStatus.modelIsFree && (
+                        <span className="px-4 py-2 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 rounded-full text-lg font-black border-2 border-emerald-200">
+                          FREE
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-slate-600 leading-relaxed text-xl font-medium">
+                      {getCurrentPersonality().description} • {systemStatus.configured ? `${systemStatus.provider} attivo` : 'Configurazione richiesta'}
+                    </p>
+                  </div>
+                  
+                  <button
+                    onClick={resetChat}
+                    className="group p-4 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all duration-300 border-4 border-transparent hover:border-red-200 shadow-lg hover:shadow-xl transform hover:scale-110"
+                    title="Reset Chat - Azzera conversazione"
+                    aria-label="Reset chat"
+                  >
+                    <RotateCcw className="w-8 h-8 group-hover:rotate-180 transition-transform duration-500" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Enhanced Messages */}
+              <div className="flex-1 p-8 overflow-y-auto space-y-8 bg-gradient-to-b from-slate-50/50 to-white">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`flex items-start space-x-6 max-w-5xl ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                      <div className={`p-4 rounded-3xl shadow-2xl ${
+                        message.role === 'user' 
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600' 
+                          : message.role === 'system'
+                          ? 'bg-gradient-to-r from-slate-400 to-slate-500'
+                          : 'bg-gradient-to-r from-purple-500 to-pink-500'
+                      }`}>
+                        {message.role === 'user' ? (
+                          <User className="w-8 h-8 text-white" />
+                        ) : message.role === 'system' ? (
+                          <Settings className="w-8 h-8 text-white" />
+                        ) : (
+                          <Brain className="w-8 h-8 text-white" />
+                        )}
+                      </div>
+                      <div className={`p-8 rounded-3xl shadow-2xl max-w-4xl ${
+                        message.role === 'user' 
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white' 
+                          : message.role === 'system'
+                          ? 'bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 border-4 border-slate-300'
+                          : 'bg-white text-slate-900 border-4 border-slate-200'
+                      }`}>
+                        <MarkdownRenderer content={message.content} />
+                        
+                        {/* Sources from Vector Store */}
+                        {message.sources && message.sources.length > 0 && (
+                          <div className="mt-6 pt-6 border-t-4 border-slate-200">
+                            <h5 className="text-lg font-black text-slate-600 mb-4 flex items-center gap-3">
+                              <Database className="w-6 h-6" />
+                              📚 Fonti dal Vector Store:
+                            </h5>
+                            <div className="space-y-3">
+                              {message.sources.map((source: RetrievedSource, index: number) => (
+                                <div key={index} className="p-4 bg-slate-50 rounded-2xl border-4 border-slate-200 shadow-lg">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-lg font-black text-slate-900">{source.title}</span>
+                                    <span className="text-sm text-slate-500 font-bold">
+                                      {Math.round(source.similarity * 100)}% rilevanza
+                                    </span>
+                                  </div>
+                                  <div className="text-sm text-slate-600 font-semibold">
+                                    {source.chapter} • {source.metadata.author} • Pag. {source.metadata.page}
+                                  </div>
+                                  {source.metadata.section && (
+                                    <div className="text-sm text-slate-500 mt-1 font-medium">
+                                      Sezione: {source.metadata.section}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Token Usage */}
+                        {message.tokens && (
+                          <div className="mt-6 pt-6 border-t-4 border-slate-200">
+                            <div className="flex items-center space-x-6 text-sm text-slate-500 font-bold">
+                              <span>📥 Input: {message.tokens.input} tokens</span>
+                              <span>📤 Output: {message.tokens.output} tokens</span>
+                              <span>💰 Costo: {message.tokens.cost === 0 ? '🆓 Gratuito' : `~$${message.tokens.cost.toFixed(4)}`}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Typing Indicator */}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="flex items-start space-x-6 max-w-5xl">
+                      <div className="p-4 rounded-3xl shadow-2xl bg-gradient-to-r from-purple-500 to-pink-500">
+                        <Brain className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="p-8 rounded-3xl shadow-2xl bg-white border-4 border-slate-200">
+                        <LoadingSpinner size="sm" text="🤖 Generando risposta spettacolare..." />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Enhanced Input */}
+              <div className="p-8 border-t-4 border-slate-200 bg-white rounded-b-3xl">
+                <div className="flex space-x-6">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder={systemStatus.configured 
+                      ? `💬 Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
+                      : '⚠️ Configura una API key per iniziare...'
+                    }
+                    className="flex-1 px-8 py-6 border-4 border-slate-200 rounded-3xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-xl shadow-xl"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    disabled={isTyping}
+                  />
+                  
+                  <ModernButton
+                    variant="secondary"
+                    onClick={resetChat}
+                    disabled={isTyping}
+                    className="px-8 py-6 border-4 border-slate-300 text-slate-700 rounded-3xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 text-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-500"
+                    title="Reset Chat"
+                    ariaLabel="Reset chat"
+                  >
+                    <Trash2 className="w-6 h-6" />
+                    <span className="hidden sm:inline ml-2">Reset</span>
+                  </ModernButton>
+                  
+                  <ModernButton
+                    variant="primary"
+                    onClick={handleSendMessage}
+                    disabled={!inputValue.trim() || isTyping}
+                    className="px-10 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-3xl hover:from-indigo-700 hover:to-purple-700 text-xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-500"
+                  >
+                    {isTyping ? (
+                      <Loader className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <Send className="w-6 h-6" />
+                    )}
+                    <span className="hidden sm:inline ml-3">Invia</span>
+                  </ModernButton>
+                </div>
               </div>
             </div>
-          </ModernCard>
+          </div>
         </div>
-      )}
+
+        {/* API Configuration Modal */}
+        <APIConfigPanel
+          isOpen={showApiConfig}
+          onClose={() => setShowApiConfig(false)}
+          onConfigUpdate={updateSystemStatus}
+        />
+
+        {/* Enhanced System Visualization */}
+        <div className="mt-24 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-12 text-white shadow-2xl border-4 border-slate-700">
+          <h3 className="text-4xl font-black mb-12 text-center flex items-center justify-center gap-4">
+            <Infinity className="w-8 h-8 animate-spin" style={{ animationDuration: '3s' }} />
+            Sistema RAG Production-Ready Spettacolare
+            <Sparkles className="w-8 h-8 animate-pulse" />
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div className="text-center space-y-6 group">
+              <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Database className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h4 className="text-2xl font-black mb-3">1. Vector Store</h4>
+                <p className="text-slate-300 text-lg leading-relaxed">
+                  Peeragogy Handbook completo indicizzato localmente con embedding semantici spettacolari
+                </p>
+              </div>
+            </div>
+            <div className="text-center space-y-6 group">
+              <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-teal-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Key className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h4 className="text-2xl font-black mb-3">2. API Sicure</h4>
+                <p className="text-slate-300 text-lg leading-relaxed">
+                  Gestione sicura delle API key con memorizzazione locale e sessioni separate
+                </p>
+              </div>
+            </div>
+            <div className="text-center space-y-6 group">
+              <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Brain className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h4 className="text-2xl font-black mb-3">3. AI Personalities</h4>
+                <p className="text-slate-300 text-lg leading-relaxed">
+                  Personalità multiple con prompt specializzati per diversi stili di apprendimento
+                </p>
+              </div>
+            </div>
+            <div className="text-center space-y-6 group">
+              <div className="w-24 h-24 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-all duration-500">
+                <Zap className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h4 className="text-2xl font-black mb-3">4. Smart Response</h4>
+                <p className="text-slate-300 text-lg leading-relaxed">
+                  Generazione di risposte contestualizzate con fonti verificabili e spettacolari
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 p-8 bg-white/10 backdrop-blur-sm rounded-2xl border-4 border-white/20">
+            <h4 className="text-2xl font-black mb-6 flex items-center gap-3">
+              <Shield className="w-6 h-6" />
+              🔒 Sicurezza e Controllo Completo
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-lg">
+              <div>
+                <h5 className="font-black mb-3">🔒 Sicurezza Locale</h5>
+                <p className="text-slate-300 leading-relaxed">
+                  API key memorizzate solo nel browser. Sessioni separate con ID univoci. Nessun dato condiviso.
+                </p>
+              </div>
+              <div>
+                <h5 className="font-black mb-3">🆓 Modelli Gratuiti</h5>
+                <p className="text-slate-300 leading-relaxed">
+                  Accesso a modelli gratuiti tramite OpenRouter: Phi-3, Gemma, Llama 3, Mistral.
+                </p>
+              </div>
+              <div>
+                <h5 className="font-black mb-3">⚙️ Configurazione Flessibile</h5>
+                <p className="text-slate-300 leading-relaxed">
+                  Selezione provider e modelli personalizzabile. Supporto per OpenAI, Anthropic, OpenRouter.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-// Componente Key per l'icona della chiave
-const Key = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-  </svg>
-);
-
-export default React.memo(ChatbotPage);
+export default ChatbotPage;

@@ -1,10 +1,10 @@
 import React, { useState, Suspense } from 'react';
-import { BookOpen, Brain, Database, Menu, X, Sparkles, Zap } from 'lucide-react';
+import { BookOpen, Brain, Users, Menu, X, Sparkles, Database, Zap } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useToast } from './components/ToastNotification';
 
-// Lazy loading ottimizzato per performance
+// Lazy loading delle pagine principali
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const LibraryPage = React.lazy(() => import('./pages/LibraryPage'));
 const ChatbotPage = React.lazy(() => import('./pages/ChatbotPage'));
@@ -12,7 +12,7 @@ const ChatbotPage = React.lazy(() => import('./pages/ChatbotPage'));
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { ToastContainer, success, info } = useToast();
+  const { ToastContainer, success, error, info } = useToast();
 
   const navigation = [
     { id: 'home', name: 'Home', icon: Sparkles },
@@ -45,11 +45,11 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-slate-50">
-        {/* Navigation Ottimizzata */}
-        <nav className="bg-white/95 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Modern Navigation */}
+        <nav className="nav-modern">
+          <div className="container-modern">
             <div className="flex justify-between items-center h-20">
-              {/* Logo Moderno */}
+              {/* Modern Logo */}
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600">
@@ -60,10 +60,10 @@ function App() {
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold text-gradient">
                     Biblioteca Pyragogica
                   </h1>
-                  <p className="text-sm text-slate-500 font-medium">Core System v2.0</p>
+                  <p className="text-sm text-slate-500 font-medium">Modern Interface</p>
                 </div>
               </div>
 
@@ -75,11 +75,7 @@ function App() {
                     <button
                       key={item.id}
                       onClick={() => handlePageChange(item.id)}
-                      className={`flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-slate-100/80 min-h-[44px] ${
-                        currentPage === item.id 
-                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg' 
-                          : 'text-slate-600'
-                      }`}
+                      className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
                       aria-label={`Naviga a ${item.name}`}
                     >
                       <Icon className="w-5 h-5" />
@@ -129,7 +125,7 @@ function App() {
           </div>
         </nav>
 
-        {/* Page Content con Loading Ottimizzato */}
+        {/* Page Content with Modern Loading */}
         <main className="relative">
           <Suspense 
             fallback={
@@ -140,7 +136,7 @@ function App() {
                   </div>
                   <LoadingSpinner 
                     size="lg" 
-                    text="Caricamento sistema ottimizzato..."
+                    text="Preparazione dell'interfaccia moderna..."
                   />
                 </div>
               </div>
@@ -154,11 +150,11 @@ function App() {
           </Suspense>
         </main>
 
-        {/* Toast Notifications */}
+        {/* Toast Notifications Container */}
         <ToastContainer />
       </div>
     </ErrorBoundary>
   );
 }
 
-export default React.memo(App);
+export default App;

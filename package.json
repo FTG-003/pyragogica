@@ -1,20 +1,19 @@
 {
-  "name": "biblioteca-digitale-pyragogica-core",
+  "name": "vite-react-typescript-starter",
   "private": true,
-  "version": "2.0.0",
+  "version": "0.0.0",
   "type": "module",
-  "description": "Core system ottimizzato per la Biblioteca Digitale Pyragogica",
   "scripts": {
     "dev": "vite",
     "build": "vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "analyze": "npm run build && npx vite-bundle-analyzer dist/assets/*.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "@supabase/supabase-js": "^2.39.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -28,20 +27,8 @@
     "globals": "^15.9.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "terser": "^5.43.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2"
-  },
-  "keywords": [
-    "education",
-    "ai",
-    "rag",
-    "peeragogy",
-    "react",
-    "typescript",
-    "performance-optimized"
-  ],
-  "author": "Biblioteca Digitale Pyragogica Team",
-  "license": "MIT"
+  }
 }

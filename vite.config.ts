@@ -1,41 +1,34 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    host: true,
-    port: 5173,
-    // Add WebContainer-specific optimizations
-    hmr: {
-      port: 5173,
-    },
-    // Disable file system watching optimizations that might cause issues in WebContainer
-    watch: {
-      usePolling: false,
-      interval: 100,
-    },
-  },
-  // Optimize for WebContainer environment
   optimizeDeps: {
-    include: ['react', 'react-dom', 'lucide-react'],
-    force: true,
+    exclude: ['lucide-react'],
   },
   build: {
-    target: 'esnext',
-    minify: 'terser',
+    // Fix timeout issues during build
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          icons: ['lucide-react'],
-        },
-      },
-    },
+          ui: ['lucide-react']
+        }
+      }
+    }
   },
-  // Ensure compatibility with WebContainer
-  define: {
-    global: 'globalThis',
+  server: {
+    // Prevent timeout issues in development
+    hmr: {
+      timeout: 60000
+    }
   },
-})
+  // Resolve potential module resolution issues
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  }
+});

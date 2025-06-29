@@ -8,7 +8,6 @@ interface ModernInputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   error?: boolean;
   errorMessage?: string;
@@ -27,7 +26,6 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(({
   onChange,
   onFocus,
   onBlur,
-  onKeyDown,
   disabled = false,
   error = false,
   errorMessage,
@@ -96,7 +94,6 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(({
         onChange={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        onKeyDown={onKeyDown}
         disabled={disabled}
         required={required}
         aria-label={ariaLabel}

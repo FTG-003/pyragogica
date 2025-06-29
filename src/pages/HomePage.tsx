@@ -79,10 +79,34 @@ const HomePage = () => {
   ];
 
   const scalabilityMetrics = [
-    { metric: 'Risorse Supportate', value: '∞', description: 'Nessun limite teorico alla crescita', icon: Infinity },
-    { metric: 'Formati Contenuto', value: '10+', description: 'PDF, HTML, Video, Audio, Dataset...', icon: Layers },
-    { metric: 'Lingue Supportate', value: 'Tutte', description: 'Sistema di traduzione AI integrato', icon: Globe },
-    { metric: 'Categorie', value: 'Dinamiche', description: 'Tassonomia auto-espandente', icon: Target }
+    { 
+      metric: 'Risorse Supportate', 
+      value: '∞', 
+      description: 'Nessun limite teorico alla crescita', 
+      icon: Infinity,
+      color: 'from-blue-500 to-cyan-500'
+    },
+    { 
+      metric: 'Formati Contenuto', 
+      value: '10+', 
+      description: 'PDF, HTML, Video, Audio, Dataset...', 
+      icon: Layers,
+      color: 'from-purple-500 to-pink-500'
+    },
+    { 
+      metric: 'Lingue Supportate', 
+      value: 'Tutte', 
+      description: 'Sistema di traduzione AI integrato', 
+      icon: Globe,
+      color: 'from-green-500 to-teal-500'
+    },
+    { 
+      metric: 'Categorie', 
+      value: 'Dinamiche', 
+      description: 'Tassonomia auto-espandente', 
+      icon: Target,
+      color: 'from-orange-500 to-red-500'
+    }
   ];
 
   return (

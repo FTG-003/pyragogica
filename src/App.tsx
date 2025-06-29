@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from 'react';
-import { BookOpen, Brain, Users, Menu, X, Sparkles, Database } from 'lucide-react';
+import { BookOpen, Brain, Users, Menu, X, Sparkles, Database, Zap } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
 import { useToast } from './components/ToastNotification';
 
@@ -15,7 +15,7 @@ function App() {
 
   const navigation = [
     { id: 'home', name: 'Home', icon: Sparkles },
-    { id: 'library', name: 'Biblioteca Scalabile', icon: Database },
+    { id: 'library', name: 'Biblioteca', icon: Database },
     { id: 'chatbot', name: 'AI Assistant', icon: Brain },
   ];
 
@@ -23,7 +23,6 @@ function App() {
     setCurrentPage(pageId);
     setMobileMenuOpen(false);
     
-    // Mostra notifica di navigazione per demo
     const pageNames = {
       home: 'Homepage',
       library: 'Biblioteca Digitale',
@@ -43,30 +42,36 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      {/* Enhanced Navigation */}
-      <nav className="bg-white/90 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50">
+      {/* Modern Navigation */}
+      <nav className="nav-modern">
+        <div className="container-modern">
           <div className="flex justify-between items-center h-20">
-            {/* Enhanced Logo */}
+            {/* Modern Logo */}
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+                     style={{
+                       background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
+                     }}>
                   <Database className="w-7 h-7 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center"
+                     style={{
+                       background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)'
+                     }}>
                   <Sparkles className="w-2.5 h-2.5 text-white" />
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold text-gradient">
                   Biblioteca Pyragogica
                 </h1>
-                <p className="text-sm text-slate-500 font-medium">Production Ready</p>
+                <p className="text-sm text-slate-500 font-medium">Modern Interface</p>
               </div>
             </div>
 
-            {/* Enhanced Desktop Navigation */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -74,25 +79,16 @@ function App() {
                   <button
                     key={item.id}
                     onClick={() => handlePageChange(item.id)}
-                    className={`group relative flex items-center space-x-3 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
-                      currentPage === item.id
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
-                    }`}
+                    className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
                   >
-                    <Icon className={`w-5 h-5 transition-transform duration-300 ${
-                      currentPage === item.id ? 'scale-110' : 'group-hover:scale-105'
-                    }`} />
+                    <Icon className="w-5 h-5" />
                     <span>{item.name}</span>
-                    {currentPage === item.id && (
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-20 blur-xl"></div>
-                    )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Enhanced Mobile menu button */}
+            {/* Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -104,7 +100,7 @@ function App() {
             </div>
           </div>
 
-          {/* Enhanced Mobile Navigation */}
+          {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <div className="md:hidden border-t border-slate-200/50 py-6 bg-white/95 backdrop-blur-xl">
               <div className="space-y-3">
@@ -131,20 +127,30 @@ function App() {
         </div>
       </nav>
 
-      {/* Enhanced Page Content with Suspense */}
+      {/* Page Content with Modern Loading */}
       <main className="relative">
         <Suspense 
           fallback={
             <div className="min-h-screen flex items-center justify-center">
-              <LoadingSpinner 
-                size="lg" 
-                text="Caricamento pagina..." 
-                className="py-20"
-              />
+              <div className="text-center space-y-6">
+                <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center"
+                     style={{
+                       background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
+                     }}>
+                  <Zap className="w-8 h-8 text-white animate-pulse" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-slate-900">Caricamento...</h3>
+                  <p className="text-slate-600">Preparazione dell'interfaccia moderna</p>
+                </div>
+                <div className="loading-modern w-64 h-1 bg-slate-200 rounded-full mx-auto"></div>
+              </div>
             </div>
           }
         >
-          {renderPage()}
+          <div className="animate-fade-in-up">
+            {renderPage()}
+          </div>
         </Suspense>
       </main>
 

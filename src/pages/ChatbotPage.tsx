@@ -1,31 +1,108 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Brain, User, BookOpen, Lightbulb, MessageCircle, Zap, Sparkles, Bot, Play, Settings, Key, Database, AlertCircle, CheckCircle, Loader, ExternalLink, Copy, Eye, EyeOff, Wifi, WifiOff, RotateCcw, Trash2 } from 'lucide-react';
 import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource } from '../services/ragService';
+import { useToast } from '../components/ToastNotification';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+// Componente per renderizzare il markdown
+const MarkdownRenderer: React.FC<{ content: string }> = ({ content }) => {
+  const renderContent = (text: string) => {
+    // Dividi il testo in righe
+    const lines = text.split('\n');
+    
+    return lines.map((line, index) => {
+      // Headers
+      if (line.startsWith('### ')) {
+        return <h3 key={index} className="text-lg font-bold mt-4 mb-2">{line.substring(4)}</h3>;
+      }
+      if (line.startsWith('## ')) {
+        return <h2 key={index} className="text-xl font-bold mt-4 mb-2">{line.substring(3)}</h2>;
+      }
+      if (line.startsWith('# ')) {
+        return <h1 key={index} className="text-2xl font-bold mt-4 mb-2">{line.substring(2)}</h1>;
+      }
+      
+      // Bold text
+      if (line.includes('**')) {
+        const parts = line.split(/(\*\*.*?\*\*)/g);
+        return (
+          <p key={index} className="mb-2">
+            {parts.map((part, partIndex) => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={partIndex} className="font-bold">{part.slice(2, -2)}</strong>;
+              }
+              return part;
+            })}
+          </p>
+        );
+      }
+      
+      // Code blocks
+      if (line.startsWith('`') && line.endsWith('`')) {
+        return (
+          <code key={index} className="bg-slate-100 px-2 py-1 rounded text-sm font-mono block my-2">
+            {line.slice(1, -1)}
+          </code>
+        );
+      }
+      
+      // Inline code
+      if (line.includes('`')) {
+        const parts = line.split(/(`[^`]+`)/g);
+        return (
+          <p key={index} className="mb-2">
+            {parts.map((part, partIndex) => {
+              if (part.startsWith('`') && part.endsWith('`')) {
+                return <code key={partIndex} className="bg-slate-100 px-1 py-0.5 rounded text-sm font-mono">{part.slice(1, -1)}</code>;
+              }
+              return part;
+            })}
+          </p>
+        );
+      }
+      
+      // Bullet points
+      if (line.startsWith('• ') || line.startsWith('- ')) {
+        return (
+          <div key={index} className="flex items-start space-x-2 mb-1">
+            <span className="text-indigo-500 mt-1">•</span>
+            <span>{line.substring(2)}</span>
+          </div>
+        );
+      }
+      
+      // Empty lines
+      if (line.trim() === '') {
+        return <br key={index} />;
+      }
+      
+      // Regular paragraphs
+      return <p key={index} className="mb-2">{line}</p>;
+    });
+  };
+
+  return <div className="prose prose-sm max-w-none">{renderContent(content)}</div>;
+};
 
 const ChatbotPage = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       role: 'system',
-      content: '🤖 **Benvenuto nel Sistema RAG Pyragogico!**\n\n**Vector Store Attivo:** Pinecone con Peeragogy Handbook completo\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Configura la tua API key con `/set_api_key`\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• `/help` - Guida completa\n• `/status` - Verifica sistema\n• `/vector_info` - Info sul database\n\nIl sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚',
+      content: '🤖 **Benvenuto nel Sistema RAG Pyragogico!**\n\n**Vector Store Attivo:** Pinecone con Peeragogy Handbook completo\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Configura la tua API key con `/login demo pyragogica2025`\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• `/help` - Guida completa\n• `/status` - Verifica sistema\n• `/backend_info` - Info sul backend sicuro\n\nIl sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚',
       timestamp: new Date()
     }
   ]);
   const [inputValue, setInputValue] = useState('');
-  const [selectedPersonality, setSelectedPersonality] = useState('socratic'); // Socratica come default
+  const [selectedPersonality, setSelectedPersonality] = useState('socratic');
   const [isTyping, setIsTyping] = useState(false);
   const [apiStatus, setApiStatus] = useState({ configured: false, provider: '', model: '' });
-  const [vectorStoreStatus, setVectorStoreStatus] = useState(true); // Pinecone è sempre attivo
+  const [vectorStoreStatus, setVectorStoreStatus] = useState(true);
   const [showApiConfig, setShowApiConfig] = useState(false);
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [configForm, setConfigForm] = useState({
-    provider: 'openai',
-    model: 'gpt-4o',
-    apiKey: ''
-  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { success, error, info } = useToast();
 
   useEffect(() => {
     checkApiStatus();
@@ -44,7 +121,6 @@ const ChatbotPage = () => {
     setApiStatus(status);
   };
 
-  // Reset Chat Function
   const resetChat = () => {
     const confirmReset = window.confirm('Sei sicuro di voler azzerare la conversazione? Tutti i messaggi verranno eliminati.');
     
@@ -60,10 +136,11 @@ const ChatbotPage = () => {
       setInputValue('');
       setIsTyping(false);
       
-      // Focus sull'input dopo il reset
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+      
+      success('Chat azzerata', 'Conversazione resettata con successo');
     }
   };
 
@@ -82,7 +159,6 @@ const ChatbotPage = () => {
     setIsTyping(true);
 
     try {
-      // Check if it's a command
       const commandResult = ragService.parseCommand(inputValue);
       
       if (commandResult.isCommand) {
@@ -99,17 +175,26 @@ const ChatbotPage = () => {
         };
         
         setMessages(prev => [...prev, systemMessage]);
-        checkApiStatus(); // Update status after potential configuration
+        checkApiStatus();
+        
+        // Show appropriate toast based on command
+        if (commandResult.command === 'login') {
+          if (response.includes('✅')) {
+            success('Login effettuato', 'Sistema RAG ora operativo');
+          } else {
+            error('Login fallito', 'Verifica le credenziali');
+          }
+        }
       } else {
-        // Regular RAG query
         if (!apiStatus.configured) {
           const errorMessage: ChatMessage = {
             id: (Date.now() + 1).toString(),
             role: 'system',
-            content: '⚠️ **API non configurata**\n\nPer utilizzare il sistema RAG, devi prima configurare la tua API key.\n\n**Configurazione rapida:**\n`/set_api_key <provider> <model> <api_key>`\n\n**Esempio:**\n`/set_api_key openai gpt-4o sk-your-key-here`\n\n**Vector Store:** ✅ Pinecone attivo con Peeragogy Handbook\n**API:** ❌ Richiesta configurazione',
+            content: '⚠️ **Autenticazione richiesta**\n\nPer utilizzare il sistema RAG, devi prima effettuare il login.\n\n**Login rapido:**\n`/login demo pyragogica2025`\n\n**Vector Store:** ✅ Pinecone attivo con Peeragogy Handbook\n**Autenticazione:** ❌ Richiesta per accesso AI',
             timestamp: new Date()
           };
           setMessages(prev => [...prev, errorMessage]);
+          error('Autenticazione richiesta', 'Effettua il login per continuare');
         } else {
           const result = await ragService.generateResponse(
             inputValue,
@@ -128,29 +213,21 @@ const ChatbotPage = () => {
           };
 
           setMessages(prev => [...prev, assistantMessage]);
+          success('Risposta generata', 'Basata sui contenuti del Peeragogy Handbook');
         }
       }
     } catch (error) {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'system',
-        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione API con \`/status\`\n• Controlla la connessione al vector store\n• Riprova con una domanda diversa`,
+        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Effettua il login con \`/login demo pyragogica2025\`\n• Riprova con una domanda diversa`,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
+      error('Errore sistema', error instanceof Error ? error.message : 'Errore sconosciuto');
     } finally {
       setIsTyping(false);
     }
-  };
-
-  const handleQuickConfig = async () => {
-    const { provider, model, apiKey } = configForm;
-    if (!apiKey.trim()) return;
-
-    const command = `/set_api_key ${provider} ${model} ${apiKey}`;
-    setInputValue(command);
-    setShowApiConfig(false);
-    await handleSendMessage();
   };
 
   const getCurrentPersonality = (): PersonalityConfig => {
@@ -159,16 +236,15 @@ const ChatbotPage = () => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+    info('Copiato', 'Testo copiato negli appunti');
   };
 
-  // Personality Change Handler
   const handlePersonalityChange = (personalityId: string) => {
     const oldPersonality = getCurrentPersonality();
     setSelectedPersonality(personalityId);
     const newPersonality = PERSONALITIES.find(p => p.id === personalityId);
     
     if (newPersonality && oldPersonality.id !== personalityId) {
-      // Add a system message about personality change
       const changeMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'system',
@@ -177,6 +253,7 @@ const ChatbotPage = () => {
       };
       
       setMessages(prev => [...prev, changeMessage]);
+      info('Personalità cambiata', `Ora attiva: ${newPersonality.name} ${newPersonality.emoji}`);
     }
   };
 
@@ -191,12 +268,11 @@ const ChatbotPage = () => {
   ];
 
   const commandExamples = [
-    "/set_api_key openai gpt-4o sk-your-key-here",
+    "/login demo pyragogica2025",
     "/status",
     "/help",
     "/personalities",
-    "/providers",
-    "/vector_info"
+    "/backend_info"
   ];
 
   return (
@@ -205,27 +281,34 @@ const ChatbotPage = () => {
       <div className="text-center mb-16">
         <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
           <Brain className="w-4 h-4" />
-          <span>Sistema RAG con Vector Store Pinecone</span>
+          <span>Sistema RAG Production-Ready con Backend Sicuro</span>
         </div>
         <h1 className="text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
         <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
           Sistema RAG (Retrieval-Augmented Generation) con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
-          Vector store Pinecone attivo con contenuti reali indicizzati semanticamente.
+          Backend sicuro con autenticazione, rate limiting e gestione protetta delle API key.
         </p>
         
-        {/* Vector Store Status */}
-        <div className="mt-8 inline-flex items-center space-x-4 px-6 py-3 bg-green-50 border border-green-200 rounded-2xl">
-          <div className="flex items-center space-x-2">
-            <Database className="w-5 h-5 text-green-600" />
+        {/* System Status */}
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
+            <Database className="w-4 h-4 text-green-600" />
             <span className="text-green-800 font-semibold">Vector Store Pinecone</span>
-            {vectorStoreStatus ? (
-              <Wifi className="w-4 h-4 text-green-600" />
-            ) : (
-              <WifiOff className="w-4 h-4 text-red-600" />
-            )}
+            <Wifi className="w-4 h-4 text-green-600" />
           </div>
-          <div className="text-green-700 text-sm">
-            Peeragogy Handbook • Indicizzazione semantica • Pronto per query
+          <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border ${
+            apiStatus.configured 
+              ? 'bg-green-50 border-green-200 text-green-800' 
+              : 'bg-orange-50 border-orange-200 text-orange-800'
+          }`}>
+            <Key className="w-4 h-4" />
+            <span className="font-semibold">
+              {apiStatus.configured ? 'Autenticato' : 'Login Richiesto'}
+            </span>
+          </div>
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-xl">
+            <Settings className="w-4 h-4 text-blue-600" />
+            <span className="text-blue-800 font-semibold">Backend Sicuro</span>
           </div>
         </div>
       </div>
@@ -240,13 +323,14 @@ const ChatbotPage = () => {
               <button
                 onClick={() => setShowApiConfig(!showApiConfig)}
                 className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
+                aria-label="Configurazioni"
               >
                 <Settings className="w-5 h-5" />
               </button>
             </div>
             
             <div className="space-y-4">
-              {/* API Status */}
+              {/* Auth Status */}
               <div className="flex items-center space-x-3">
                 {apiStatus.configured ? (
                   <CheckCircle className="w-5 h-5 text-green-500" />
@@ -255,11 +339,11 @@ const ChatbotPage = () => {
                 )}
                 <div className="flex-1">
                   <div className="text-sm font-medium text-slate-900">
-                    API {apiStatus.configured ? 'Configurata' : 'Non Configurata'}
+                    {apiStatus.configured ? 'Autenticato' : 'Login Richiesto'}
                   </div>
                   {apiStatus.configured && (
                     <div className="text-xs text-slate-600">
-                      {apiStatus.provider} • {apiStatus.model}
+                      Backend sicuro • Token valido
                     </div>
                   )}
                 </div>
@@ -286,7 +370,7 @@ const ChatbotPage = () => {
                     Sistema RAG {apiStatus.configured ? 'Operativo' : 'In Attesa'}
                   </div>
                   <div className="text-xs text-slate-600">
-                    {apiStatus.configured ? 'Pronto per query' : 'Configura API per iniziare'}
+                    {apiStatus.configured ? 'Pronto per query' : 'Effettua login per iniziare'}
                   </div>
                 </div>
               </div>
@@ -294,93 +378,15 @@ const ChatbotPage = () => {
 
             {!apiStatus.configured && (
               <button
-                onClick={() => setShowApiConfig(true)}
+                onClick={() => setInputValue('/login demo pyragogica2025')}
                 className="w-full mt-4 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-300"
               >
-                Configura API
+                Login Demo
               </button>
             )}
           </div>
 
-          {/* API Configuration Modal */}
-          {showApiConfig && (
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Configurazione API</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Provider</label>
-                  <select
-                    value={configForm.provider}
-                    onChange={(e) => setConfigForm(prev => ({ 
-                      ...prev, 
-                      provider: e.target.value,
-                      model: API_PROVIDERS.find(p => p.id === e.target.value)?.models[0] || ''
-                    }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    {API_PROVIDERS.map(provider => (
-                      <option key={provider.id} value={provider.id}>
-                        {provider.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Modello</label>
-                  <select
-                    value={configForm.model}
-                    onChange={(e) => setConfigForm(prev => ({ ...prev, model: e.target.value }))}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    {API_PROVIDERS.find(p => p.id === configForm.provider)?.models.map(model => (
-                      <option key={model} value={model}>
-                        {model}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">API Key</label>
-                  <div className="relative">
-                    <input
-                      type={showApiKey ? 'text' : 'password'}
-                      value={configForm.apiKey}
-                      onChange={(e) => setConfigForm(prev => ({ ...prev, apiKey: e.target.value }))}
-                      placeholder={API_PROVIDERS.find(p => p.id === configForm.provider)?.keyFormat}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                    <button
-                      onClick={() => setShowApiKey(!showApiKey)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
-                    >
-                      {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex space-x-3">
-                  <button
-                    onClick={handleQuickConfig}
-                    disabled={!configForm.apiKey.trim()}
-                    className="flex-1 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
-                  >
-                    Configura
-                  </button>
-                  <button
-                    onClick={() => setShowApiConfig(false)}
-                    className="px-4 py-2 border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors duration-300"
-                  >
-                    Annulla
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Enhanced Personality Selector with Active Indicator */}
+          {/* Enhanced Personality Selector */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-slate-900">Personalità AI</h3>
@@ -408,9 +414,6 @@ const ChatbotPage = () => {
                         {selectedPersonality === personality.id && (
                           <span className="text-xs bg-white/20 px-2 py-1 rounded-full">ATTIVA</span>
                         )}
-                        {personality.id === 'socratic' && selectedPersonality !== personality.id && (
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">OPERATIVA</span>
-                        )}
                       </h4>
                     </div>
                   </div>
@@ -420,17 +423,6 @@ const ChatbotPage = () => {
                   </div>
                 </button>
               ))}
-            </div>
-            
-            {/* Personality Status Note */}
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center space-x-2 text-blue-700 text-sm">
-                <Brain className="w-4 h-4" />
-                <span className="font-semibold">Personalità Socratica 🤔 Pienamente Operativa</span>
-              </div>
-              <p className="text-blue-600 text-xs mt-1">
-                Le altre personalità sono disponibili ma la Socratica offre l'esperienza più completa.
-              </p>
             </div>
           </div>
 
@@ -460,6 +452,7 @@ const ChatbotPage = () => {
                   <button
                     onClick={() => copyToClipboard(command)}
                     className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-600 transition-all duration-300"
+                    aria-label="Copia comando"
                   >
                     <Copy className="w-3 h-3" />
                   </button>
@@ -472,7 +465,7 @@ const ChatbotPage = () => {
         {/* Enhanced Chat Interface */}
         <div className="lg:col-span-3">
           <div className="bg-white rounded-3xl shadow-xl h-[800px] flex flex-col border border-slate-200">
-            {/* Enhanced Chat Header with Reset Button */}
+            {/* Enhanced Chat Header */}
             <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white rounded-t-3xl">
               <div className="flex items-center space-x-4">
                 <div className="relative p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
@@ -485,37 +478,20 @@ const ChatbotPage = () => {
                       RAG System • {getCurrentPersonality().name}
                     </h3>
                     <span className="text-2xl">{getCurrentPersonality().emoji}</span>
-                    {selectedPersonality === 'socratic' && (
-                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                        OPERATIVA
-                      </span>
-                    )}
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                      PRODUCTION
+                    </span>
                   </div>
                   <p className="text-slate-600 leading-relaxed">
-                    {getCurrentPersonality().description} • Vector Store Pinecone attivo
+                    {getCurrentPersonality().description} • Backend sicuro attivo
                   </p>
                 </div>
-                <div className="flex flex-col space-y-2">
-                  <div className="flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-                    <Database className="w-4 h-4" />
-                    <span>Pinecone</span>
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  </div>
-                  <div className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold ${
-                    apiStatus.configured 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-orange-100 text-orange-700'
-                  }`}>
-                    <Key className="w-4 h-4" />
-                    <span>{apiStatus.configured ? 'API OK' : 'Config API'}</span>
-                  </div>
-                </div>
                 
-                {/* Reset Chat Button */}
                 <button
                   onClick={resetChat}
                   className="group p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 border-2 border-transparent hover:border-red-200"
                   title="Reset Chat - Azzera conversazione"
+                  aria-label="Reset chat"
                 >
                   <RotateCcw className="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" />
                 </button>
@@ -552,27 +528,15 @@ const ChatbotPage = () => {
                         ? 'bg-slate-100 text-slate-700 border border-slate-200'
                         : 'bg-white text-slate-900 border border-slate-200'
                     }`}>
-                      <div className="prose prose-sm max-w-none">
-                        {message.content.split('\n').map((line, index) => {
-                          if (line.startsWith('**') && line.endsWith('**')) {
-                            return <h4 key={index} className="font-bold mt-4 mb-2">{line.slice(2, -2)}</h4>;
-                          }
-                          if (line.startsWith('`') && line.endsWith('`')) {
-                            return <code key={index} className="bg-slate-100 px-2 py-1 rounded text-sm font-mono">{line.slice(1, -1)}</code>;
-                          }
-                          if (line.trim() === '') {
-                            return <br key={index} />;
-                          }
-                          return <p key={index} className="mb-2">{line}</p>;
-                        })}
-                      </div>
+                      {/* Render content with markdown support */}
+                      <MarkdownRenderer content={message.content} />
                       
-                      {/* Sources from Pinecone */}
+                      {/* Sources from Vector Store */}
                       {message.sources && message.sources.length > 0 && (
                         <div className="mt-4 pt-4 border-t border-slate-200">
                           <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
                             <Database className="w-4 h-4 mr-2" />
-                            📚 Fonti dal Vector Store Pinecone:
+                            📚 Fonti dal Vector Store:
                           </h5>
                           <div className="space-y-2">
                             {message.sources.map((source: RetrievedSource, index: number) => (
@@ -620,10 +584,7 @@ const ChatbotPage = () => {
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                     <div className="p-6 rounded-3xl shadow-lg bg-white border border-slate-200">
-                      <div className="flex items-center space-x-2">
-                        <Loader className="w-4 h-4 animate-spin text-indigo-600" />
-                        <span className="text-slate-600">Interrogando vector store Pinecone...</span>
-                      </div>
+                      <LoadingSpinner size="sm" text="Interrogando vector store..." />
                     </div>
                   </div>
                 </div>
@@ -631,7 +592,7 @@ const ChatbotPage = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Enhanced Input with Reset Button */}
+            {/* Enhanced Input */}
             <div className="p-6 border-t border-slate-200 bg-white rounded-b-3xl">
               <div className="flex space-x-4">
                 <input
@@ -639,7 +600,7 @@ const ChatbotPage = () => {
                   type="text"
                   placeholder={apiStatus.configured 
                     ? `Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
-                    : 'Configura prima la tua API key con /set_api_key...'
+                    : 'Effettua il login con /login demo pyragogica2025...'
                   }
                   className="flex-1 px-6 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg"
                   value={inputValue}
@@ -648,12 +609,12 @@ const ChatbotPage = () => {
                   disabled={isTyping}
                 />
                 
-                {/* Reset Button in Input Area */}
                 <button
                   onClick={resetChat}
                   disabled={isTyping}
                   className="px-6 py-4 border-2 border-slate-300 text-slate-700 rounded-2xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-300 flex items-center space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Reset Chat"
+                  aria-label="Reset chat"
                 >
                   <Trash2 className="w-5 h-5" />
                   <span className="hidden sm:inline">Reset</span>
@@ -679,7 +640,7 @@ const ChatbotPage = () => {
 
       {/* Enhanced RAG System Visualization */}
       <div className="mt-20 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-3xl p-10 text-white shadow-2xl">
-        <h3 className="text-3xl font-bold mb-8 text-center">Sistema RAG con Vector Store Pinecone</h3>
+        <h3 className="text-3xl font-bold mb-8 text-center">Sistema RAG Production-Ready</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="text-center space-y-4">
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
@@ -695,8 +656,8 @@ const ChatbotPage = () => {
               <Zap className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h4 className="text-xl font-bold mb-2">2. Retrieval</h4>
-              <p className="text-slate-300 text-sm">Query semantica su Pinecone per trovare i passaggi più rilevanti del manuale</p>
+              <h4 className="text-xl font-bold mb-2">2. Backend Sicuro</h4>
+              <p className="text-slate-300 text-sm">Proxy protetto per API AI con autenticazione, rate limiting e logging</p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -704,8 +665,8 @@ const ChatbotPage = () => {
               <Brain className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h4 className="text-xl font-bold mb-2">3. Augmentation</h4>
-              <p className="text-slate-300 text-sm">Arricchimento del prompt con contesto dal manuale e personalità selezionata</p>
+              <h4 className="text-xl font-bold mb-2">3. AI Personalities</h4>
+              <p className="text-slate-300 text-sm">Personalità multiple con prompt specializzati per diversi stili di apprendimento</p>
             </div>
           </div>
           <div className="text-center space-y-4">
@@ -713,8 +674,8 @@ const ChatbotPage = () => {
               <MessageCircle className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h4 className="text-xl font-bold mb-2">4. Generation</h4>
-              <p className="text-slate-300 text-sm">Generazione di risposte contestualizzate basate sui contenuti reali del manuale</p>
+              <h4 className="text-xl font-bold mb-2">4. Smart Response</h4>
+              <p className="text-slate-300 text-sm">Generazione di risposte contestualizzate con fonti verificabili e formattazione markdown</p>
             </div>
           </div>
         </div>
@@ -722,20 +683,20 @@ const ChatbotPage = () => {
         <div className="mt-12 p-6 bg-white/10 backdrop-blur-sm rounded-xl">
           <h4 className="text-lg font-bold mb-4 flex items-center">
             <Key className="w-5 h-5 mr-2" />
-            Controllo Utente Completo
+            Sicurezza e Controllo Completo
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
-              <h5 className="font-semibold mb-2">🔄 Reset Chat</h5>
-              <p className="text-slate-300">Bottone sempre disponibile per azzerare la conversazione e ricominciare da capo.</p>
+              <h5 className="font-semibold mb-2">🔒 Backend Sicuro</h5>
+              <p className="text-slate-300">Tutte le API key protette sul server. Rate limiting 5 req/min. Logging completo delle attività.</p>
             </div>
             <div>
-              <h5 className="font-semibold mb-2">🎭 Personalità Attive</h5>
-              <p className="text-slate-300">Personalità Socratica 🤔 pienamente operativa. Cambia personalità in tempo reale.</p>
+              <h5 className="font-semibold mb-2">🎭 Personalità Avanzate</h5>
+              <p className="text-slate-300">4 personalità AI specializzate con prompt separati e configurazioni ottimizzate.</p>
             </div>
             <div>
-              <h5 className="font-semibold mb-2">🔐 Privacy & Controllo</h5>
-              <p className="text-slate-300">API key memorizzate localmente. Controllo completo sui costi e sulla privacy.</p>
+              <h5 className="font-semibold mb-2">📝 Markdown Rendering</h5>
+              <p className="text-slate-300">Formattazione intelligente di testo, codice, liste e headers per una lettura ottimale.</p>
             </div>
           </div>
         </div>

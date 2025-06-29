@@ -1,66 +1,41 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: true,
+    port: 5173,
+    // Add WebContainer-specific optimizations
+    hmr: {
+      port: 5173,
+    },
+    // Disable file system watching optimizations that might cause issues in WebContainer
+    watch: {
+      usePolling: false,
+      interval: 100,
+    },
+  },
+  // Optimize for WebContainer environment
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    include: ['react', 'react-dom', 'lucide-react'],
+    force: true,
   },
   build: {
-    // Ottimizzazioni per performance
-    target: 'es2020',
+    target: 'esnext',
     minify: 'terser',
-    sourcemap: false,
-    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
-          // Separazione vendor per caching ottimale
           vendor: ['react', 'react-dom'],
-          ui: ['lucide-react'],
-          // Separazione logica business
-          rag: ['./src/services/ragService.ts'],
-          data: ['./src/data/libraryContent.ts', './src/data/vectorStore.ts']
+          icons: ['lucide-react'],
         },
-        // Nomi file ottimizzati per caching
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
-      }
+      },
     },
-    // Compressione aggressiva
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug']
-      }
-    }
   },
-  server: {
-    // Preload ottimizzato
-    warmup: {
-      clientFiles: [
-        './src/App.tsx',
-        './src/pages/HomePage.tsx',
-        './src/components/ui/ModernButton.tsx'
-      ]
-    }
+  // Ensure compatibility with WebContainer
+  define: {
+    global: 'globalThis',
   },
-  // Resolve ottimizzato
-  resolve: {
-    alias: {
-      '@': '/src'
-    }
-  },
-  // CSS ottimizzazioni
-  css: {
-    devSourcemap: false,
-    postcss: {
-      plugins: [
-        // Autoprefixer già configurato in postcss.config.js
-      ]
-    }
-  }
-});
+})

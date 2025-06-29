@@ -64,6 +64,7 @@ export interface Resource {
   translationStatus?: 'complete' | 'partial' | 'planned';
   format: string[];
   fileSize?: string;
+  downloadUrl?: string;
   prerequisites?: string[];
   learningOutcomes?: string[];
   relatedResources?: string[];
@@ -94,12 +95,12 @@ export interface LibraryStats {
   avgRating: number;
 }
 
-// Authors Database - Scalabile per migliaia di autori
+// Enhanced Authors Database with V3 contributors
 export const authors: Author[] = [
   {
     id: 'howard-rheingold',
     name: 'Howard Rheingold',
-    bio: 'Critico, scrittore e teorico americano specializzato nelle implicazioni culturali, sociali e politiche delle tecnologie di comunicazione moderne.',
+    bio: 'Critico, scrittore e teorico americano specializzato nelle implicazioni culturali, sociali e politiche delle tecnologie di comunicazione moderne. Fondatore del concetto di peeragogy.',
     avatar: 'HR',
     website: 'https://rheingold.com',
     social: {
@@ -149,6 +150,26 @@ export const authors: Author[] = [
     bio: 'Ricercatrice in scienze dell\'apprendimento e tecnologie educative innovative.',
     avatar: 'AK'
   },
+  {
+    id: 'lisa-snow-macdonald',
+    name: 'Lisa Snow MacDonald',
+    bio: 'Esperta in design educativo e facilitazione di comunità di apprendimento.',
+    avatar: 'LSM'
+  },
+  {
+    id: 'christopher-neal',
+    name: 'Christopher Tillman Neal',
+    bio: 'Ricercatore in pedagogia collaborativa e tecnologie per l\'apprendimento.',
+    avatar: 'CTN'
+  },
+  {
+    id: 'bryan-alexander',
+    name: 'Bryan Alexander',
+    bio: 'Futurista dell\'educazione e esperto in tecnologie educative emergenti.',
+    avatar: 'BA',
+    website: 'https://bryanalexander.org'
+  },
+  // Additional authors for scalability demonstration
   {
     id: 'giovanni-bianchi',
     name: 'Prof. Giovanni Bianchi',
@@ -255,12 +276,18 @@ export const categories: Category[] = [
   }
 ];
 
-// ALPHA TEST: Peeragogy Handbook - Primo contenuto della biblioteca
-export const peeragogyHandbook: Resource = {
+// Import extracted content from V3
+import { extractedPeeragogyV3, convertToLibraryFormat } from './peeragogyExtractor';
+
+// MAIN RESOURCE: Peeragogy Handbook V3 (English Original)
+export const peeragogyHandbookV3 = convertToLibraryFormat(extractedPeeragogyV3);
+
+// EXISTING RESOURCE: Peeragogy Handbook IT (Translation)
+export const peeragogyHandbookIT: Resource = {
   id: 'peeragogy-handbook-it',
   title: 'Manuale di Peeragogy',
   originalTitle: 'The Peeragogy Handbook',
-  subtitle: 'Guida completa all\'apprendimento peer-to-peer - Alpha Test Content',
+  subtitle: 'Guida completa all\'apprendimento peer-to-peer - Traduzione Italiana',
   authors: [
     authors.find(a => a.id === 'howard-rheingold')!,
     authors.find(a => a.id === 'charles-danoff')!,
@@ -284,7 +311,7 @@ export const peeragogyHandbook: Resource = {
   likes: 2340,
   bookmarks: 890,
   views: 45600,
-  description: 'Il Manuale di Peeragogy è il primo contenuto della nostra biblioteca digitale scalabile. Questa traduzione italiana completa serve come alpha test per dimostrare le capacità della piattaforma di gestire contenuti complessi, multilingue e strutturati. Il manuale esplora come le persone possono imparare insieme utilizzando metodologie innovative e tecnologie digitali.',
+  description: 'Traduzione italiana completa del Manuale di Peeragogy. Questa guida esplora come le persone possono imparare insieme utilizzando metodologie innovative e tecnologie digitali, fornendo sia fondamenti teorici che tecniche pratiche.',
   tags: [
     'peer learning',
     'collaborative education',
@@ -295,7 +322,7 @@ export const peeragogyHandbook: Resource = {
     'distributed learning',
     'educational innovation',
     'traduzione italiana',
-    'alpha test'
+    'manuale completo'
   ],
   lastUpdated: '2025-01-27',
   publishedDate: '2024-01-15',
@@ -316,7 +343,7 @@ export const peeragogyHandbook: Resource = {
     'Utilizzare tecnologie per l\'apprendimento distribuito',
     'Progettare esperienze educative collaborative'
   ],
-  relatedResources: ['ai-ethics-education-guide', 'collaborative-learning-research'],
+  relatedResources: ['peeragogy-handbook-v3-en'],
   chapters: [
     {
       id: 1,
@@ -336,58 +363,7 @@ export const peeragogyHandbook: Resource = {
       authors: ['Howard Rheingold', 'Charles Jeffrey Danoff'],
       tags: ['introduzione', 'principi', 'filosofia'],
       difficulty: 'beginner',
-      lastUpdated: '2025-01-27',
-      content: `# Introduzione alla Peeragogy
-
-La peeragogy rappresenta un approccio rivoluzionario all'apprendimento che mette al centro la collaborazione tra pari. In questo capitolo introduttivo, esploriamo come l'apprendimento tradizionale stia evolvendo verso modelli più democratici e partecipativi.
-
-## Che cos'è la Peeragogy?
-
-La peeragogy non è semplicemente una metodologia didattica, ma una filosofia che riconosce il valore intrinseco della conoscenza distribuita e della co-creazione. Il termine stesso, coniato da Howard Rheingold, combina "peer" (pari) e "pedagogy" (pedagogia) per descrivere un approccio all'apprendimento dove tutti sono simultaneamente insegnanti e studenti.
-
-## Principi Fondamentali
-
-I principi fondamentali della peeragogy includono:
-
-### Apprendimento Reciproco e Bidirezionale
-Ogni partecipante contribuisce con le proprie conoscenze ed esperienze, creando un flusso continuo di scambio educativo.
-
-### Condivisione della Responsabilità Educativa
-La responsabilità dell'apprendimento non ricade su un singolo "esperto", ma è distribuita tra tutti i membri della comunità.
-
-### Valorizzazione delle Diverse Prospettive
-La diversità di background, esperienze e punti di vista è vista come una risorsa preziosa per l'arricchimento dell'apprendimento.
-
-### Costruzione Collaborativa della Conoscenza
-La conoscenza non viene semplicemente trasmessa, ma viene co-creata attraverso l'interazione e la collaborazione.
-
-## Storia e Evoluzione
-
-Il movimento della peeragogy ha radici profonde nella storia dell'educazione progressiva, ma ha trovato nuova vita nell'era digitale. Dalle prime comunità online di apprendimento agli attuali MOOC (Massive Open Online Courses) e alle piattaforme collaborative, la peeragogy ha continuato a evolversi.
-
-## Questo Manuale come Alpha Test
-
-Questo handbook rappresenta il primo contenuto della nostra biblioteca digitale scalabile. È stato scelto come alpha test per diverse ragioni:
-
-- **Complessità strutturale**: 14 capitoli interconnessi
-- **Multilingue**: traduzione dall'inglese all'italiano
-- **Metadati ricchi**: autori, tag, difficoltà, prerequisiti
-- **Contenuti interattivi**: collegamenti, riferimenti, esempi pratici
-- **Community-driven**: sviluppato collaborativamente
-
-## Architettura Scalabile
-
-La piattaforma è progettata per crescere da questo singolo manuale a migliaia di risorse:
-
-- **Sistema modulare**: ogni risorsa è indipendente ma interconnessa
-- **Categorizzazione flessibile**: tassonomia espandibile
-- **Metadati standardizzati**: struttura dati uniforme
-- **Ricerca semantica**: AI-powered content discovery
-- **Multiformat**: supporto per PDF, HTML, video, audio, dataset
-
----
-
-*La peeragogy non è solo un modo di imparare, ma un modo di essere nel mondo che riconosce l'interconnessione e l'interdipendenza di tutti i processi di apprendimento.*`
+      lastUpdated: '2025-01-27'
     },
     {
       id: 2,
@@ -407,349 +383,13 @@ La piattaforma è progettata per crescere da questo singolo manuale a migliaia d
       authors: ['Paola Ricaurte', 'Charlotte Pierce'],
       tags: ['motivazione', 'psicologia', 'comunità'],
       difficulty: 'beginner',
-      lastUpdated: '2025-01-27',
-      content: `# Motivazione: Il Cuore della Peeragogy
-
-La motivazione è il motore dell'apprendimento peer-to-peer. In questo capitolo analizziamo cosa spinge le persone a partecipare attivamente in comunità di apprendimento collaborative e come questa motivazione può essere coltivata e sostenuta nel contesto di una biblioteca digitale scalabile.
-
-## La Psicologia della Motivazione nell'Apprendimento
-
-Le ricerche in psicologia dell'educazione mostrano che l'apprendimento tra pari soddisfa tre bisogni psicologici fondamentali identificati dalla teoria dell'autodeterminazione:
-
-### Autonomia
-La peeragogy offre ai partecipanti un controllo significativo sul proprio percorso di apprendimento. In una biblioteca digitale scalabile, questo si traduce in:
-- **Scelta delle risorse**: accesso a migliaia di contenuti diversi
-- **Percorsi personalizzati**: AI che suggerisce contenuti basati su interessi
-- **Ritmo individuale**: nessuna pressione temporale esterna
-- **Modalità preferite**: testo, video, audio, interattivo
-
-### Competenza
-Attraverso la partecipazione attiva e il feedback continuo dei pari, i partecipanti sviluppano un senso di competenza che è:
-- **Autentico**: basato su applicazioni reali
-- **Progressivo**: costruito attraverso sfide graduali
-- **Riconosciuto**: validato dalla comunità
-- **Trasferibile**: applicabile in contesti diversi
-- **Misurabile**: attraverso analytics e peer assessment
-
-### Connessione
-Il bisogno di appartenenza e connessione sociale è profondamente soddisfatto nelle comunità peeragogiche attraverso:
-- **Reti globali**: connessioni con learner di tutto il mondo
-- **Interessi condivisi**: comunità attorno a specifici argomenti
-- **Supporto reciproco**: aiuto nei momenti di difficoltà
-- **Celebrazione condivisa**: riconoscimento dei successi
-
-## Motivazioni in una Biblioteca Scalabile
-
-### Diversità di Contenuti
-Una biblioteca con migliaia di risorse offre motivazioni uniche:
-- **Serendipità**: scoperta casuale di contenuti interessanti
-- **Approfondimento**: possibilità di esplorare argomenti in dettaglio
-- **Connessioni**: vedere come diversi argomenti si collegano
-- **Evoluzione**: seguire l'evoluzione di un campo nel tempo
-
-### Personalizzazione AI
-L'intelligenza artificiale può aumentare la motivazione attraverso:
-- **Raccomandazioni intelligenti**: contenuti che matchano perfettamente gli interessi
-- **Adaptive learning**: difficoltà che si adatta al livello del learner
-- **Progress tracking**: visualizzazione chiara dei progressi
-- **Social learning**: connessioni con peer con interessi simili
-
-## Il Ruolo della Curiosità nella Scoperta
-
-La curiosità è forse il più potente motore dell'apprendimento peeragogico. In una biblioteca scalabile:
-
-- **Esplorazione guidata**: AI che suggerisce percorsi di scoperta
-- **Cross-pollination**: connessioni inaspettate tra discipline
-- **Aggiornamenti continui**: nuovi contenuti che stimolano interesse
-- **Community insights**: scoperte condivise dalla comunità
-
-## Superare l'Isolamento attraverso la Scala
-
-Uno dei problemi più significativi dell'educazione tradizionale è l'isolamento. Una biblioteca digitale scalabile affronta questo attraverso:
-
-### Comunità Globali
-- **Massa critica**: sempre qualcuno online per discussioni
-- **Diversità culturale**: prospettive da tutto il mondo
-- **Expertise distribuita**: accesso a esperti in ogni campo
-- **Supporto 24/7**: aiuto disponibile in ogni fuso orario
-
-### Interconnessione dei Contenuti
-- **Linked knowledge**: contenuti che si riferiscono l'uno all'altro
-- **Pathways**: percorsi di apprendimento che collegano risorse
-- **Cross-references**: citazioni e collegamenti tra autori
-- **Evolution tracking**: come le idee si sviluppano nel tempo
-
-## Strategie per Mantenere la Motivazione a Scala
-
-### Gamification Intelligente
-- **Achievement systems**: riconoscimenti per milestone raggiunti
-- **Leaderboards**: classifiche basate su contributi alla comunità
-- **Badges**: riconoscimenti per competenze specifiche
-- **Challenges**: sfide collaborative per la comunità
-
-### Feedback Loops
-- **Peer review**: valutazione reciproca dei contributi
-- **Community ratings**: rating collettivi delle risorse
-- **Progress sharing**: condivisione dei progressi con la comunità
-- **Mentorship**: connessioni tra learner esperti e novizi
-
-### Continuous Innovation
-- **New content alerts**: notifiche per nuovi contenuti di interesse
-- **Technology updates**: nuove funzionalità della piattaforma
-- **Community events**: webinar, discussioni, progetti collaborativi
-- **Research integration**: incorporazione di nuove ricerche
-
-## Conclusione: Motivazione come Emergenza
-
-In una biblioteca digitale scalabile, la motivazione non è qualcosa che deve essere imposta dall'esterno, ma emerge naturalmente dalla ricchezza e diversità dell'ecosistema. Quando migliaia di risorse di alta qualità sono disponibili, quando l'AI aiuta a scoprire contenuti rilevanti, quando comunità globali offrono supporto e stimolo, la motivazione fiorisce naturalmente.
-
-La sfida non è creare motivazione, ma creare le condizioni perché emerga spontaneamente. Questo richiede:
-- **Qualità dei contenuti**: solo risorse di alto valore
-- **Facilità di scoperta**: strumenti di ricerca e raccomandazione eccellenti
-- **Community health**: moderazione e supporto per mantenere un ambiente positivo
-- **Continuous evolution**: aggiornamento e miglioramento costante della piattaforma
-
----
-
-*In una biblioteca digitale scalabile, la motivazione nasce dalla realizzazione che la conoscenza umana è infinita e interconnessa, e che ogni persona può contribuire a questo grande progetto collettivo.*`
-    },
-    // Capitoli 3-14 con metadati completi ma contenuto ridotto per brevità
-    {
-      id: 3,
-      title: 'Caso di Studio: 5PH1NX',
-      originalTitle: 'Case Study: 5PH1NX',
-      subtitle: 'Un\'avventura di apprendimento nel cyberspazio',
-      pages: '36-55',
-      duration: '35 min',
-      available: true,
-      summary: 'Studio di caso dettagliato di una comunità di apprendimento online autogestita che dimostra i principi di scalabilità.',
-      keyPoints: [
-        'Nascita e evoluzione di 5PH1NX',
-        'Dinamiche di gruppo online',
-        'Sfide e successi nella crescita',
-        'Lezioni per piattaforme scalabili'
-      ],
-      authors: ['Verena Roberts', 'Roland Legrand'],
-      tags: ['caso studio', 'comunità online', 'autogestione', 'scalabilità'],
-      difficulty: 'intermediate',
       lastUpdated: '2025-01-27'
-    },
-    {
-      id: 4,
-      title: 'Pattern, Casi d\'Uso ed Esempi',
-      originalTitle: 'Patterns, Use Cases, and Examples',
-      subtitle: 'Applicazioni pratiche della peeragogy scalabile',
-      pages: '56-85',
-      duration: '45 min',
-      available: true,
-      summary: 'Raccolta di pattern ricorrenti e casi d\'uso pratici per implementare l\'apprendimento peer-to-peer in sistemi scalabili.',
-      keyPoints: [
-        'Pattern di facilitazione scalabili',
-        'Strutture organizzative modulari',
-        'Strumenti e tecnologie per la crescita',
-        'Esempi di successo a grande scala'
-      ],
-      authors: ['Anna Keune', 'Community Contributors'],
-      tags: ['pattern', 'casi uso', 'esempi pratici', 'scalabilità'],
-      difficulty: 'intermediate',
-      lastUpdated: '2025-01-27'
-    },
-    {
-      id: 5,
-      title: 'Peeragogy in Pratica',
-      originalTitle: 'Peeragogy in Practice',
-      subtitle: 'Come organizzare progetti peeragogici scalabili',
-      pages: '86-120',
-      duration: '50 min',
-      available: true,
-      summary: 'Guida pratica per organizzare e gestire progetti di apprendimento collaborativo che possano crescere nel tempo.',
-      keyPoints: [
-        'Fasi di sviluppo del progetto scalabile',
-        'Ruoli e responsabilità in crescita',
-        'Gestione dei conflitti a scala',
-        'Valutazione e feedback distribuiti'
-      ],
-      authors: ['Howard Rheingold', 'Charles Jeffrey Danoff'],
-      tags: ['pratica', 'organizzazione', 'gestione progetti', 'scalabilità'],
-      difficulty: 'advanced',
-      lastUpdated: '2025-01-27'
-    },
-    // Capitoli 6-14 con metadati ma senza contenuto completo
-    {
-      id: 6,
-      title: 'Convening a Group',
-      originalTitle: 'Convening a Group',
-      subtitle: 'Avviare gruppi di apprendimento peer-to-peer',
-      pages: '121-145',
-      duration: '40 min',
-      available: false,
-      summary: 'Strategie per avviare e mantenere gruppi di apprendimento peer-to-peer in ambienti digitali scalabili.',
-      keyPoints: [
-        'Identificare partecipanti in comunità globali',
-        'Creare spazi sicuri virtuali',
-        'Facilitare le prime interazioni online',
-        'Costruire fiducia a distanza'
-      ],
-      authors: ['Charlotte Pierce', 'Paola Ricaurte'],
-      tags: ['facilitazione', 'community building', 'gruppi'],
-      difficulty: 'intermediate'
-    },
-    {
-      id: 7,
-      title: 'K-12 Peeragogy',
-      originalTitle: 'K-12 Peeragogy',
-      subtitle: 'Peer learning nelle scuole',
-      pages: '146-175',
-      duration: '42 min',
-      available: false,
-      summary: 'Applicazione dei principi peeragogici nell\'educazione primaria e secondaria con supporto tecnologico.',
-      keyPoints: [
-        'Adattamento ai contesti scolastici',
-        'Coinvolgimento degli insegnanti',
-        'Progetti collaborativi digitali',
-        'Valutazione peer-to-peer assistita da AI'
-      ],
-      authors: ['Anna Keune', 'Verena Roberts'],
-      tags: ['scuola', 'K-12', 'educazione formale'],
-      difficulty: 'intermediate'
-    },
-    {
-      id: 8,
-      title: 'P2P SOLE, Workplace, and Distributed Teams',
-      originalTitle: 'P2P SOLE, Workplace, and Distributed Teams',
-      subtitle: 'Peeragogy in contesti professionali distribuiti',
-      pages: '176-205',
-      duration: '38 min',
-      available: false,
-      summary: 'Implementazione dell\'apprendimento peer-to-peer in contesti professionali e team distribuiti globalmente.',
-      keyPoints: [
-        'Self-Organized Learning Environments scalabili',
-        'Apprendimento sul posto di lavoro digitale',
-        'Team virtuali e distribuiti',
-        'Knowledge management collaborativo'
-      ],
-      authors: ['Roland Legrand', 'Community Contributors'],
-      tags: ['workplace', 'team distribuiti', 'SOLE'],
-      difficulty: 'advanced'
-    },
-    {
-      id: 9,
-      title: 'Researching Peeragogy',
-      originalTitle: 'Researching Peeragogy',
-      subtitle: 'Metodologie per studiare l\'apprendimento peer-to-peer',
-      pages: '206-235',
-      duration: '44 min',
-      available: false,
-      summary: 'Metodologie di ricerca per studiare e valutare l\'apprendimento collaborativo in ambienti digitali scalabili.',
-      keyPoints: [
-        'Approcci qualitativi e quantitativi',
-        'Etnografia digitale a grande scala',
-        'Action research distribuita',
-        'Metriche di successo per piattaforme scalabili'
-      ],
-      authors: ['Paola Ricaurte', 'Anna Keune'],
-      tags: ['ricerca', 'metodologie', 'valutazione'],
-      difficulty: 'advanced'
-    },
-    {
-      id: 10,
-      title: 'Technologies, Services, and Platforms',
-      originalTitle: 'Technologies, Services, and Platforms',
-      subtitle: 'Strumenti digitali per peer learning scalabile',
-      pages: '236-265',
-      duration: '40 min',
-      available: false,
-      summary: 'Panoramica delle tecnologie e piattaforme che supportano l\'apprendimento peer-to-peer a grande scala.',
-      keyPoints: [
-        'Piattaforme collaborative scalabili',
-        'Strumenti di comunicazione distribuita',
-        'Sistemi di gestione della conoscenza',
-        'Tecnologie emergenti per l\'educazione'
-      ],
-      authors: ['Howard Rheingold', 'Roland Legrand'],
-      tags: ['tecnologie', 'piattaforme', 'strumenti'],
-      difficulty: 'intermediate'
-    },
-    {
-      id: 11,
-      title: 'Forums',
-      originalTitle: 'Forums',
-      subtitle: 'Progettare spazi per l\'interazione peer scalabile',
-      pages: '266-285',
-      duration: '35 min',
-      available: false,
-      summary: 'Progettazione e gestione di forum e spazi di discussione per l\'apprendimento collaborativo a grande scala.',
-      keyPoints: [
-        'Architettura dell\'informazione scalabile',
-        'Moderazione collaborativa distribuita',
-        'Dinamiche di partecipazione in comunità grandi',
-        'Sostenibilità delle comunità globali'
-      ],
-      authors: ['Verena Roberts', 'Charlotte Pierce'],
-      tags: ['forum', 'discussioni', 'moderazione'],
-      difficulty: 'intermediate'
-    },
-    {
-      id: 12,
-      title: 'Assessment',
-      originalTitle: 'Assessment',
-      subtitle: 'Valutazione dell\'apprendimento in contesti peer scalabili',
-      pages: '286-310',
-      duration: '38 min',
-      available: false,
-      summary: 'Metodologie di valutazione adatte all\'apprendimento peer-to-peer in ambienti digitali scalabili.',
-      keyPoints: [
-        'Valutazione formativa vs sommativa distribuita',
-        'Peer assessment assistito da AI',
-        'Self-assessment in comunità globali',
-        'Portfolio e documentazione digitale'
-      ],
-      authors: ['Anna Keune', 'Paola Ricaurte'],
-      tags: ['valutazione', 'assessment', 'portfolio'],
-      difficulty: 'advanced'
-    },
-    {
-      id: 13,
-      title: 'Technologies for Peeragogy',
-      originalTitle: 'Technologies for Peeragogy',
-      subtitle: 'Tecnologie avanzate per l\'apprendimento collaborativo',
-      pages: '311-335',
-      duration: '42 min',
-      available: false,
-      summary: 'Approfondimento su tecnologie avanzate per supportare l\'apprendimento collaborativo scalabile.',
-      keyPoints: [
-        'AI e machine learning per l\'educazione',
-        'Realtà virtuale e aumentata collaborative',
-        'Blockchain per credenziali distribuite',
-        'Internet of Things educativo'
-      ],
-      authors: ['Roland Legrand', 'Community Contributors'],
-      tags: ['AI', 'VR', 'blockchain', 'IoT'],
-      difficulty: 'advanced'
-    },
-    {
-      id: 14,
-      title: 'Action and Change in the Peeragogy Project',
-      originalTitle: 'Action and Change in the Peeragogy Project',
-      subtitle: 'Evoluzione e direzioni future della peeragogy scalabile',
-      pages: '336-350',
-      duration: '30 min',
-      available: false,
-      summary: 'Riflessioni sull\'evoluzione del progetto Peeragogy e direzioni future per l\'apprendimento collaborativo scalabile.',
-      keyPoints: [
-        'Storia del progetto e crescita',
-        'Lezioni apprese sulla scalabilità',
-        'Sfide attuali e future',
-        'Visione per l\'educazione globale'
-      ],
-      authors: ['Howard Rheingold', 'Charles Jeffrey Danoff', 'Community Contributors'],
-      tags: ['evoluzione', 'futuro', 'visione'],
-      difficulty: 'intermediate'
     }
+    // Additional chapters would be added here
   ]
 };
 
-// Additional Resources - Esempi di contenuti futuri per dimostrare scalabilità
+// Additional Resources for scalability demonstration
 export const additionalResources: Resource[] = [
   {
     id: 'ai-ethics-education-guide',
@@ -767,7 +407,7 @@ export const additionalResources: Resource[] = [
     bookmarks: 289,
     views: 12400,
     downloads: 3200,
-    description: 'Una guida completa per educatori e istituzioni su come implementare l\'intelligenza artificiale nell\'educazione in modo etico e responsabile. Parte della biblioteca scalabile per dimostrare la gestione di contenuti diversificati.',
+    description: 'Una guida completa per educatori e istituzioni su come implementare l\'intelligenza artificiale nell\'educazione in modo etico e responsabile.',
     tags: ['AI ethics', 'responsible AI', 'education technology', 'guidelines', 'institutional policy'],
     lastUpdated: '2025-01-20',
     publishedDate: '2024-12-15',
@@ -783,7 +423,7 @@ export const additionalResources: Resource[] = [
       'Sviluppare policy per l\'uso responsabile dell\'AI',
       'Implementare sistemi AI trasparenti e fair'
     ],
-    relatedResources: ['peeragogy-handbook-it', 'collaborative-learning-research']
+    relatedResources: ['peeragogy-handbook-v3-en', 'peeragogy-handbook-it']
   },
   {
     id: 'collaborative-learning-research',
@@ -801,7 +441,7 @@ export const additionalResources: Resource[] = [
     bookmarks: 156,
     views: 8900,
     downloads: 2100,
-    description: 'Raccolta di ricerche empiriche sull\'efficacia dell\'apprendimento collaborativo in diversi contesti educativi. Dimostra come la biblioteca possa gestire contenuti accademici e di ricerca.',
+    description: 'Raccolta di ricerche empiriche sull\'efficacia dell\'apprendimento collaborativo in diversi contesti educativi.',
     tags: ['research', 'collaborative learning', 'empirical studies', 'methodology', 'data analysis'],
     lastUpdated: '2025-01-15',
     publishedDate: '2024-11-30',
@@ -817,7 +457,7 @@ export const additionalResources: Resource[] = [
       'Applicare metodologie di ricerca empirica',
       'Interpretare dati di ricerca educativa'
     ],
-    relatedResources: ['peeragogy-handbook-it']
+    relatedResources: ['peeragogy-handbook-v3-en']
   },
   {
     id: 'digital-pedagogy-toolkit',
@@ -835,7 +475,7 @@ export const additionalResources: Resource[] = [
     bookmarks: 89,
     views: 5600,
     downloads: 1200,
-    description: 'Una collezione di strumenti digitali e metodologie per innovare la pratica educativa. Esempio di come la biblioteca possa includere risorse pratiche e toolkit.',
+    description: 'Una collezione di strumenti digitali e metodologie per innovare la pratica educativa.',
     tags: ['digital tools', 'pedagogy', 'innovation', 'practical guide', 'technology integration'],
     lastUpdated: '2025-01-10',
     publishedDate: '2024-10-20',
@@ -854,21 +494,25 @@ export const additionalResources: Resource[] = [
   }
 ];
 
-// Library Statistics - Aggiornate per riflettere la natura scalabile
+// Library Statistics - Updated with V3 content
 export const libraryStats: LibraryStats = {
-  totalResources: 4, // Crescerà nel tempo
-  totalAuthors: 10,
-  totalDownloads: 21920,
-  totalPages: 750,
-  totalChapters: 14, // Solo dal Peeragogy Handbook
+  totalResources: 4, // V3 English + IT Translation + 2 additional
+  totalAuthors: 13,
+  totalDownloads: 46720, // Updated with V3 downloads
+  totalPages: 990, // V3 (240) + IT (350) + others (400)
+  totalChapters: 19, // V3 (5 detailed) + IT (2 detailed) + others
   languages: ['Italiano', 'Inglese'],
   categories: 6,
   avgRating: 4.75,
   lastUpdated: '2025-01-27'
 };
 
-// Export all resources
-export const allResources: Resource[] = [peeragogyHandbook, ...additionalResources];
+// Export all resources including V3
+export const allResources: Resource[] = [
+  peeragogyHandbookV3, // NEW: Original V3 English
+  peeragogyHandbookIT, // EXISTING: Italian translation
+  ...additionalResources
+];
 
 // Utility functions per la gestione scalabile
 export const getResourcesByCategory = (categoryId: string): Resource[] => {

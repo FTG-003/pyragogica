@@ -47,6 +47,8 @@ export interface RetrievedSource {
     page?: string;
     section?: string;
     source?: string;
+    language?: string;
+    version?: string;
   };
 }
 
@@ -75,6 +77,9 @@ export interface UserSession {
   createdAt: Date;
   lastActivity: Date;
 }
+
+// Import vector store
+import { searchVectorStore, getVectorStoreStats } from '../data/vectorStore';
 
 // OpenRouter Models with Free Tier Identification
 export const OPENROUTER_MODELS: ModelInfo[] = [
@@ -410,130 +415,34 @@ export class RAGService {
     };
   }
 
-  // Vector Store Simulation (for testing without external dependencies)
-  private async createEmbedding(text: string): Promise<number[]> {
-    const words = text.toLowerCase().split(' ');
-    const embedding = new Array(1536).fill(0);
-    
-    words.forEach((word, index) => {
-      const hash = this.simpleHash(word);
-      embedding[hash % 1536] += 1 / (index + 1);
-    });
-    
-    const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-    return embedding.map(val => val / magnitude);
-  }
-
-  private simpleHash(str: string): number {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return Math.abs(hash);
-  }
-
+  // Enhanced Vector Store Integration
   private async queryVectorStore(query: string, topK: number = 3): Promise<RetrievedSource[]> {
-    // Simulated vector store with real Peeragogy content
-    const knowledgeBase = [
-      {
-        id: 'peeragogy-intro-1',
-        title: 'Introduzione alla Peeragogy',
-        chapter: 'Capitolo 1: Introduzione',
-        content: 'La peeragogy è un framework flessibile di tecniche per l\'apprendimento tra pari e la produzione collaborativa di conoscenza. Come amiamo dire, la peeragogy non riguarda solo "l\'apprendimento tra pari" o la "produzione tra pari" in astratto, ma l\'apprendere e lavorare insieme su problemi che sono personalmente significativi e che vogliamo risolvere.',
+    try {
+      // Use the real vector store with Peeragogy V3 content
+      const results = searchVectorStore(query, topK);
+      
+      return results.map(doc => ({
+        id: doc.id,
+        title: doc.metadata.title,
+        chapter: doc.metadata.chapter,
+        content: doc.content,
+        similarity: doc.score || 0.8, // Use computed score
         metadata: {
-          author: 'Howard Rheingold',
-          page: '1-15',
-          section: 'Che cos\'è la Peeragogy?',
-          source: 'Peeragogy Handbook'
-        },
-        keywords: ['peeragogy', 'apprendimento', 'collaborativo', 'peer', 'principi', 'definizione']
-      },
-      {
-        id: 'peeragogy-motivation-1',
-        title: 'Motivazione e Demotivazione',
-        chapter: 'Capitolo 2: Motivazione',
-        content: 'La motivazione è un fattore chiave nell\'apprendimento. Nella peeragogy, siamo particolarmente interessati a come le persone possano essere motivate ad imparare con e dagli altri. Questo implica comprendere sia le motivazioni intrinseche (spinta interna, curiosità, soddisfazione) che quelle estrinseche (ricompense, riconoscimento, voti).',
-        metadata: {
-          author: 'Paola Ricaurte',
-          page: '16-35',
-          section: 'Motivazione Intrinseca vs Estrinseca',
-          source: 'Peeragogy Handbook'
-        },
-        keywords: ['motivazione', 'intrinseca', 'estrinseca', 'apprendimento', 'curiosità']
-      },
-      {
-        id: 'peeragogy-patterns-1',
-        title: 'Pattern e Casi d\'Uso',
-        chapter: 'Capitolo 4: Pattern, Casi d\'Uso ed Esempi',
-        content: 'I pattern nella peeragogy sono soluzioni ricorrenti a problemi comuni nell\'apprendimento collaborativo. Questi pattern includono la facilitazione distribuita, la rotazione dei ruoli, la documentazione condivisa e la valutazione tra pari. Ogni pattern può essere adattato al contesto specifico della comunità di apprendimento.',
-        metadata: {
-          author: 'Anna Keune',
-          page: '56-85',
-          section: 'Pattern di Facilitazione',
-          source: 'Peeragogy Handbook'
-        },
-        keywords: ['pattern', 'facilitazione', 'ruoli', 'documentazione', 'valutazione', 'casi uso']
-      },
-      {
-        id: 'peeragogy-practice-1',
-        title: 'Peeragogy in Pratica',
-        chapter: 'Capitolo 5: Peeragogy in Pratica',
-        content: 'Organizzare progetti peeragogici richiede attenzione alla struttura, ai processi e alle relazioni. È importante creare spazi sicuri per l\'apprendimento, stabilire obiettivi chiari ma flessibili, e mantenere un equilibrio tra struttura e spontaneità. La chiave è permettere l\'emergere naturale della leadership e della collaborazione.',
-        metadata: {
-          author: 'Howard Rheingold',
-          page: '86-120',
-          section: 'Organizzazione di Progetti',
-          source: 'Peeragogy Handbook'
-        },
-        keywords: ['pratica', 'progetti', 'organizzazione', 'leadership', 'collaborazione', 'implementare']
-      },
-      {
-        id: 'peeragogy-technology-1',
-        title: 'Tecnologie per la Peeragogy',
-        chapter: 'Capitolo 13: Tecnologie per la Peeragogy',
-        content: 'Le tecnologie digitali offrono nuove opportunità per l\'apprendimento collaborativo. Dalle piattaforme wiki ai sistemi di videoconferenza, dagli strumenti di annotazione collaborativa ai sistemi di gestione dell\'apprendimento, la tecnologia può facilitare la connessione, la comunicazione e la co-creazione tra i partecipanti.',
-        metadata: {
-          author: 'Roland Legrand',
-          page: '311-335',
-          section: 'Strumenti Collaborativi',
-          source: 'Peeragogy Handbook'
-        },
-        keywords: ['tecnologie', 'digitali', 'strumenti', 'wiki', 'videoconferenza', 'collaborativa']
-      }
-    ];
-
-    // Simple keyword matching for relevance
-    const queryWords = query.toLowerCase().split(' ');
-    const scored = knowledgeBase.map(item => {
-      let score = 0;
-      queryWords.forEach(word => {
-        if (item.keywords.some(keyword => keyword.includes(word) || word.includes(keyword))) {
-          score += 1;
+          author: doc.metadata.author,
+          page: doc.metadata.page,
+          section: doc.metadata.section,
+          source: doc.metadata.source,
+          language: doc.metadata.language,
+          version: doc.metadata.version
         }
-        if (item.content.toLowerCase().includes(word)) {
-          score += 0.5;
-        }
-      });
-      return { ...item, similarity: Math.min(score / queryWords.length, 1) };
-    });
-
-    return scored
-      .filter(item => item.similarity > 0)
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, topK)
-      .map(item => ({
-        id: item.id,
-        title: item.title,
-        chapter: item.chapter,
-        content: item.content,
-        similarity: item.similarity,
-        metadata: item.metadata
       }));
+    } catch (error) {
+      console.error('Error querying vector store:', error);
+      return [];
+    }
   }
 
-  // Main RAG Generation
+  // Main RAG Generation with Real Content
   async generateResponse(
     query: string,
     personalityId: string
@@ -552,27 +461,27 @@ export class RAGService {
       throw new Error(`Personalità "${personalityId}" non trovata.`);
     }
 
-    // Retrieve relevant sources
+    // Retrieve relevant sources from real Peeragogy content
     const sources = await this.queryVectorStore(query);
     if (sources.length === 0) {
       throw new Error('Nessuna fonte rilevante trovata nel Peeragogy Handbook per questa domanda.');
     }
 
-    // Build RAG prompt
+    // Build RAG prompt with real content
     const sourceContext = sources.map(source => 
       `[${source.title} - ${source.chapter}]
 ${source.content}
-(Autore: ${source.metadata.author}, Pagina: ${source.metadata.page})`
+(Autore: ${source.metadata.author}, Pagina: ${source.metadata.page}, Versione: ${source.metadata.version})`
     ).join('\n\n');
 
     const ragPrompt = `${personality.systemPrompt}
 
-CONTESTO DAL PEERAGOGY HANDBOOK:
+CONTESTO DAL PEERAGOGY HANDBOOK V3 (CONTENUTO REALE):
 ${sourceContext}
 
 DOMANDA DELL'UTENTE: ${query}
 
-Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peeragogy Handbook, mantenendo la personalità ${personality.name} (${personality.emoji}).`;
+Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peeragogy Handbook V3, mantenendo la personalità ${personality.name} (${personality.emoji}). Cita sempre le fonti specifiche quando possibile.`;
 
     // Call AI API
     const response = await this.callAIAPI(ragPrompt, personality);
@@ -682,7 +591,7 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
     return (inputTokens / 1000) * model.pricing.input + (outputTokens / 1000) * model.pricing.output;
   }
 
-  // Command System
+  // Enhanced Command System
   parseCommand(message: string): { isCommand: boolean; command?: string; args?: string[] } {
     if (!message.startsWith('/')) {
       return { isCommand: false };
@@ -699,13 +608,22 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
     switch (command) {
       case 'status':
         const status = this.getSystemStatus();
-        return `📊 **Stato Sistema RAG**
+        const vectorStats = getVectorStoreStats();
+        
+        return `📊 **Stato Sistema RAG con Contenuti Reali**
 
 **🔐 Configurazione:**
 • Provider: ${status.provider}
 • Modello: ${status.model} ${status.modelIsFree ? '(GRATUITO)' : '(A PAGAMENTO)'}
 • API Key: ${status.hasApiKey ? '✅ Configurata' : '❌ Mancante'}
 • Sistema: ${status.configured ? '✅ Operativo' : '⚠️ Richiede configurazione'}
+
+**📚 Vector Store (Contenuti Reali):**
+• Documenti: ${vectorStats.totalDocuments} dal Peeragogy Handbook V3
+• Lingue: ${vectorStats.languages.join(', ')}
+• Versioni: ${vectorStats.versions.join(', ')}
+• Capitoli: ${vectorStats.chapters.length}
+• Autori: ${vectorStats.authors.length}
 
 **🎭 Personalità disponibili:** ${PERSONALITIES.length}
 • 🎓 Accademico • 💡 Divulgatore • 🧠 Critico • 🤔 Socratico
@@ -714,7 +632,7 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
 • ID: \`${status.sessionId}\`
 • Cronologia: ${this.getConversationHistory().length} messaggi
 
-${status.configured ? '**🚀 Sistema pronto per l\'uso!**' : '**⚙️ Configura API key per iniziare**'}`;
+${status.configured ? '**🚀 Sistema pronto con contenuti reali del Peeragogy Handbook V3!**' : '**⚙️ Configura API key per iniziare**'}`;
 
       case 'providers':
         return `🔌 **Provider AI Disponibili**
@@ -757,6 +675,33 @@ ${currentProvider.models.filter(m => !m.free).map(model =>
 
 Seleziona un modello dall'interfaccia di configurazione!`;
 
+      case 'vectorstore':
+        const stats = getVectorStoreStats();
+        return `📚 **Vector Store - Peeragogy Handbook V3**
+
+**📊 Statistiche:**
+• **Documenti totali:** ${stats.totalDocuments}
+• **Lingue:** ${stats.languages.join(', ')}
+• **Versioni:** ${stats.versions.join(', ')}
+• **Capitoli:** ${stats.chapters.length}
+• **Autori:** ${stats.authors.length}
+
+**📖 Capitoli disponibili:**
+${stats.chapters.map(chapter => `• ${chapter}`).join('\n')}
+
+**✍️ Autori principali:**
+${stats.authors.map(author => `• ${author}`).join('\n')}
+
+**🔍 Contenuti indicizzati:**
+Il vector store contiene contenuti reali estratti dal PDF del Peeragogy Handbook V3, inclusi:
+- Introduzione ai principi della peeragogy
+- Motivazione e psicologia dell'apprendimento
+- Case study 5PH1NX dettagliato
+- Pattern e casi d'uso pratici
+- Guida all'implementazione
+
+Tutti i contenuti sono semanticamente indicizzati per ricerca intelligente!`;
+
       case 'clear':
         this.clearConversationHistory();
         return '🗑️ **Cronologia conversazione cancellata**\n\nLa cronologia è stata rimossa dalla sessione corrente.';
@@ -782,12 +727,20 @@ Ogni sessione mantiene la propria cronologia e configurazione separate.`;
 • Scegli una personalità AI
 
 **💬 Comandi Sistema:**
-• \`/status\` - Stato configurazione
+• \`/status\` - Stato configurazione e vector store
 • \`/providers\` - Lista provider disponibili
 • \`/models\` - Modelli del provider corrente
+• \`/vectorstore\` - Info contenuti Peeragogy V3
 • \`/clear\` - Cancella cronologia conversazione
 • \`/session\` - Info sessione corrente
 • \`/help\` - Questa guida
+
+**📚 Contenuti Reali:**
+Il sistema ora include contenuti reali estratti dal Peeragogy Handbook V3:
+- 10+ documenti semanticamente indicizzati
+- Contenuti originali in inglese
+- Citazioni precise con pagine e autori
+- Ricerca intelligente nei contenuti
 
 **🆓 Modelli Gratuiti:**
 Usa OpenRouter con modelli gratuiti per testing senza costi!
@@ -800,7 +753,13 @@ Usa OpenRouter con modelli gratuiti per testing senza costi!
 **🚀 Per iniziare:**
 1. Configura una API key nell'interfaccia
 2. Seleziona un modello (consigliati quelli gratuiti)
-3. Fai una domanda sul Peeragogy Handbook!`;
+3. Fai una domanda sul Peeragogy Handbook!
+
+**💡 Esempi di domande:**
+• "Spiegami i principi fondamentali della peeragogy"
+• "Come funziona il pattern Wrapper?"
+• "Raccontami del caso studio 5PH1NX"
+• "Quali sono le strategie per la motivazione?"`;
 
       default:
         return `❌ **Comando non riconosciuto:** \`/${command}\`
@@ -809,6 +768,7 @@ Usa OpenRouter con modelli gratuiti per testing senza costi!
 • \`/status\` - Stato sistema
 • \`/providers\` - Lista provider
 • \`/models\` - Modelli disponibili
+• \`/vectorstore\` - Info contenuti reali
 • \`/clear\` - Cancella cronologia
 • \`/session\` - Info sessione
 • \`/help\` - Guida completa

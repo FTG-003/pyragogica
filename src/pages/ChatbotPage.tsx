@@ -564,403 +564,409 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
-      {/* Header - Fixed height to prevent jumping */}
-      <div className="text-center mb-8 sm:mb-16 min-h-[200px] flex flex-col justify-center">
-        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
-          <Brain className="w-4 h-4" />
-          <span>Sistema RAG Production-Ready con API Personalizzabili</span>
-        </div>
-        <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
-        <p className="text-lg sm:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
-          Sistema RAG con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
-          Configurazione API flessibile con supporto per modelli gratuiti e premium.
-        </p>
-        
-        {/* System Status - Fixed height */}
-        <div className="mt-8 flex flex-wrap justify-center gap-4 min-h-[60px] items-center">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
-            <Database className="w-4 h-4 text-green-600" />
-            <span className="text-green-800 font-semibold">Vector Store Locale</span>
-            <CheckCircle className="w-4 h-4 text-green-600" />
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Header - Fixed height to prevent jumping */}
+        <div className="text-center mb-8 min-h-[180px] flex flex-col justify-center">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
+            <Brain className="w-4 h-4" />
+            <span>Sistema RAG Production-Ready con API Personalizzabili</span>
           </div>
-          <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border ${
-            systemStatus.configured 
-              ? 'bg-green-50 border-green-200 text-green-800' 
-              : 'bg-orange-50 border-orange-200 text-orange-800'
-          }`}>
-            <Key className="w-4 h-4" />
-            <span className="font-semibold">
-              {systemStatus.configured ? 'API Configurata' : 'API da Configurare'}
-            </span>
-          </div>
-          {systemStatus.modelIsFree && (
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
-              <Zap className="w-4 h-4 text-emerald-600" />
-              <span className="text-emerald-800 font-semibold">Modello Gratuito</span>
+          <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
+          <p className="text-lg sm:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
+            Sistema RAG con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
+            Configurazione API flessibile con supporto per modelli gratuiti e premium.
+          </p>
+          
+          {/* System Status - Fixed height */}
+          <div className="mt-8 flex flex-wrap justify-center gap-4 min-h-[60px] items-center">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
+              <Database className="w-4 h-4 text-green-600" />
+              <span className="text-green-800 font-semibold">Vector Store Locale</span>
+              <CheckCircle className="w-4 h-4 text-green-600" />
             </div>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
-        {/* Mobile Sidebar Toggle */}
-        <div className="lg:hidden">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="w-full flex items-center justify-between p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50"
-          >
-            <div className="flex items-center space-x-3">
-              <span className="text-2xl">{getCurrentPersonality().emoji}</span>
-              <div className="text-left">
-                <div className="font-semibold text-slate-900">{getCurrentPersonality().name}</div>
-                <div className="text-sm text-slate-600">{systemStatus.configured ? 'Configurato' : 'Da configurare'}</div>
-              </div>
+            <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border ${
+              systemStatus.configured 
+                ? 'bg-green-50 border-green-200 text-green-800' 
+                : 'bg-orange-50 border-orange-200 text-orange-800'
+            }`}>
+              <Key className="w-4 h-4" />
+              <span className="font-semibold">
+                {systemStatus.configured ? 'API Configurata' : 'API da Configurare'}
+              </span>
             </div>
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {/* Enhanced Sidebar - Fixed width to prevent layout shifts */}
-        <div className={`lg:col-span-1 space-y-6 ${sidebarOpen ? 'block' : 'hidden lg:block'} lg:w-80`}>
-          {/* System Status */}
-          <div className="card-modern p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">Stato Sistema</h3>
-              <button
-                onClick={() => setShowApiConfig(true)}
-                className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
-                aria-label="Configurazione API"
-              >
-                <Settings className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Configuration Status */}
-              <div className="flex items-center space-x-3">
-                {systemStatus.configured ? (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-orange-500" />
-                )}
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    {systemStatus.configured ? 'Sistema Configurato' : 'Configurazione Richiesta'}
-                  </div>
-                  <div className="text-xs text-slate-600">
-                    {systemStatus.configured ? `${systemStatus.provider} • ${systemStatus.model}` : 'Inserisci API key per iniziare'}
-                  </div>
-                </div>
+            {systemStatus.modelIsFree && (
+              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <Zap className="w-4 h-4 text-emerald-600" />
+                <span className="text-emerald-800 font-semibold">Modello Gratuito</span>
               </div>
-              
-              {/* API Key Status */}
-              <div className="flex items-center space-x-3">
-                {systemStatus.hasApiKey ? (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-orange-500" />
-                )}
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    API Key {systemStatus.hasApiKey ? 'Configurata' : 'Mancante'}
-                  </div>
-                  <div className="text-xs text-slate-600">
-                    {systemStatus.hasApiKey ? 'Memorizzata localmente' : 'Richiesta per l\'accesso AI'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Vector Store Status */}
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">Vector Store Locale</div>
-                  <div className="text-xs text-slate-600">Peeragogy Handbook • Attivo</div>
-                </div>
-              </div>
-            </div>
-
-            {!systemStatus.configured && (
-              <button
-                onClick={() => setShowApiConfig(true)}
-                className="w-full mt-4 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-300"
-              >
-                Configura API
-              </button>
             )}
           </div>
-
-          {/* Enhanced Personality Selector */}
-          <div className="card-modern p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-slate-900">Personalità AI</h3>
-              <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>Attiva</span>
-              </div>
-            </div>
-            <div className="space-y-3">
-              {PERSONALITIES.map((personality) => (
-                <button
-                  key={personality.id}
-                  onClick={() => handlePersonalityChange(personality.id)}
-                  className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 ${
-                    selectedPersonality === personality.id
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-900 border-2 border-transparent hover:border-slate-200'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-2xl">{personality.emoji}</span>
-                    <div className="flex-1">
-                      <h4 className="font-bold flex items-center space-x-2">
-                        <span>{personality.name}</span>
-                        {selectedPersonality === personality.id && (
-                          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">ATTIVA</span>
-                        )}
-                      </h4>
-                    </div>
-                  </div>
-                  <p className="text-sm opacity-90 mb-2">{personality.description}</p>
-                  <div className="text-xs opacity-75">
-                    Temp: {personality.temperature} • Max: {personality.maxTokens} token
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Enhanced Chat Interface - Fixed height to prevent jumping */}
-        <div className="lg:col-span-3">
-          <div 
-            ref={chatContainerRef}
-            className="chat-container"
-            style={{ height: '700px' }} // Fixed height to prevent page jumping
-          >
-            {/* Enhanced Chat Header with Model Indicator */}
-            <div className="chat-header">
-              <div className="flex items-center space-x-4">
-                <div className="relative p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
-                  <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+        {/* Main Content Grid - Fixed layout to prevent overlapping */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Mobile Sidebar Toggle */}
+          <div className="lg:hidden col-span-1">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="w-full flex items-center justify-between p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50"
+            >
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">{getCurrentPersonality().emoji}</span>
+                <div className="text-left">
+                  <div className="font-semibold text-slate-900">{getCurrentPersonality().name}</div>
+                  <div className="text-sm text-slate-600">{systemStatus.configured ? 'Configurato' : 'Da configurare'}</div>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-bold text-slate-900 text-lg sm:text-xl">
-                      RAG System • {getCurrentPersonality().name}
-                    </h3>
-                    <span className="text-xl sm:text-2xl">{getCurrentPersonality().emoji}</span>
-                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                      PRODUCTION
-                    </span>
-                    {systemStatus.modelIsFree && (
-                      <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
-                        FREE
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Model Indicator */}
-                  {systemStatus.configured && getCurrentModel() && (
-                    <div className="flex items-center space-x-2 mb-1">
-                      <Cpu className="w-4 h-4 text-indigo-600" />
-                      <span className="text-sm font-semibold text-indigo-600">
-                        {getCurrentModel()?.name}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        getCurrentModel()?.free 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-orange-100 text-orange-700'
-                      }`}>
-                        {getCurrentModel()?.free ? 'Gratuito' : 'Premium'}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <p className="text-slate-600 text-sm sm:text-base">
-                    {getCurrentPersonality().description} • {systemStatus.configured ? `${systemStatus.provider} attivo` : 'Configurazione richiesta'}
-                  </p>
-                </div>
-                
+              </div>
+              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+
+          {/* Enhanced Sidebar - Fixed width and proper positioning */}
+          <div className={`lg:col-span-3 space-y-6 ${sidebarOpen ? 'block' : 'hidden lg:block'}`}>
+            {/* System Status */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-slate-900">Stato Sistema</h3>
                 <button
-                  onClick={resetChat}
-                  className="group p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 border-2 border-transparent hover:border-red-200"
-                  title="Reset Chat"
-                  aria-label="Reset chat"
+                  onClick={() => setShowApiConfig(true)}
+                  className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
+                  aria-label="Configurazione API"
                 >
-                  <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-180 transition-transform duration-500" />
+                  <Settings className="w-5 h-5" />
                 </button>
               </div>
-            </div>
-
-            {/* Enhanced Messages - Fixed height with scroll */}
-            <div className="chat-messages" style={{ height: 'calc(100% - 200px)' }}>
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex items-start space-x-3 sm:space-x-4 max-w-full ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`p-2 sm:p-3 rounded-2xl shadow-lg ${
-                      message.role === 'user' 
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600' 
-                        : message.role === 'system'
-                        ? 'bg-gradient-to-r from-slate-400 to-slate-500'
-                        : 'bg-gradient-to-r from-purple-500 to-pink-500'
-                    }`}>
-                      {message.role === 'user' ? (
-                        <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      ) : message.role === 'system' ? (
-                        <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      ) : (
-                        <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                      )}
-                    </div>
-                    <div className={`message-bubble ${
-                      message.role === 'user' 
-                        ? 'message-user' 
-                        : message.role === 'system'
-                        ? 'message-system'
-                        : 'message-assistant'
-                    }`}>
-                      <MarkdownRenderer content={message.content} />
-                      
-                      {/* Sources from Vector Store - Fixed relevance percentages */}
-                      {message.sources && message.sources.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-slate-200">
-                          <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
-                            <Database className="w-4 h-4 mr-2" />
-                            📚 Fonti dal Vector Store:
-                          </h5>
-                          <div className="space-y-2">
-                            {message.sources.map((source: RetrievedSource, index: number) => {
-                              // Fix: Ensure realistic relevance percentages (0-100%)
-                              const relevancePercentage = Math.min(100, Math.max(0, Math.round(source.similarity * 100)));
-                              
-                              return (
-                                <div key={index} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                  <div className="flex items-center justify-between mb-1">
-                                    <span className="text-sm font-medium text-slate-900">{source.title}</span>
-                                    <span className="text-xs text-slate-500">
-                                      {relevancePercentage}% rilevanza
-                                    </span>
-                                  </div>
-                                  <div className="text-xs text-slate-600">
-                                    {source.chapter} • {source.metadata.author} • Pag. {source.metadata.page}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Token Usage */}
-                      {message.tokens && (
-                        <div className="mt-4 pt-4 border-t border-slate-200">
-                          <div className="flex items-center space-x-4 text-xs text-slate-500">
-                            <span>Input: {message.tokens.input} tokens</span>
-                            <span>Output: {message.tokens.output} tokens</span>
-                            <span>Costo: {message.tokens.cost === 0 ? 'Gratuito' : `~$${message.tokens.cost.toFixed(4)}`}</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
               
-              {/* Typing Indicator */}
-              {isTyping && (
-                <div className="flex justify-start">
-                  <div className="flex items-start space-x-4 max-w-full">
-                    <div className="p-3 rounded-2xl shadow-lg bg-gradient-to-r from-purple-500 to-pink-500">
-                      <Brain className="w-5 h-5 text-white" />
+              <div className="space-y-4">
+                {/* Configuration Status */}
+                <div className="flex items-center space-x-3">
+                  {systemStatus.configured ? (
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-orange-500" />
+                  )}
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-slate-900">
+                      {systemStatus.configured ? 'Sistema Configurato' : 'Configurazione Richiesta'}
                     </div>
-                    <div className="message-bubble message-assistant">
-                      <LoadingSpinner size="sm" text="Generando risposta..." />
+                    <div className="text-xs text-slate-600">
+                      {systemStatus.configured ? `${systemStatus.provider} • ${systemStatus.model}` : 'Inserisci API key per iniziare'}
                     </div>
                   </div>
                 </div>
+                
+                {/* API Key Status */}
+                <div className="flex items-center space-x-3">
+                  {systemStatus.hasApiKey ? (
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-orange-500" />
+                  )}
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-slate-900">
+                      API Key {systemStatus.hasApiKey ? 'Configurata' : 'Mancante'}
+                    </div>
+                    <div className="text-xs text-slate-600">
+                      {systemStatus.hasApiKey ? 'Memorizzata localmente' : 'Richiesta per l\'accesso AI'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vector Store Status */}
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-slate-900">Vector Store Locale</div>
+                    <div className="text-xs text-slate-600">Peeragogy Handbook • Attivo</div>
+                  </div>
+                </div>
+              </div>
+
+              {!systemStatus.configured && (
+                <button
+                  onClick={() => setShowApiConfig(true)}
+                  className="w-full mt-4 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-300"
+                >
+                  Configura API
+                </button>
               )}
-              <div ref={messagesEndRef} />
             </div>
 
-            {/* Enhanced Input - Fixed height */}
-            <div className="chat-input-area" style={{ height: '120px' }}>
-              <div className="flex space-x-3 sm:space-x-4">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder={systemStatus.configured 
-                    ? `Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
-                    : 'Configura una API key per iniziare...'
-                  }
-                  className="flex-1 input-modern"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  disabled={isTyping}
-                />
-                
-                <button
-                  onClick={resetChat}
-                  disabled={isTyping}
-                  className="px-4 sm:px-6 py-3 sm:py-4 border-2 border-slate-300 text-slate-700 rounded-xl sm:rounded-2xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-300 flex items-center space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
-                  title="Reset Chat"
-                  aria-label="Reset chat"
-                >
-                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden sm:inline">Reset</span>
-                </button>
-                
-                <button
-                  onClick={() => handleSendMessage()}
-                  disabled={!inputValue.trim() || isTyping}
-                  className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl sm:rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2 sm:space-x-3 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-h-[44px]"
-                >
-                  {isTyping ? (
-                    <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                  )}
-                  <span className="hidden sm:inline">Invia</span>
-                </button>
+            {/* Enhanced Personality Selector */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-slate-900">Personalità AI</h3>
+                <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>Attiva</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {PERSONALITIES.map((personality) => (
+                  <button
+                    key={personality.id}
+                    onClick={() => handlePersonalityChange(personality.id)}
+                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 ${
+                      selectedPersonality === personality.id
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-900 border-2 border-transparent hover:border-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3 mb-2">
+                      <span className="text-2xl">{personality.emoji}</span>
+                      <div className="flex-1">
+                        <h4 className="font-bold flex items-center space-x-2">
+                          <span>{personality.name}</span>
+                          {selectedPersonality === personality.id && (
+                            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">ATTIVA</span>
+                          )}
+                        </h4>
+                      </div>
+                    </div>
+                    <p className="text-sm opacity-90 mb-2">{personality.description}</p>
+                    <div className="text-xs opacity-75">
+                      Temp: {personality.temperature} • Max: {personality.maxTokens} token
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Quick Prompts Section */}
-          <div className="mt-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <Sparkles className="w-5 h-5 text-indigo-600" />
-              <h3 className="text-lg font-bold text-slate-900">Domande Pronte sul Peeragogy Handbook</h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
-              {quickPrompts.map((prompt, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleQuickPrompt(prompt)}
-                  className="group p-4 text-left bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
-                  disabled={isTyping}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors duration-300">
-                      <Sparkles className="w-4 h-4 text-indigo-600" />
+          {/* Enhanced Chat Interface - Fixed height and proper spacing */}
+          <div className="lg:col-span-9">
+            <div 
+              ref={chatContainerRef}
+              className="bg-white rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden"
+              style={{ height: '700px' }}
+            >
+              {/* Enhanced Chat Header with Model Indicator */}
+              <div className="p-6 border-b-2 border-slate-200 bg-gradient-to-r from-orange-50 via-pink-50 to-purple-50">
+                <div className="flex items-center space-x-4">
+                  <div className="relative p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
+                    <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h3 className="font-bold text-slate-900 text-lg sm:text-xl">
+                        RAG System • {getCurrentPersonality().name}
+                      </h3>
+                      <span className="text-xl sm:text-2xl">{getCurrentPersonality().emoji}</span>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                        PRODUCTION
+                      </span>
+                      {systemStatus.modelIsFree && (
+                        <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                          FREE
+                        </span>
+                      )}
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-900 group-hover:text-indigo-900 transition-colors duration-300">
-                        {prompt}
-                      </p>
-                      <p className="text-xs text-slate-500 mt-1 group-hover:text-indigo-600 transition-colors duration-300">
-                        Clicca per inserire nel chat
-                      </p>
+                    
+                    {/* Model Indicator */}
+                    {systemStatus.configured && getCurrentModel() && (
+                      <div className="flex items-center space-x-2 mb-1">
+                        <Cpu className="w-4 h-4 text-indigo-600" />
+                        <span className="text-sm font-semibold text-indigo-600">
+                          {getCurrentModel()?.name}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          getCurrentModel()?.free 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-orange-100 text-orange-700'
+                        }`}>
+                          {getCurrentModel()?.free ? 'Gratuito' : 'Premium'}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <p className="text-slate-600 text-sm sm:text-base">
+                      {getCurrentPersonality().description} • {systemStatus.configured ? `${systemStatus.provider} attivo` : 'Configurazione richiesta'}
+                    </p>
+                  </div>
+                  
+                  <button
+                    onClick={resetChat}
+                    className="group p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 border-2 border-transparent hover:border-red-200"
+                    title="Reset Chat"
+                    aria-label="Reset chat"
+                  >
+                    <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-180 transition-transform duration-500" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Enhanced Messages - Fixed height with scroll */}
+              <div 
+                className="p-4 overflow-y-auto space-y-6 bg-gradient-to-b from-orange-50/30 via-pink-50/30 to-purple-50/30"
+                style={{ height: 'calc(100% - 240px)' }}
+              >
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`flex items-start space-x-3 sm:space-x-4 max-w-full ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                      <div className={`p-2 sm:p-3 rounded-2xl shadow-lg ${
+                        message.role === 'user' 
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600' 
+                          : message.role === 'system'
+                          ? 'bg-gradient-to-r from-slate-400 to-slate-500'
+                          : 'bg-gradient-to-r from-purple-500 to-pink-500'
+                      }`}>
+                        {message.role === 'user' ? (
+                          <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                        ) : message.role === 'system' ? (
+                          <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                        ) : (
+                          <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                        )}
+                      </div>
+                      <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-lg max-w-[85%] sm:max-w-3xl ${
+                        message.role === 'user' 
+                          ? 'bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white' 
+                          : message.role === 'system'
+                          ? 'bg-gradient-to-r from-blue-100 to-cyan-100 text-slate-800 border-2 border-blue-300'
+                          : 'bg-gradient-to-r from-emerald-100 to-teal-100 text-slate-900 border-2 border-emerald-300'
+                      }`}>
+                        <MarkdownRenderer content={message.content} />
+                        
+                        {/* Sources from Vector Store - Fixed relevance percentages */}
+                        {message.sources && message.sources.length > 0 && (
+                          <div className="mt-4 pt-4 border-t border-slate-200">
+                            <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
+                              <Database className="w-4 h-4 mr-2" />
+                              📚 Fonti dal Vector Store:
+                            </h5>
+                            <div className="space-y-2">
+                              {message.sources.map((source: RetrievedSource, index: number) => {
+                                // Fix: Ensure realistic relevance percentages (0-100%)
+                                const relevancePercentage = Math.min(100, Math.max(0, Math.round(source.similarity * 100)));
+                                
+                                return (
+                                  <div key={index} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className="text-sm font-medium text-slate-900">{source.title}</span>
+                                      <span className="text-xs text-slate-500">
+                                        {relevancePercentage}% rilevanza
+                                      </span>
+                                    </div>
+                                    <div className="text-xs text-slate-600">
+                                      {source.chapter} • {source.metadata.author} • Pag. {source.metadata.page}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Token Usage */}
+                        {message.tokens && (
+                          <div className="mt-4 pt-4 border-t border-slate-200">
+                            <div className="flex items-center space-x-4 text-xs text-slate-500">
+                              <span>Input: {message.tokens.input} tokens</span>
+                              <span>Output: {message.tokens.output} tokens</span>
+                              <span>Costo: {message.tokens.cost === 0 ? 'Gratuito' : `~$${message.tokens.cost.toFixed(4)}`}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </button>
-              ))}
+                ))}
+                
+                {/* Typing Indicator */}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="flex items-start space-x-4 max-w-full">
+                      <div className="p-3 rounded-2xl shadow-lg bg-gradient-to-r from-purple-500 to-pink-500">
+                        <Brain className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-lg bg-gradient-to-r from-emerald-100 to-teal-100 text-slate-900 border-2 border-emerald-300">
+                        <LoadingSpinner size="sm" text="Generando risposta..." />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Enhanced Input - Fixed height */}
+              <div className="p-4 border-t-2 border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50" style={{ height: '120px' }}>
+                <div className="flex space-x-3 sm:space-x-4 h-full items-center">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder={systemStatus.configured 
+                      ? `Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
+                      : 'Configura una API key per iniziare...'
+                    }
+                    className="flex-1 px-6 py-3 border-2 border-orange-300 rounded-2xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 transition-all duration-300 bg-white/90 backdrop-blur-sm hover:border-amber-300 min-h-[44px] text-base"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    disabled={isTyping}
+                  />
+                  
+                  <button
+                    onClick={resetChat}
+                    disabled={isTyping}
+                    className="px-4 sm:px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-300 flex items-center space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                    title="Reset Chat"
+                    aria-label="Reset chat"
+                  >
+                    <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="hidden sm:inline">Reset</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleSendMessage()}
+                    disabled={!inputValue.trim() || isTyping}
+                    className="px-6 sm:px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2 sm:space-x-3 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-h-[44px]"
+                  >
+                    {isTyping ? (
+                      <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
+                    <span className="hidden sm:inline">Invia</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Prompts Section - Positioned below chat */}
+            <div className="mt-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <Sparkles className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-lg font-bold text-slate-900">Domande Pronte sul Peeragogy Handbook</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {quickPrompts.map((prompt, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickPrompt(prompt)}
+                    className="group p-4 text-left bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+                    disabled={isTyping}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors duration-300">
+                        <Sparkles className="w-4 h-4 text-indigo-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-slate-900 group-hover:text-indigo-900 transition-colors duration-300">
+                          {prompt}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1 group-hover:text-indigo-600 transition-colors duration-300">
+                          Clicca per inserire nel chat
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

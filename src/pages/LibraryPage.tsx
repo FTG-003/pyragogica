@@ -1,9 +1,272 @@
 import React, { useState } from 'react';
-import { Search, Filter, BookOpen, Star, Clock, ArrowRight, Eye, Heart, Download, Users, Sparkles } from 'lucide-react';
+import { Search, Filter, BookOpen, Star, Clock, ArrowRight, Eye, Heart, Download, Users, Sparkles, X, ExternalLink, Github, Globe, FileText, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+
+// Utility functions moved outside component scope
+const getDifficultyColor = (difficulty: string) => {
+  switch (difficulty) {
+    case 'beginner':
+      return 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-300';
+    case 'intermediate':
+      return 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border-yellow-300';
+    case 'advanced':
+      return 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border-red-300';
+    default:
+      return 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-300';
+  }
+};
+
+const getAccessStyle = (access: string) => {
+  switch (access) {
+    case 'free':
+      return 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border-emerald-300';
+    case 'premium':
+      return 'bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border-orange-300';
+    case 'very':
+      return 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border-purple-300';
+    default:
+      return 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-300';
+  }
+};
+
+// PDF Viewer Component
+const PDFViewer: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  pdfUrl: string;
+  title: string;
+}> = ({ isOpen, onClose, pdfUrl, title }) => {
+  const [zoom, setZoom] = useState(100);
+  
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-gradient-to-r from-orange-500 to-pink-500 rounded-xl">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900">{title}</h3>
+              <p className="text-sm text-slate-600">Visualizzatore PDF</p>
+            </div>
+          </div>
+          
+          {/* Controls */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 bg-slate-100 rounded-xl p-2">
+              <button
+                onClick={() => setZoom(Math.max(50, zoom - 25))}
+                className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <span className="text-sm font-medium px-2">{zoom}%</span>
+              <button
+                onClick={() => setZoom(Math.min(200, zoom + 25))}
+                className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+              title="Apri in nuova finestra"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+            
+            <button
+              onClick={onClose}
+              className="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-300"
+              title="Chiudi"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* PDF Content */}
+        <div className="flex-1 p-6 overflow-hidden">
+          <div className="w-full h-full bg-slate-100 rounded-2xl overflow-auto">
+            <iframe
+              src={`${pdfUrl}#zoom=${zoom}`}
+              className="w-full h-full border-0 rounded-2xl"
+              title={title}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Resource Detail Modal Component
+const ResourceDetailModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  resource: any;
+  onOpenPDF: () => void;
+}> = ({ isOpen, onClose, resource, onOpenPDF }) => {
+  if (!isOpen || !resource) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-8">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-8">
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 mb-4">
+                <span className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold border-2 shadow-lg ${getAccessStyle(resource.access)}`}>
+                  <BookOpen className="w-4 h-4" />
+                  <span className="capitalize">{resource.access === 'free' ? 'Gratuito' : resource.access}</span>
+                </span>
+                {resource.featured && (
+                  <span className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-xs font-semibold shadow-lg">
+                    ⭐ Featured
+                  </span>
+                )}
+              </div>
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">{resource.title}</h2>
+              <p className="text-lg text-slate-600 mb-4">{resource.subtitle}</p>
+              <p className="text-slate-600">di {resource.authors.join(', ')}</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-300"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Description */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Descrizione</h3>
+            <p className="text-slate-700 leading-relaxed text-lg">{resource.description}</p>
+          </div>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-slate-900 mb-2">Informazioni</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Pagine:</span>
+                    <span className="font-medium">{resource.pages}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Lingua:</span>
+                    <span className="font-medium">{resource.language}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Difficoltà:</span>
+                    <span className="font-medium capitalize">{resource.difficulty}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Valutazione:</span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      <span className="font-medium">{resource.rating}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-slate-900 mb-2">Statistiche</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Visualizzazioni:</span>
+                    <span className="font-medium">{resource.views?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Mi piace:</span>
+                    <span className="font-medium">{resource.likes?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Download:</span>
+                    <span className="font-medium">{resource.downloads?.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="mb-8">
+            <h4 className="font-semibold text-slate-900 mb-3">Tag</h4>
+            <div className="flex flex-wrap gap-2">
+              {resource.tags.map((tag: string, index: number) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 text-sm font-medium rounded-lg border border-purple-200 shadow-sm"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={onOpenPDF}
+              className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              <FileText className="w-5 h-5" />
+              <span>Leggi PDF</span>
+            </button>
+            
+            {/* Repository Link */}
+            {resource.id === '1' && (
+              <a
+                href="https://github.com/Peeragogy/Peeragogy.github.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-800 text-white font-semibold rounded-xl hover:from-slate-800 hover:to-slate-900 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <Github className="w-5 h-5" />
+                <span>Repository</span>
+              </a>
+            )}
+            
+            {/* Website Link */}
+            {resource.id === '1' && (
+              <a
+                href="https://peeragogy.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <Globe className="w-5 h-5" />
+                <span>Sito Web</span>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const LibraryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedResource, setSelectedResource] = useState<any>(null);
+  const [showResourceDetail, setShowResourceDetail] = useState(false);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
 
   const mockResources = [
     {
@@ -20,11 +283,12 @@ const LibraryPage = () => {
       views: 45600,
       likes: 2340,
       downloads: 15420,
-      description: 'Traduzione italiana completa del Manuale di Peeragogy. Questa guida esplora come le persone possono imparare insieme utilizzando metodologie innovative e tecnologie digitali.',
-      tags: ['peer learning', 'collaborative education', 'community building'],
+      description: 'Traduzione italiana completa del Manuale di Peeragogy. Questa guida esplora come le persone possono imparare insieme utilizzando metodologie innovative e tecnologie digitali, fornendo sia fondamenti teorici che tecniche pratiche per implementare l\'apprendimento collaborativo in diversi contesti educativi.',
+      tags: ['peer learning', 'collaborative education', 'community building', 'digital pedagogy', 'educational innovation'],
       difficulty: 'intermediate',
       featured: true,
-      gradient: 'from-orange-500 to-pink-500'
+      gradient: 'from-orange-500 to-pink-500',
+      pdfUrl: '/resources/original-documents/pdf/peeragogy-handbook-v3.0-en.pdf'
     },
     {
       id: '2',
@@ -84,30 +348,24 @@ const LibraryPage = () => {
       ? mockResources 
       : mockResources.filter(resource => resource.category === selectedCategory);
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner':
-        return 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-300';
-      case 'intermediate':
-        return 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border-yellow-300';
-      case 'advanced':
-        return 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border-red-300';
-      default:
-        return 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-300';
-    }
+  const handleResourceClick = (resource: any) => {
+    setSelectedResource(resource);
+    setShowResourceDetail(true);
   };
 
-  const getAccessStyle = (access: string) => {
-    switch (access) {
-      case 'free':
-        return 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border-emerald-300';
-      case 'premium':
-        return 'bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border-orange-300';
-      case 'very':
-        return 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border-purple-300';
-      default:
-        return 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border-gray-300';
-    }
+  const handleOpenPDF = () => {
+    setShowResourceDetail(false);
+    setShowPDFViewer(true);
+  };
+
+  const handleClosePDF = () => {
+    setShowPDFViewer(false);
+    setSelectedResource(null);
+  };
+
+  const handleCloseDetail = () => {
+    setShowResourceDetail(false);
+    setSelectedResource(null);
   };
 
   return (
@@ -165,6 +423,7 @@ const LibraryPage = () => {
           <div
             key={resource.id}
             className="card-modern p-8 group cursor-pointer hover:animate-color-pulse"
+            onClick={() => handleResourceClick(resource)}
           >
             {/* Header with badges */}
             <div className="flex items-start justify-between mb-4">
@@ -281,6 +540,22 @@ const LibraryPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Resource Detail Modal */}
+      <ResourceDetailModal
+        isOpen={showResourceDetail}
+        onClose={handleCloseDetail}
+        resource={selectedResource}
+        onOpenPDF={handleOpenPDF}
+      />
+
+      {/* PDF Viewer */}
+      <PDFViewer
+        isOpen={showPDFViewer}
+        onClose={handleClosePDF}
+        pdfUrl={selectedResource?.pdfUrl || ''}
+        title={selectedResource?.title || ''}
+      />
     </div>
   );
 };

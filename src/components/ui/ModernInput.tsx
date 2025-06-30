@@ -135,6 +135,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(({
               className={`
                 text-slate-400 hover:text-slate-600 transition-colors duration-300
                 focus:outline-none focus:text-indigo-500
+                ${iconSizeClasses[size]}
               `}
               aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
             >
@@ -144,6 +145,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(({
             <span className={`
               text-slate-400 transition-colors duration-300
               ${isFocused ? 'text-indigo-500' : ''}
+              ${iconSizeClasses[size]}
             `}>
               {icon}
             </span>

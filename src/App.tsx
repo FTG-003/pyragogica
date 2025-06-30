@@ -49,7 +49,7 @@ function App() {
         <nav className="nav-modern">
           <div className="container-modern">
             <div className="flex justify-between items-center h-20">
-              {/* Modern Logo - FIX per lettere tagliate */}
+              {/* Modern Logo */}
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600">
@@ -60,7 +60,7 @@ function App() {
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gradient-safe title-safe">
+                  <h1 className="text-2xl font-bold text-gradient">
                     Biblioteca Pyragogica
                   </h1>
                   <p className="text-sm text-slate-500 font-medium">Modern Interface</p>

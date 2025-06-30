@@ -124,7 +124,7 @@
     @apply transition-all duration-300 text-base;
     @apply bg-white/90 backdrop-blur-sm hover:border-amber-300;
     @apply min-h-[44px];
-    @apply border-gradient-to-r from-orange-300 to-pink-300;
+    @apply border-orange-300;
     font-feature-settings: 'ss01';
     letter-spacing: -0.01em;
   }

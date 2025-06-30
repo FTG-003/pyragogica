@@ -45,12 +45,23 @@ const PDFViewer: React.FC<{
   };
 
   const handleDownloadPDF = () => {
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      // Create a proper download link
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `${title.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download error:', error);
+      // Fallback: open in new window
+      window.open(pdfUrl, '_blank');
+    }
   };
 
   return (
@@ -192,12 +203,23 @@ const ResourceDetailModal: React.FC<{
 
   const handleDownloadPDF = () => {
     if (resource.pdfUrl) {
-      const link = document.createElement('a');
-      link.href = resource.pdfUrl;
-      link.download = `${resource.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Create a proper download link
+        const link = document.createElement('a');
+        link.href = resource.pdfUrl;
+        link.download = `${resource.title.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Download error:', error);
+        // Fallback: open in new window
+        window.open(resource.pdfUrl, '_blank');
+      }
     }
   };
 
@@ -480,12 +502,23 @@ const LibraryPage = () => {
   const handleDownloadClick = (e: React.MouseEvent, resource: any) => {
     e.stopPropagation(); // Prevent opening the modal
     if (resource.pdfUrl) {
-      const link = document.createElement('a');
-      link.href = resource.pdfUrl;
-      link.download = `${resource.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Create a proper download link
+        const link = document.createElement('a');
+        link.href = resource.pdfUrl;
+        link.download = `${resource.title.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Download error:', error);
+        // Fallback: open in new window
+        window.open(resource.pdfUrl, '_blank');
+      }
     }
   };
 

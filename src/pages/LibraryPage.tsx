@@ -408,7 +408,7 @@ const LibraryPage = () => {
       category: 'peer-learning',
       type: 'handbook',
       access: 'free',
-      pages: 240,
+      pages: 278,
       language: 'English',
       rating: 4.9,
       views: 45600,

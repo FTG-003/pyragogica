@@ -399,13 +399,12 @@ const LibraryPage = () => {
   const [selectedResource, setSelectedResource] = useState<any>(null);
   const [showResourceDetail, setShowResourceDetail] = useState(false);
   const [showPDFViewer, setShowPDFViewer] = useState(false);
-
   const mockResources = [
     {
       id: '1',
       title: 'The Peeragogy Handbook',
       subtitle: 'A comprehensive guide to peer-to-peer learning',
-      authors: ['Howard Rheingold', 'Charles Jeffrey Danoff'],
+      authors: ['Howard Rheingold', 'Charles Jeffrey Danoff', 'Paola Ricaurte', 'Charlotte Pierce', 'Lisa Snow Macdonald']
       category: 'peer-learning',
       type: 'handbook',
       access: 'free',

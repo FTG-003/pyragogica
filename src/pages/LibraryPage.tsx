@@ -296,8 +296,8 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: true,
       gradient: 'from-orange-500 to-pink-500',
-      // Using a publicly accessible sample PDF for demonstration
-      pdfUrl: 'https://www.africau.edu/images/default/sample.pdf' 
+      // Using the provided official PDF link
+      pdfUrl: 'https://peeragogy.org/peeragogy-handbook-v3-0/' 
     },
     {
       id: '2',
@@ -318,7 +318,7 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: false,
       gradient: 'from-purple-500 to-indigo-500',
-      // Placeholder PDF URL - replace with actual URL if available
+      // Placeholder PDF URL - using a sample PDF for demonstration
       pdfUrl: 'https://www.africau.edu/images/default/sample.pdf'
     },
     {
@@ -340,7 +340,7 @@ const LibraryPage = () => {
       difficulty: 'advanced',
       featured: true,
       gradient: 'from-emerald-500 to-teal-500',
-      // Placeholder PDF URL - replace with actual URL if available
+      // Placeholder PDF URL - using a sample PDF for demonstration
       pdfUrl: 'https://www.africau.edu/images/default/sample.pdf'
     }
   ];

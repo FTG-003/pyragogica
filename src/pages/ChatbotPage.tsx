@@ -351,6 +351,7 @@ const ChatbotPage = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const { success, error, info } = useToast();
 
   // Quick prompts per il Peeragogy Handbook
@@ -564,8 +565,8 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
-      {/* Header */}
-      <div className="text-center mb-8 sm:mb-16">
+      {/* Header - Fixed height to prevent jumping */}
+      <div className="text-center mb-8 sm:mb-16 min-h-[200px] flex flex-col justify-center">
         <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
           <Brain className="w-4 h-4" />
           <span>Sistema RAG Production-Ready con API Personalizzabili</span>
@@ -576,8 +577,8 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
           Configurazione API flessibile con supporto per modelli gratuiti e premium.
         </p>
         
-        {/* System Status */}
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        {/* System Status - Fixed height */}
+        <div className="mt-8 flex flex-wrap justify-center gap-4 min-h-[60px] items-center">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
             <Database className="w-4 h-4 text-green-600" />
             <span className="text-green-800 font-semibold">Vector Store Locale</span>
@@ -620,8 +621,8 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
           </button>
         </div>
 
-        {/* Enhanced Sidebar */}
-        <div className={`lg:col-span-1 space-y-6 ${sidebarOpen ? 'block' : 'hidden lg:block'}`}>
+        {/* Enhanced Sidebar - Fixed width to prevent layout shifts */}
+        <div className={`lg:col-span-1 space-y-6 ${sidebarOpen ? 'block' : 'hidden lg:block'} lg:w-80`}>
           {/* System Status */}
           <div className="card-modern p-6">
             <div className="flex items-center justify-between mb-4">
@@ -731,9 +732,13 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
           </div>
         </div>
 
-        {/* Enhanced Chat Interface */}
+        {/* Enhanced Chat Interface - Fixed height to prevent jumping */}
         <div className="lg:col-span-3">
-          <div className="chat-container">
+          <div 
+            ref={chatContainerRef}
+            className="chat-container"
+            style={{ height: '700px' }} // Fixed height to prevent page jumping
+          >
             {/* Enhanced Chat Header with Model Indicator */}
             <div className="chat-header">
               <div className="flex items-center space-x-4">
@@ -790,8 +795,8 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
               </div>
             </div>
 
-            {/* Enhanced Messages */}
-            <div className="chat-messages">
+            {/* Enhanced Messages - Fixed height with scroll */}
+            <div className="chat-messages" style={{ height: 'calc(100% - 200px)' }}>
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -822,7 +827,7 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
                     }`}>
                       <MarkdownRenderer content={message.content} />
                       
-                      {/* Sources from Vector Store */}
+                      {/* Sources from Vector Store - Fixed relevance percentages */}
                       {message.sources && message.sources.length > 0 && (
                         <div className="mt-4 pt-4 border-t border-slate-200">
                           <h5 className="text-sm font-semibold text-slate-600 mb-2 flex items-center">
@@ -830,19 +835,24 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
                             📚 Fonti dal Vector Store:
                           </h5>
                           <div className="space-y-2">
-                            {message.sources.map((source: RetrievedSource, index: number) => (
-                              <div key={index} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className="text-sm font-medium text-slate-900">{source.title}</span>
-                                  <span className="text-xs text-slate-500">
-                                    {Math.round(source.similarity * 100)}% rilevanza
-                                  </span>
+                            {message.sources.map((source: RetrievedSource, index: number) => {
+                              // Fix: Ensure realistic relevance percentages (0-100%)
+                              const relevancePercentage = Math.min(100, Math.max(0, Math.round(source.similarity * 100)));
+                              
+                              return (
+                                <div key={index} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-sm font-medium text-slate-900">{source.title}</span>
+                                    <span className="text-xs text-slate-500">
+                                      {relevancePercentage}% rilevanza
+                                    </span>
+                                  </div>
+                                  <div className="text-xs text-slate-600">
+                                    {source.chapter} • {source.metadata.author} • Pag. {source.metadata.page}
+                                  </div>
                                 </div>
-                                <div className="text-xs text-slate-600">
-                                  {source.chapter} • {source.metadata.author} • Pag. {source.metadata.page}
-                                </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -878,8 +888,8 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Enhanced Input */}
-            <div className="chat-input-area">
+            {/* Enhanced Input - Fixed height */}
+            <div className="chat-input-area" style={{ height: '120px' }}>
               <div className="flex space-x-3 sm:space-x-4">
                 <input
                   ref={inputRef}

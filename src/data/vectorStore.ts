@@ -159,9 +159,9 @@ export const peeragogyVectorStore: VectorDocument[] = [
   }
 ];
 
-// Funzione per la ricerca semantica simulata
-export function searchVectorStore(query: string, topK: number = 5): VectorDocument[] {
-  const queryWords = query.toLowerCase().split(' ');
+// Enhanced search function with realistic similarity scoring
+export function searchVectorStore(query: string, topK: number = 5): Array<VectorDocument & { score: number }> {
+  const queryWords = query.toLowerCase().split(' ').filter(word => word.length > 2);
   
   const scored = peeragogyVectorStore.map(doc => {
     let score = 0;
@@ -170,23 +170,29 @@ export function searchVectorStore(query: string, topK: number = 5): VectorDocume
     
     queryWords.forEach(word => {
       // Exact matches get higher scores
-      if (content.includes(word)) score += 2;
-      if (metadata.includes(word)) score += 1;
+      const contentMatches = (content.match(new RegExp(word, 'g')) || []).length;
+      const metadataMatches = (metadata.match(new RegExp(word, 'g')) || []).length;
       
-      // Partial matches
+      score += contentMatches * 2; // Content matches are more valuable
+      score += metadataMatches * 1; // Metadata matches are less valuable
+      
+      // Partial matches with lower scores
       const contentWords = content.split(' ');
       const metadataWords = metadata.split(' ');
       
       contentWords.forEach(cWord => {
-        if (cWord.includes(word) || word.includes(cWord)) score += 0.5;
+        if (cWord.includes(word) && cWord !== word) score += 0.5;
       });
       
       metadataWords.forEach(mWord => {
-        if (mWord.includes(word) || word.includes(mWord)) score += 0.3;
+        if (mWord.includes(word) && mWord !== word) score += 0.3;
       });
     });
     
-    return { ...doc, score: score / queryWords.length };
+    // Normalize score to create realistic similarity values (0-1 range)
+    const normalizedScore = Math.min(1, score / (queryWords.length * 10));
+    
+    return { ...doc, score: normalizedScore };
   });
   
   return scored

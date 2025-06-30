@@ -1,60 +1,87 @@
 import React from 'react';
-import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Database, Layers, CheckCircle } from 'lucide-react';
+import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Database, Layers, CheckCircle, Crown, Lock, Sparkles } from 'lucide-react';
 
 const HomePage = () => {
   const features = [
     {
       icon: Database,
-      title: 'Biblioteca Infinitamente Scalabile',
-      description: 'Architettura modulare progettata per crescere da un singolo manuale a migliaia di risorse educative di qualità mondiale.',
-      stats: '∞ Risorse'
+      title: 'Hub di Conoscenza Interattiva',
+      description: 'Indicizzazione e organizzazione intelligente di testi educativi e filosofici con sistema di categorizzazione avanzato.',
+      stats: 'Contenuti Illimitati'
     },
     {
       icon: Brain,
-      title: 'AI Multi-Personalità',
-      description: 'Sistema di intelligenza artificiale che si adatta a qualsiasi contenuto con personalità multiple per ogni stile di apprendimento.',
-      stats: '4 Personalità'
+      title: 'Chatbot Multi-Personalità RAG',
+      description: 'Sistema di intelligenza artificiale con 4 personalità distinte: Accademico, Divulgatore, Critico e Filosofico per ogni stile di apprendimento.',
+      stats: '4 Personalità AI'
     },
     {
-      icon: Layers,
-      title: 'Contenuti Strutturati',
-      description: 'Sistema di categorizzazione avanzato con metadati ricchi, traduzioni multilingue e percorsi personalizzati.',
-      stats: '6+ Categorie'
+      icon: Crown,
+      title: 'Contenuti Open & Premium',
+      description: 'Distinzione intelligente tra risorse gratuite e premium con accesso libero o a pagamento per contenuti specifici.',
+      stats: 'Accesso Flessibile'
     },
     {
-      icon: Zap,
-      title: 'RAG Semantico',
-      description: 'Sistema di retrieval intelligente che funziona con qualsiasi tipo di contenuto: manuali, guide, ricerche, video.',
-      stats: '99.9% Uptime'
+      icon: Sparkles,
+      title: 'Community "Very" Immersiva',
+      description: 'Esperienza esclusiva per membri della community pyragogica con funzionalità avanzate di co-creazione cognitiva.',
+      stats: 'Esperienza VIP'
     }
   ];
 
   const benefits = [
-    'Accesso democratico alla conoscenza di qualità',
-    'Interfaccia moderna e intuitiva',
-    'Sistema di ricerca semantica avanzata',
-    'Supporto multilingue completo',
-    'Architettura infinitamente scalabile',
-    'Open source e trasparente'
+    'Accesso a contenuti peer-to-peer di qualità mondiale',
+    'Sistema RAG per sintesi e interrogazione intelligente',
+    'Distinzione chiara tra contenuti open e premium',
+    'Chatbot multi-personalità per ogni stile di apprendimento',
+    'Hub interattivo per co-creazione cognitiva',
+    'Community "Very" con accesso esclusivo'
+  ];
+
+  const contentTypes = [
+    {
+      icon: BookOpen,
+      title: 'Apprendimento Peer-to-Peer',
+      description: 'Metodologie e pratiche collaborative',
+      access: 'Open + Premium'
+    },
+    {
+      icon: Shield,
+      title: 'Etica AI',
+      description: 'Principi e linee guida per AI responsabile',
+      access: 'Open + Premium'
+    },
+    {
+      icon: Brain,
+      title: 'Co-creazione Cognitiva',
+      description: 'Tecniche di intelligenza collettiva',
+      access: 'Premium + Very'
+    },
+    {
+      icon: Users,
+      title: 'Filosofia Educativa',
+      description: 'Fondamenti teorici e pratici',
+      access: 'Open + Premium'
+    }
   ];
 
   const testimonials = [
     {
       name: 'Howard Rheingold',
       role: 'Co-fondatore, Progetto Peeragogy',
-      content: 'Una piattaforma che realizza la visione di una biblioteca digitale veramente collaborativa.',
+      content: 'Una piattaforma che realizza la visione di una biblioteca digitale veramente collaborativa e interattiva.',
       avatar: 'HR'
     },
     {
       name: 'Dr.ssa Maria Rossi',
       role: 'Ricercatrice, Scienze dell\'Educazione',
-      content: 'L\'architettura modulare permette di integrare facilmente nuove metodologie educative.',
+      content: 'Il sistema RAG multi-personalità offre un\'esperienza di apprendimento completamente nuova e personalizzata.',
       avatar: 'MR'
     },
     {
       name: 'Prof. Giovanni Bianchi',
       role: 'Esperto, Etica AI',
-      content: 'Un esempio eccellente di come l\'AI possa essere utilizzata responsabilmente nell\'educazione.',
+      content: 'Un esempio eccellente di come l\'AI possa essere utilizzata eticamente per democratizzare l\'accesso alla conoscenza.',
       avatar: 'GB'
     }
   ];
@@ -72,21 +99,28 @@ const HomePage = () => {
         <div className="container-modern hero-content">
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20 animate-scale-in mb-8">
             <Star className="w-5 h-5 text-yellow-400" />
-            <span>Biblioteca Digitale Infinitamente Scalabile</span>
+            <span>Hub di Conoscenza Interattiva</span>
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
           </div>
           
           <div className="space-y-8">
-            <h1 className="hero-title animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[0.85] animate-fade-in-up">
               Biblioteca Digitale
-              <span className="block text-gradient animate-pulse">
+              <span className="block text-gradient animate-pulse" style={{ 
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                paddingBottom: '0.1em' // Fix per lettere tagliate
+              }}>
                 Pyragogica
               </span>
             </h1>
             
-            <p className="hero-subtitle animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Una piattaforma <strong>infinitamente scalabile</strong> per risorse educative di qualità mondiale. 
-              Il <strong>Manuale di Peeragogy</strong> è solo l'inizio del nostro viaggio verso l'eccellenza educativa.
+            <p className="text-lg sm:text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              Un <strong>hub di conoscenza interattiva</strong> dove contenuti liberi e premium relativi all'<strong>apprendimento peer-to-peer</strong>, 
+              all'<strong>etica AI</strong> e alla <strong>co-creazione cognitiva</strong> possono essere consultati, acquistati, sintetizzati e 
+              interrogati tramite un sistema di <strong>chatbot con RAG</strong>.
             </p>
           </div>
           
@@ -99,7 +133,7 @@ const HomePage = () => {
             
             <button className="btn-modern btn-secondary group">
               <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-lg">Prova l'AI Assistant</span>
+              <span className="text-lg">Prova il Chatbot RAG</span>
             </button>
           </div>
         </div>
@@ -111,13 +145,13 @@ const HomePage = () => {
           <div className="text-center mb-16">
             <div className="status-indicator status-info mb-6">
               <Zap className="w-4 h-4" />
-              <span>Tecnologie Avanzate</span>
+              <span>Sistema RAG Avanzato</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              Funzionalità per la Crescita Infinita
+              Funzionalità del Sistema
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Ogni funzionalità è progettata per scalare da centinaia a milioni di utenti e risorse
+              Un ecosistema completo per l'apprendimento collaborativo e la co-creazione cognitiva
             </p>
           </div>
 
@@ -146,8 +180,50 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Benefits Section */}
+      {/* Content Types Section */}
       <section className="section-modern bg-slate-100">
+        <div className="container-modern">
+          <div className="text-center mb-16">
+            <div className="status-indicator status-info mb-6">
+              <BookOpen className="w-4 h-4" />
+              <span>Tipologie di Contenuto</span>
+            </div>
+            <h2 className="text-4xl font-bold text-slate-900 mb-6">Aree di Conoscenza</h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Contenuti specializzati organizzati per massimizzare l'apprendimento collaborativo
+            </p>
+          </div>
+
+          <div className="grid-modern grid-4">
+            {contentTypes.map((type, index) => {
+              const Icon = type.icon;
+              return (
+                <div key={index} className="card-modern p-6 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4">
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">{type.title}</h3>
+                  <p className="text-slate-600 text-sm mb-3">{type.description}</p>
+                  <div className="flex items-center space-x-2">
+                    {type.access.includes('Open') && (
+                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Open</span>
+                    )}
+                    {type.access.includes('Premium') && (
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">Premium</span>
+                    )}
+                    {type.access.includes('Very') && (
+                      <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">Very</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="section-modern">
         <div className="container-modern">
           <div className="grid-modern grid-2" style={{ alignItems: 'center' }}>
             <div>
@@ -155,7 +231,7 @@ const HomePage = () => {
                 <Globe className="w-4 h-4" />
                 <span>Vantaggi Chiave</span>
               </div>
-              <h2 className="text-4xl font-bold text-slate-900 mb-8">Perché Scegliere la Biblioteca Pyragogica</h2>
+              <h2 className="text-4xl font-bold text-slate-900 mb-8">Perché Scegliere Pyragogica</h2>
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center gap-3">
@@ -167,23 +243,23 @@ const HomePage = () => {
             </div>
             
             <div className="card-modern p-8 bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
-              <h3 className="text-2xl font-bold mb-6 text-white">Statistiche Impressionanti</h3>
+              <h3 className="text-2xl font-bold mb-6 text-white">Capacità del Sistema</h3>
               <div className="grid-modern grid-2">
                 <div className="text-center">
-                  <div className="text-4xl font-bold mb-2">∞</div>
-                  <div className="opacity-90">Risorse Supportate</div>
+                  <div className="text-4xl font-bold mb-2">RAG</div>
+                  <div className="opacity-90">Retrieval Augmented</div>
                 </div>
                 <div className="text-center">
                   <div className="text-4xl font-bold mb-2">4</div>
                   <div className="opacity-90">Personalità AI</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold mb-2">6+</div>
-                  <div className="opacity-90">Categorie</div>
+                  <div className="text-4xl font-bold mb-2">∞</div>
+                  <div className="opacity-90">Contenuti Scalabili</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold mb-2">99.9%</div>
-                  <div className="opacity-90">Uptime</div>
+                  <div className="text-4xl font-bold mb-2">24/7</div>
+                  <div className="opacity-90">Disponibilità</div>
                 </div>
               </div>
             </div>
@@ -192,7 +268,7 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="section-modern">
+      <section className="section-modern bg-slate-100">
         <div className="container-modern">
           <div className="text-center mb-16">
             <div className="status-indicator status-success mb-6">
@@ -201,7 +277,7 @@ const HomePage = () => {
             </div>
             <h2 className="text-4xl font-bold text-slate-900 mb-6">Cosa Dicono gli Esperti</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Testimonianze da educatori e ricercatori che credono nella scalabilità dell'educazione
+              Feedback da educatori e ricercatori che utilizzano il sistema RAG per l'apprendimento collaborativo
             </p>
           </div>
 
@@ -235,35 +311,35 @@ const HomePage = () => {
       <section className="section-modern bg-gradient-to-br from-indigo-600 to-purple-600">
         <div className="container-modern text-center text-white">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-            Inizia il Tuo Viaggio nell'Apprendimento
+            Inizia la Tua Esperienza di Apprendimento
           </h2>
           <p className="text-xl mb-10 opacity-90 max-w-3xl mx-auto leading-relaxed">
-            Esplora il Manuale di Peeragogy e scopri il futuro dell'apprendimento scalabile e collaborativo
+            Accedi al hub di conoscenza interattiva e scopri il potere del chatbot RAG multi-personalità
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button className="btn-modern bg-white text-indigo-600 hover:bg-slate-100 shadow-xl">
               <Database className="w-6 h-6" />
-              <span className="text-lg font-bold">Esplora la Biblioteca</span>
+              <span className="text-lg font-bold">Esplora Contenuti</span>
             </button>
             <button className="btn-modern bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600">
               <Brain className="w-6 h-6" />
-              <span className="text-lg font-bold">Prova l'AI Assistant</span>
+              <span className="text-lg font-bold">Prova il Chatbot RAG</span>
             </button>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-8 mt-12 opacity-80">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
-              <span className="text-sm">Infinitamente Scalabile</span>
+              <span className="text-sm">Contenuti Open & Premium</span>
             </div>
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm">Open Source</span>
+              <Brain className="w-4 h-4" />
+              <span className="text-sm">RAG Multi-Personalità</span>
             </div>
             <div className="flex items-center gap-2">
-              <Star className="w-4 h-4" />
-              <span className="text-sm">Community Driven</span>
+              <Crown className="w-4 h-4" />
+              <span className="text-sm">Community "Very"</span>
             </div>
           </div>
         </div>

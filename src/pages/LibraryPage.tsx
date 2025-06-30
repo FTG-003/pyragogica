@@ -294,8 +294,8 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: true,
       gradient: 'from-orange-500 to-pink-500',
-      // Ora usa il PDF locale dalla cartella public
-      pdfUrl: '/resources/original-documents/pdf/peeragogy-handbook-v3.0-en.pdf'
+      // Percorso corretto basato sulla struttura del repository
+      pdfUrl: '/resources/original-documents/pdf/peeragogy-3-0-ebook.pdf'
     },
     {
       id: '2',

@@ -132,15 +132,16 @@ const PDFViewer: React.FC<{
         {/* PDF Content */}
         <div className="flex-1 p-6 overflow-hidden">
           {pdfError ? (
-            // Error fallback
+            // Error fallback with download instructions
             <div className="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center">
               <div className="text-center max-w-md">
                 <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <AlertCircle className="w-8 h-8 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Errore caricamento PDF</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">PDF Placeholder</h3>
                 <p className="text-slate-600 mb-6 leading-relaxed">
-                  Non è possibile visualizzare il PDF nel browser. Prova ad aprirlo in una nuova finestra o scaricarlo.
+                  Questo è un PDF placeholder. Per ottenere il vero Peeragogy Handbook V3.0, 
+                  scaricalo dal sito ufficiale.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
@@ -148,16 +149,16 @@ const PDFViewer: React.FC<{
                     className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300"
                   >
                     <Download className="w-5 h-5" />
-                    <span>Scarica PDF</span>
+                    <span>Scarica Placeholder</span>
                   </button>
                   <a
-                    href={pdfUrl}
+                    href="https://peeragogy.org"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300"
                   >
                     <ExternalLink className="w-5 h-5" />
-                    <span>Apri PDF</span>
+                    <span>Sito Ufficiale</span>
                   </a>
                 </div>
               </div>
@@ -374,13 +375,13 @@ const ResourceDetailModal: React.FC<{
 
           {/* PDF Status Notice */}
           {resource.id === '1' && (
-            <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
+            <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
               <div className="flex items-start space-x-3">
-                <FileText className="w-5 h-5 text-green-600 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-green-900">PDF Disponibile</p>
-                  <p className="text-xs text-green-700 mt-1">
-                    Il PDF originale del Peeragogy Handbook V3.0 è disponibile per la visualizzazione diretta e il download.
+                  <p className="text-sm font-medium text-amber-900">PDF Placeholder</p>
+                  <p className="text-xs text-amber-700 mt-1">
+                    Questo è un PDF placeholder. Per il vero Peeragogy Handbook V3.0, visita il sito ufficiale peeragogy.org
                   </p>
                 </div>
               </div>

@@ -1,17 +1,64 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Biblioteca Digitale Pyragogica - Complete Prototype & Analysis</title>
-    <!-- Inter Font from Google Fonts -->
+    
+    <!-- SEO Meta Tags -->
+    <title>Biblioteca Digitale Pyragogica - Hub di Conoscenza Interattiva</title>
+    <meta name="description" content="Hub di conoscenza interattiva per apprendimento peer-to-peer, etica AI e co-creazione cognitiva. Sistema RAG con chatbot multi-personalità." />
+    <meta name="keywords" content="peeragogy, peer learning, AI ethics, RAG, chatbot, educazione, apprendimento collaborativo" />
+    <meta name="author" content="Biblioteca Digitale Pyragogica" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://pyragogy.org" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pyragogy.org" />
+    <meta property="og:title" content="Biblioteca Digitale Pyragogica - Hub di Conoscenza Interattiva" />
+    <meta property="og:description" content="Hub di conoscenza interattiva per apprendimento peer-to-peer con sistema RAG avanzato" />
+    <meta property="og:image" content="https://pyragogy.org/og-image.jpg" />
+    <meta property="og:site_name" content="Biblioteca Digitale Pyragogica" />
+    <meta property="og:locale" content="it_IT" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://pyragogy.org" />
+    <meta property="twitter:title" content="Biblioteca Digitale Pyragogica" />
+    <meta property="twitter:description" content="Hub di conoscenza interattiva per apprendimento peer-to-peer" />
+    <meta property="twitter:image" content="https://pyragogy.org/twitter-image.jpg" />
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#f59e0b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pyragogica" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    
+    <!-- Performance -->
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Analytics placeholder -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> -->
   </body>
 </html>

@@ -1,67 +1,52 @@
-# Biblioteca Digitale Pyragogica - Production Ready
+# 🌟 Biblioteca Digitale Pyragogica
 
-Una piattaforma digitale scalabile per risorse educative di alta qualità con sistema RAG (Retrieval-Augmented Generation) integrato.
+> Hub di conoscenza interattiva per apprendimento peer-to-peer con sistema RAG avanzato
 
-## 🎯 Caratteristiche Principali
+[![Deploy Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### 📚 Contenuti Reali Integrati
-- **Peeragogy Handbook V3** - Originale inglese completo (240 pagine)
-- **Traduzione italiana** - Versione localizzata con contenuti estesi
-- **Vector Store locale** - 10+ documenti semanticamente indicizzati
-- **Ricerca intelligente** - AI-powered content discovery
+## 🚀 **Demo Live**
 
-### 🤖 Sistema RAG Production-Ready
-- **4 Personalità AI** - Accademico, Divulgatore, Critico, Socratico
-- **Modelli gratuiti** - Phi-3, Gemma, Llama 3, Mistral via OpenRouter
-- **API sicure** - Gestione locale delle chiavi, sessioni separate
-- **Contenuti verificabili** - Citazioni precise con pagine e autori
+**🔗 [pyragogy.org](https://pyragogy.org)**
 
-### 🏗️ Architettura Scalabile
-- **Modulare** - Progettata per crescere da 1 a 1000+ risorse
-- **Multilingue** - Supporto nativo per traduzioni
-- **Categorizzazione flessibile** - Tassonomia espandibile
-- **Metadati ricchi** - Struttura dati complessa e standardizzata
+## ✨ **Caratteristiche Principali**
 
-## 🚀 Tecnologie
+### 🧠 **Sistema RAG Multi-Personalità**
+- **4 Personalità AI**: Accademico, Divulgatore, Critico, Socratico
+- **Modelli Gratuiti**: Phi-3, Gemma, Llama 3, Mistral via OpenRouter
+- **API Sicure**: Gestione locale delle chiavi, nessun server backend
+
+### 📚 **Hub di Conoscenza Interattiva**
+- **Contenuti Open & Premium**: Distinzione chiara tra accesso libero e a pagamento
+- **Apprendimento Peer-to-Peer**: Metodologie collaborative
+- **Etica AI**: Principi per intelligenza artificiale responsabile
+- **Co-creazione Cognitiva**: Tecniche di intelligenza collettiva
+
+### 🎨 **Design Moderno**
+- **Mobile-First**: Responsive su tutti i dispositivi
+- **Animazioni Fluide**: Micro-interazioni coinvolgenti
+- **Palette Colorata**: Design vibrante e professionale
+- **Accessibilità**: WCAG 2.1 compliant
+
+## 🛠️ **Tecnologie**
 
 - **Frontend**: React 18 + TypeScript + Tailwind CSS
-- **AI Integration**: OpenRouter, OpenAI, Anthropic
-- **Vector Store**: Implementazione locale con ricerca semantica
-- **State Management**: React Hooks + Local Storage
 - **Build Tool**: Vite
+- **AI Integration**: OpenRouter, OpenAI, Anthropic
 - **Icons**: Lucide React
+- **Deployment**: Netlify
 
-## 📁 Struttura del Progetto
+## 🚀 **Quick Start**
 
-```
-src/
-├── components/          # Componenti riutilizzabili
-├── pages/              # Pagine principali
-├── services/           # Servizi (RAG, API)
-├── data/               # Contenuti e vector store
-├── ai-prompts/         # Personalità AI
-└── hooks/              # Custom hooks
-
-public/
-└── resources/          # Risorse originali (PDF, EPUB, etc.)
-    └── original-documents/
-        ├── pdf/        # Documenti PDF
-        ├── epub/       # Libri elettronici
-        ├── audio/      # Contenuti audio
-        └── video/      # Contenuti video
-```
-
-## 🔧 Setup e Installazione
-
-### Prerequisiti
+### **Prerequisiti**
 - Node.js 18+
-- npm o yarn
+- npm 8+
 
-### Installazione
+### **Installazione**
 ```bash
 # Clone del repository
-git clone [repository-url]
-cd biblioteca-digitale-pyragogica
+git clone https://github.com/pyragogy/biblioteca-digitale.git
+cd biblioteca-digitale
 
 # Installazione dipendenze
 npm install
@@ -70,139 +55,107 @@ npm install
 npm run dev
 ```
 
-### Configurazione API
-1. Apri l'applicazione
-2. Vai su "Configurazione" nell'AI Assistant
-3. Seleziona un provider (consigliato: OpenRouter)
-4. Inserisci la tua API key
-5. Scegli un modello (disponibili opzioni gratuite)
-
-## 📚 Contenuti Disponibili
-
-### Peeragogy Handbook V3 (Inglese)
-- **240 pagine** di contenuto originale
-- **5 capitoli** con testo completo
-- **10+ autori** principali
-- **Licenza**: Creative Commons Attribution-ShareAlike 4.0
-
-### Manuale di Peeragogy (Italiano)
-- **350 pagine** tradotte
-- **2 capitoli** con contenuto completo
-- **Traduzione professionale** dall'inglese
-- **Metadati estesi** per ogni sezione
-
-### Risorse Aggiuntive
-- Guida Etica AI nell'Educazione
-- Ricerca sull'Apprendimento Collaborativo
-- Toolkit di Pedagogia Digitale
-
-## 🤖 Sistema RAG
-
-### Vector Store Locale
-- **Contenuti reali** estratti dal PDF
-- **Ricerca semantica** basata su keyword matching
-- **Metadati ricchi** (autore, pagina, sezione, versione)
-- **Multilingue** (inglese e italiano)
-
-### Personalità AI
-1. **🎓 Accademico** - Rigoroso, metodico, basato su evidenze
-2. **💡 Divulgatore** - Semplice, coinvolgente, pratico
-3. **🧠 Critico** - Analitico, questionante, stimolante
-4. **🤔 Socratico** - Conversazionale, guidante, riflessivo
-
-### Modelli Supportati
-- **Gratuiti**: Phi-3, Gemma 7B, Llama 3 8B, Mistral 7B
-- **Premium**: GPT-4o, Claude 3.5 Sonnet, Gemini Pro
-
-## 🔒 Sicurezza e Privacy
-
-- **API key locali** - Memorizzate solo nel browser
-- **Sessioni separate** - Ogni utente ha configurazioni isolate
-- **Nessun tracking** - Dati non condivisi con server esterni
-- **Open source** - Codice completamente trasparente
-
-## 📊 Comandi Sistema
-
-- `/status` - Stato configurazione e vector store
-- `/providers` - Lista provider disponibili
-- `/models` - Modelli del provider corrente
-- `/vectorstore` - Info contenuti Peeragogy
-- `/clear` - Cancella cronologia
-- `/help` - Guida completa
-
-## 🎨 Design System
-
-### Principi
-- **Minimalismo elegante** - Design pulito e funzionale
-- **Accessibilità** - WCAG 2.1 compliant
-- **Responsive** - Ottimizzato per tutti i dispositivi
-- **Performance** - Caricamento rapido e fluido
-
-### Palette Colori
-- **Primario**: Indigo 600 → Purple 600
-- **Secondario**: Slate 50 → Slate 900
-- **Accenti**: Green, Blue, Orange, Red per stati
-
-## 🚀 Deployment
-
-### Build Production
+### **Build Production**
 ```bash
+# Build ottimizzato
 npm run build
-```
 
-### Preview
-```bash
+# Preview build locale
 npm run preview
 ```
 
-### Deployment Platforms
-- Netlify (consigliato)
-- Vercel
-- GitHub Pages
-- Qualsiasi hosting statico
+## 🔧 **Configurazione**
 
-## 📈 Roadmap
+### **API Keys**
+L'applicazione richiede API keys per funzionare:
 
-### Fase 1 (Attuale) ✅
-- Peeragogy Handbook V3 integrato
-- Sistema RAG funzionante
-- 4 personalità AI
-- Vector store locale
+1. **OpenRouter** (Raccomandato - modelli gratuiti disponibili)
+   - Registrati su [openrouter.ai](https://openrouter.ai)
+   - Ottieni la tua API key
+   - Inseriscila nell'interfaccia di configurazione
 
-### Fase 2 (Prossima)
-- Estrazione automatica PDF
-- Più contenuti tradotti
-- Miglioramenti vector store
-- API REST per integrazioni
+2. **OpenAI** (Opzionale)
+   - API key da [platform.openai.com](https://platform.openai.com)
 
-### Fase 3 (Futura)
-- 50+ risorse educative
-- Supporto multilingue esteso
-- Community features
-- Mobile app
+3. **Anthropic** (Opzionale)
+   - API key da [console.anthropic.com](https://console.anthropic.com)
 
-## 🤝 Contribuzioni
+### **Sicurezza**
+- ✅ API keys memorizzate **solo localmente** nel browser
+- ✅ Nessun server backend richiesto
+- ✅ Sessioni isolate per ogni utente
+- ✅ Nessun tracking o analytics invasivi
+
+## 📖 **Come Usare**
+
+### **1. Configurazione Iniziale**
+- Apri l'applicazione
+- Vai su "Configurazione" nell'AI Assistant
+- Inserisci la tua API key (consigliato: OpenRouter)
+- Seleziona un modello (disponibili opzioni gratuite)
+
+### **2. Esplora la Biblioteca**
+- Naviga tra i contenuti open e premium
+- Usa i filtri per trovare risorse specifiche
+- Leggi descrizioni dettagliate e metadati
+
+### **3. Interagisci con l'AI**
+- Scegli una delle 4 personalità AI
+- Fai domande sui contenuti
+- Ricevi risposte personalizzate con fonti
+
+### **4. Comandi Sistema**
+- `/status` - Verifica configurazione
+- `/help` - Guida completa
+- `/clear` - Cancella cronologia
+
+## 🌍 **Deploy**
+
+### **Netlify (Raccomandato)**
+1. Fork questo repository
+2. Connetti a Netlify
+3. Deploy automatico da `main` branch
+4. Configurazione in `netlify.toml`
+
+### **Vercel**
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+### **GitHub Pages**
+```bash
+npm run build
+# Upload cartella dist/
+```
+
+## 🤝 **Contribuire**
 
 1. Fork del repository
-2. Crea un branch per la feature (`git checkout -b feature/AmazingFeature`)
-3. Commit delle modifiche (`git commit -m 'Add AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
+2. Crea un branch (`git checkout -b feature/amazing-feature`)
+3. Commit delle modifiche (`git commit -m 'Add amazing feature'`)
+4. Push al branch (`git push origin feature/amazing-feature`)
 5. Apri una Pull Request
 
-## 📄 Licenze
+## 📄 **Licenza**
 
-- **Codice**: MIT License
-- **Contenuti Peeragogy**: Creative Commons Attribution-ShareAlike 4.0
-- **Risorse aggiuntive**: Varie (vedi `public/resources/original-documents/LICENSES.md`)
+Questo progetto è sotto licenza MIT. Vedi il file [LICENSE](LICENSE) per dettagli.
 
-## 📞 Supporto
+## 🙏 **Riconoscimenti**
 
-- **Issues**: [GitHub Issues]
-- **Documentazione**: [Link alla documentazione]
-- **Community**: [Link alla community]
+- **Peeragogy Handbook** - Contenuti educativi di base
+- **OpenRouter** - Accesso a modelli AI gratuiti
+- **Lucide** - Iconografia moderna
+- **Tailwind CSS** - Framework di styling
+
+## 📞 **Supporto**
+
+- **Website**: [pyragogy.org](https://pyragogy.org)
+- **Issues**: [GitHub Issues](https://github.com/pyragogy/biblioteca-digitale/issues)
+- **Email**: support@pyragogy.org
 
 ---
 
-**Versione**: 1.3.0 - Production Ready con Contenuti Reali
-**Ultimo aggiornamento**: 2025-01-27
-**Status**: ✅ Stabile e pronto per la produzione
+**Versione**: 1.0.0 - Production Ready  
+**Ultimo aggiornamento**: 2025-01-27  
+**Status**: ✅ Deploy Ready

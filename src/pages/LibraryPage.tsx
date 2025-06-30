@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, BookOpen, Star, Clock, ArrowRight, Eye, Heart, Download, Users, Sparkles, X, ExternalLink, Github, Globe, FileText, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import { Search, Filter, BookOpen, Star, Clock, ArrowRight, Eye, Heart, Download, Users, Sparkles, X, ExternalLink, Github, Globe, FileText, ZoomIn, ZoomOut, AlertCircle, Upload } from 'lucide-react';
 
 // Utility functions moved outside component scope
 const getDifficultyColor = (difficulty: string) => {
@@ -28,7 +28,7 @@ const getAccessStyle = (access: string) => {
   }
 };
 
-// PDF Viewer Component
+// PDF Viewer Component with fallback
 const PDFViewer: React.FC<{
   isOpen: boolean;
   onClose: () => void;
@@ -36,8 +36,19 @@ const PDFViewer: React.FC<{
   title: string;
 }> = ({ isOpen, onClose, pdfUrl, title }) => {
   const [zoom, setZoom] = useState(100);
+  const [pdfError, setPdfError] = useState(false);
   
   if (!isOpen) return null;
+
+  // Fallback URLs for Peeragogy Handbook
+  const fallbackUrls = [
+    'https://raw.githubusercontent.com/Peeragogy/Peeragogy.github.io/master/peeragogy-handbook-v3-0.pdf',
+    'https://peeragogy.org/peeragogy-handbook-v3-0.pdf'
+  ];
+
+  const handlePdfError = () => {
+    setPdfError(true);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -56,30 +67,32 @@ const PDFViewer: React.FC<{
           
           {/* Controls */}
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 bg-slate-100 rounded-xl p-2">
-              <button
-                onClick={() => setZoom(Math.max(50, zoom - 25))}
-                className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
-                title="Zoom Out"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <span className="text-sm font-medium px-2">{zoom}%</span>
-              <button
-                onClick={() => setZoom(Math.min(200, zoom + 25))}
-                className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
-                title="Zoom In"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-            </div>
+            {!pdfError && (
+              <div className="flex items-center space-x-2 bg-slate-100 rounded-xl p-2">
+                <button
+                  onClick={() => setZoom(Math.max(50, zoom - 25))}
+                  className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </button>
+                <span className="text-sm font-medium px-2">{zoom}%</span>
+                <button
+                  onClick={() => setZoom(Math.min(200, zoom + 25))}
+                  className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                  title="Zoom In"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             
             <a
-              href={pdfUrl}
+              href={fallbackUrls[0]}
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
-              title="Apri in nuova finestra"
+              title="Apri PDF online"
             >
               <ExternalLink className="w-5 h-5" />
             </a>
@@ -96,13 +109,71 @@ const PDFViewer: React.FC<{
 
         {/* PDF Content */}
         <div className="flex-1 p-6 overflow-hidden">
-          <div className="w-full h-full bg-slate-100 rounded-2xl overflow-auto">
-            <iframe
-              src={`${pdfUrl}#zoom=${zoom}`}
-              className="w-full h-full border-0 rounded-2xl"
-              title={title}
-            />
-          </div>
+          {pdfError ? (
+            // Error fallback with multiple options
+            <div className="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center">
+              <div className="text-center max-w-md">
+                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <AlertCircle className="w-8 h-8 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">PDF non disponibile localmente</h3>
+                <p className="text-slate-600 mb-6 leading-relaxed">
+                  Il file PDF non è presente nel progetto locale. Puoi accedere al documento attraverso i link ufficiali:
+                </p>
+                <div className="space-y-3">
+                  <a
+                    href={fallbackUrls[0]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300"
+                  >
+                    📄 Apri PDF dal Repository GitHub
+                  </a>
+                  <a
+                    href="https://peeragogy.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                  >
+                    🌐 Visita il Sito Ufficiale
+                  </a>
+                </div>
+                <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                  <div className="flex items-start space-x-3">
+                    <Upload className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-blue-900">Per sviluppatori:</p>
+                      <p className="text-xs text-blue-700 mt-1">
+                        Carica il PDF in <code className="bg-blue-100 px-1 rounded">public/resources/original-documents/pdf/</code>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full h-full bg-slate-100 rounded-2xl overflow-auto">
+              <iframe
+                src={`${pdfUrl}#zoom=${zoom}`}
+                className="w-full h-full border-0 rounded-2xl"
+                title={title}
+                onError={handlePdfError}
+                onLoad={(e) => {
+                  // Check if iframe loaded successfully
+                  const iframe = e.target as HTMLIFrameElement;
+                  try {
+                    // If we can't access the content, it likely failed to load
+                    if (!iframe.contentDocument && !iframe.contentWindow) {
+                      handlePdfError();
+                    }
+                  } catch (error) {
+                    // Cross-origin or other loading error
+                    handlePdfError();
+                  }
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -226,7 +297,7 @@ const ResourceDetailModal: React.FC<{
               className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               <FileText className="w-5 h-5" />
-              <span>Leggi PDF</span>
+              <span>Visualizza PDF</span>
             </button>
             
             {/* Repository Link */}
@@ -255,6 +326,22 @@ const ResourceDetailModal: React.FC<{
               </a>
             )}
           </div>
+
+          {/* PDF Status Notice */}
+          {resource.id === '1' && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <div className="flex items-start space-x-3">
+                <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-blue-900">Accesso al PDF</p>
+                  <p className="text-xs text-blue-700 mt-1">
+                    Il PDF può essere visualizzato tramite i link ufficiali del progetto Peeragogy. 
+                    Il visualizzatore integrato fornisce accesso diretto ai contenuti originali.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

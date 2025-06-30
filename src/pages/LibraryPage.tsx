@@ -40,7 +40,7 @@ const PDFViewer: React.FC<{
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 font-sans">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
@@ -50,7 +50,7 @@ const PDFViewer: React.FC<{
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900">{title}</h3>
-              <p className="text-sm text-slate-600">Visualizzatore PDF</p>
+              <p className="text-sm text-slate-600">Visualizzatore PDF Locale</p>
             </div>
           </div>
           
@@ -89,7 +89,6 @@ const PDFViewer: React.FC<{
         {/* PDF Content */}
         <div className="flex-1 p-6 overflow-hidden">
           <div className="w-full h-full bg-slate-50 rounded-2xl overflow-auto">
-            {/* Using iframe to embed PDF. The #zoom parameter controls initial zoom level. */}
             <iframe
               src={`${pdfUrl}#zoom=${zoom}`}
               className="w-full h-full border-0"
@@ -113,7 +112,7 @@ const ResourceDetailModal: React.FC<{
   if (!isOpen || !resource) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4 font-sans">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-8">
           {/* Header */}
@@ -229,7 +228,7 @@ const ResourceDetailModal: React.FC<{
               href={resource.pdfUrl}
               download
               className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-              target="_blank" // Open in new tab to ensure download prompt
+              target="_blank"
               rel="noopener noreferrer"
             >
               <Download className="w-5 h-5" />
@@ -275,7 +274,6 @@ const LibraryPage = () => {
   const [showResourceDetail, setShowResourceDetail] = useState(false);
   const [showPDFViewer, setShowPDFViewer] = useState(false);
 
-  // Updated mockResources with publicly accessible PDF URLs
   const mockResources = [
     {
       id: '1',
@@ -296,8 +294,8 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: true,
       gradient: 'from-orange-500 to-pink-500',
-      // Using the provided official PDF link
-      pdfUrl: 'https://peeragogy.org/peeragogy-handbook-v3-0/' 
+      // Ora usa il PDF locale dalla cartella public
+      pdfUrl: '/resources/original-documents/pdf/peeragogy-handbook-v3.0-en.pdf'
     },
     {
       id: '2',
@@ -318,8 +316,7 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: false,
       gradient: 'from-purple-500 to-indigo-500',
-      // Placeholder PDF URL - using a sample PDF for demonstration
-      pdfUrl: 'https://www.africau.edu/images/default/sample.pdf'
+      pdfUrl: '/resources/original-documents/pdf/peeragogy-3-0-ebook.pdf'
     },
     {
       id: '3',
@@ -340,8 +337,7 @@ const LibraryPage = () => {
       difficulty: 'advanced',
       featured: true,
       gradient: 'from-emerald-500 to-teal-500',
-      // Placeholder PDF URL - using a sample PDF for demonstration
-      pdfUrl: 'https://www.africau.edu/images/default/sample.pdf'
+      pdfUrl: '/resources/original-documents/pdf/peeragogy-3-0-ebook.pdf'
     }
   ];
 
@@ -382,40 +378,38 @@ const LibraryPage = () => {
   };
 
   const handleDownloadClick = (e: React.MouseEvent, resource: any) => {
-    e.stopPropagation(); // Prevent opening the modal
+    e.stopPropagation();
     if (resource.pdfUrl) {
       try {
-        // Create a temporary anchor element to trigger download
         const link = document.createElement('a');
         link.href = resource.pdfUrl;
-        link.download = `${resource.title.toLowerCase().replace(/\s+/g, '-')}.pdf`; // Suggest a filename
-        link.target = '_blank'; // Open in a new tab to ensure download behavior
-        link.rel = 'noopener noreferrer'; // Security best practice
+        link.download = `${resource.title.toLowerCase().replace(/\s+/g, '-')}.pdf`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         
         document.body.appendChild(link);
-        link.click(); // Programmatically click the link
-        document.body.removeChild(link); // Clean up the temporary link
+        link.click();
+        document.body.removeChild(link);
       } catch (error) {
         console.error('Download error:', error);
-        // Fallback: if direct download fails, open the PDF in a new tab
         window.open(resource.pdfUrl, '_blank');
       }
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-sans">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header */}
       <div className="mb-16">
         <div className="text-center space-y-6 mb-12">
           <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-100 to-pink-100 text-orange-700 rounded-full text-sm font-semibold border-2 border-orange-200 shadow-lg">
             <BookOpen className="w-4 h-4" />
-            <span>Biblioteca Digitale Colorata</span>
+            <span>Biblioteca Digitale Locale</span>
             <Sparkles className="w-4 h-4" />
           </div>
           <h1 className="text-5xl font-bold text-slate-900">Esplora la Conoscenza</h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Una biblioteca digitale vibrante e interattiva per risorse educative di alta qualità.
+            Una biblioteca digitale con PDF locali per visualizzazione e download diretto.
           </p>
         </div>
 
@@ -426,7 +420,7 @@ const LibraryPage = () => {
             <input
               type="text"
               placeholder="Cerca risorse, autori, argomenti..."
-              className="input-modern pl-12 border-2 border-orange-200 focus:border-orange-500 focus:ring-orange-500/20 w-full p-3 rounded-xl shadow-sm text-slate-700"
+              className="input-modern pl-12 border-2 border-orange-200 focus:border-orange-500 focus:ring-orange-500/20"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -457,7 +451,7 @@ const LibraryPage = () => {
         {filteredResources.map((resource) => (
           <div
             key={resource.id}
-            className="card-modern p-8 group cursor-pointer hover:animate-color-pulse bg-white rounded-3xl shadow-xl border border-slate-100 transform hover:-translate-y-2 transition-all duration-300"
+            className="card-modern p-8 group cursor-pointer hover:animate-color-pulse"
             onClick={() => handleResourceClick(resource)}
           >
             {/* Header with badges */}
@@ -543,39 +537,39 @@ const LibraryPage = () => {
 
       {/* Library Stats */}
       <div className="mt-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-10 text-white shadow-2xl">
-        <h3 className="text-3xl font-bold text-center mb-10">Statistiche della Biblioteca Colorata</h3>
+        <h3 className="text-3xl font-bold text-center mb-10">Statistiche della Biblioteca Locale</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div className="space-y-3 p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
-            <div className="text-4xl font-bold">4</div>
-            <div className="text-indigo-200 font-medium">Risorse Totali</div>
+            <div className="text-4xl font-bold">3</div>
+            <div className="text-indigo-200 font-medium">PDF Locali</div>
           </div>
           <div className="space-y-3 p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
-            <div className="text-4xl font-bold">13</div>
-            <div className="text-indigo-200 font-medium">Autori</div>
-          </div>
-          <div className="space-y-3 p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
-            <div className="text-4xl font-bold">990</div>
+            <div className="text-4xl font-bold">598</div>
             <div className="text-indigo-200 font-medium">Pagine Totali</div>
           </div>
           <div className="space-y-3 p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
-            <div className="text-4xl font-bold">6</div>
-            <div className="text-indigo-200 font-medium">Categorie</div>
+            <div className="text-4xl font-bold">100%</div>
+            <div className="text-indigo-200 font-medium">Disponibilità</div>
+          </div>
+          <div className="space-y-3 p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
+            <div className="text-4xl font-bold">0ms</div>
+            <div className="text-indigo-200 font-medium">Latenza</div>
           </div>
         </div>
         
-        {/* Additional colorful stats */}
+        {/* Additional local stats */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-4 bg-gradient-to-r from-orange-500/20 to-pink-500/20 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div className="text-2xl font-bold mb-2">67K+</div>
-            <div className="text-orange-200 font-medium">Visualizzazioni Totali</div>
+            <div className="text-2xl font-bold mb-2">📁 Locale</div>
+            <div className="text-orange-200 font-medium">Accesso Diretto</div>
           </div>
           <div className="text-center p-4 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div className="text-2xl font-bold mb-2">3.3K+</div>
-            <div className="text-emerald-200 font-medium">Mi Piace</div>
+            <div className="text-2xl font-bold mb-2">⚡ Veloce</div>
+            <div className="text-emerald-200 font-medium">Caricamento Istantaneo</div>
           </div>
           <div className="text-center p-4 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div className="text-2xl font-bold mb-2">19.8K+</div>
-            <div className="text-purple-200 font-medium">Download</div>
+            <div className="text-2xl font-bold mb-2">🔒 Sicuro</div>
+            <div className="text-purple-200 font-medium">Nessun Server Esterno</div>
           </div>
         </div>
       </div>

@@ -49,7 +49,7 @@ const PDFViewer: React.FC<{
       // Create a proper download link
       const link = document.createElement('a');
       link.href = pdfUrl;
-      link.download = `${title.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+      link.download = `peeragogy-handbook-v3.0-en.pdf`;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       
@@ -207,7 +207,7 @@ const ResourceDetailModal: React.FC<{
         // Create a proper download link
         const link = document.createElement('a');
         link.href = resource.pdfUrl;
-        link.download = `${resource.title.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+        link.download = `peeragogy-handbook-v3.0-en.pdf`;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         
@@ -506,7 +506,7 @@ const LibraryPage = () => {
         // Create a proper download link
         const link = document.createElement('a');
         link.href = resource.pdfUrl;
-        link.download = `${resource.title.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+        link.download = `peeragogy-handbook-v3.0-en.pdf`;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         

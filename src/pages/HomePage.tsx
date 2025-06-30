@@ -25,7 +25,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const features = [
     {
       icon: Database,
-      title: 'Dal Testo al Dialogo: L’Intelligenza prende Forma',
+      title: 'Dal Testo al Dialogo: L'Intelligenza prende Forma',
       description: 'Indicizzazione e organizzazione intelligente di testi educativi e filosofici con sistema di categorizzazione avanzato.',
       stats: 'Contenuti Illimitati',
       gradient: 'from-orange-500 to-red-500'
@@ -95,9 +95,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   const testimonials = [
     {
-  name: 'Dr.ssa Sofia Ricci',
-  role: 'Esperta di Intelligenza Collettiva e Apprendimento Adattivo',
-  content: 'Un ambiente dinamico che fonde l'intelligenza artificiale con la saggezza collettiva per un'esperienza di apprendimento senza precedenti'.
+      name: 'Dr.ssa Sofia Ricci',
+      role: 'Esperta di Intelligenza Collettiva e Apprendimento Adattivo',
+      content: 'Un ambiente dinamico che fonde l\'intelligenza artificiale con la saggezza collettiva per un\'esperienza di apprendimento senza precedenti',
       avatar: 'HR',
       gradient: 'from-orange-500 to-pink-500'
     },

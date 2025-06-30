@@ -135,23 +135,29 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </div>
           
           <div className="space-y-8">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[0.85] animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-up" style={{ 
+              lineHeight: '1.1',
+              paddingBottom: '0.2em'
+            }}>
               Biblioteca Digitale
-              <span className="block text-gradient animate-pulse" style={{ 
+              <span className="block" style={{ 
                 background: 'linear-gradient(135deg, #f59e0b 0%, #ec4899 50%, #8b5cf6 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                paddingBottom: '0.1em'
+                paddingBottom: '0.2em',
+                lineHeight: '1.1'
               }}>
                 Pyragogica
               </span>
             </h1>
             
             <p className="text-lg sm:text-xl md:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Un <strong className="text-gradient-orange">hub di conoscenza interattiva</strong> dove contenuti liberi e premium relativi all'<strong className="text-gradient-pink">apprendimento peer-to-peer</strong>, 
-              all'<strong className="text-gradient-purple">etica AI</strong> e alla <strong className="text-gradient-emerald">co-creazione cognitiva</strong> possono essere consultati, acquistati, sintetizzati e 
-              interrogati tramite un sistema di <strong className="text-yellow-300">chatbot con RAG</strong>.
+              Un <strong className="text-orange-300">hub di conoscenza interattiva</strong> dove puoi esplorare, acquistare e interrogare contenuti — sia liberi che premium — dedicati all'<strong className="text-pink-300">apprendimento peer-to-peer</strong>, 
+              all'<strong className="text-purple-300">etica dell'IA</strong> e alla <strong className="text-emerald-300">co-creazione cognitiva</strong>.
+              <br />
+              <br />
+              Il tutto potenziato da un sistema avanzato di <strong className="text-yellow-300">chatbot con RAG</strong>, per sintesi, domande e dialoghi personalizzati.
             </p>
           </div>
           

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Brain, User, Settings, Key, Database, AlertCircle, CheckCircle, Loader, Copy, RotateCcw, Trash2, Globe, Shield, Zap, Eye, EyeOff, ChevronDown, ExternalLink, Menu, X } from 'lucide-react';
+import { Send, Brain, User, Settings, Key, Database, AlertCircle, CheckCircle, Loader, Copy, RotateCcw, Trash2, Globe, Shield, Zap, Eye, EyeOff, ChevronDown, ExternalLink, Menu, X, Cpu, Sparkles } from 'lucide-react';
 import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource, type APIProvider, type ModelInfo } from '../services/ragService';
 import { useToast } from '../components/ToastNotification';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -353,6 +353,15 @@ const ChatbotPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { success, error, info } = useToast();
 
+  // Quick prompts per il Peeragogy Handbook
+  const quickPrompts = [
+    "Spiegami i principi fondamentali della peeragogy",
+    "Come posso implementare l'apprendimento peer-to-peer?",
+    "Quali sono i pattern ricorrenti nella peeragogy?",
+    "Come gestire i conflitti in un gruppo di apprendimento?",
+    "Che ruolo ha la motivazione nell'apprendimento collaborativo?"
+  ];
+
   useEffect(() => {
     // Initialize with welcome message
     const welcomeMessage: ChatMessage = {
@@ -422,13 +431,14 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+  const handleSendMessage = async (messageText?: string) => {
+    const textToSend = messageText || inputValue;
+    if (!textToSend.trim()) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputValue,
+      content: textToSend,
       timestamp: new Date(),
       sessionId: ragService.getSessionId()
     };
@@ -439,7 +449,7 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
     setIsTyping(true);
 
     try {
-      const commandResult = ragService.parseCommand(inputValue);
+      const commandResult = ragService.parseCommand(textToSend);
       
       if (commandResult.isCommand) {
         const response = await ragService.handleCommand(
@@ -478,7 +488,7 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
           error('Configurazione richiesta', 'Configura una API key per continuare');
         } else {
           const result = await ragService.generateResponse(
-            inputValue,
+            textToSend,
             selectedPersonality
           );
 
@@ -518,6 +528,10 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
     return PERSONALITIES.find(p => p.id === selectedPersonality) || PERSONALITIES[0];
   };
 
+  const getCurrentModel = (): ModelInfo | null => {
+    return ragService.getCurrentModel();
+  };
+
   const handlePersonalityChange = (personalityId: string) => {
     const oldPersonality = getCurrentPersonality();
     setSelectedPersonality(personalityId);
@@ -537,6 +551,15 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
       info('Personalità cambiata', `Ora attiva: ${newPersonality.name} ${newPersonality.emoji}`);
       setSidebarOpen(false);
     }
+  };
+
+  const handleQuickPrompt = (prompt: string) => {
+    setInputValue(prompt);
+    // Auto-focus input after setting the prompt
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+    info('Domanda selezionata', 'Premi Invio per inviare o modifica il testo');
   };
 
   return (
@@ -711,7 +734,7 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
         {/* Enhanced Chat Interface */}
         <div className="lg:col-span-3">
           <div className="chat-container">
-            {/* Enhanced Chat Header */}
+            {/* Enhanced Chat Header with Model Indicator */}
             <div className="chat-header">
               <div className="flex items-center space-x-4">
                 <div className="relative p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
@@ -719,7 +742,7 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3 mb-2">
                     <h3 className="font-bold text-slate-900 text-lg sm:text-xl">
                       RAG System • {getCurrentPersonality().name}
                     </h3>
@@ -733,6 +756,24 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
                       </span>
                     )}
                   </div>
+                  
+                  {/* Model Indicator */}
+                  {systemStatus.configured && getCurrentModel() && (
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Cpu className="w-4 h-4 text-indigo-600" />
+                      <span className="text-sm font-semibold text-indigo-600">
+                        {getCurrentModel()?.name}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        getCurrentModel()?.free 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-orange-100 text-orange-700'
+                      }`}>
+                        {getCurrentModel()?.free ? 'Gratuito' : 'Premium'}
+                      </span>
+                    </div>
+                  )}
+                  
                   <p className="text-slate-600 text-sm sm:text-base">
                     {getCurrentPersonality().description} • {systemStatus.configured ? `${systemStatus.provider} attivo` : 'Configurazione richiesta'}
                   </p>
@@ -866,7 +907,7 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
                 </button>
                 
                 <button
-                  onClick={handleSendMessage}
+                  onClick={() => handleSendMessage()}
                   disabled={!inputValue.trim() || isTyping}
                   className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl sm:rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2 sm:space-x-3 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-h-[44px]"
                 >
@@ -878,6 +919,38 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
                   <span className="hidden sm:inline">Invia</span>
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Quick Prompts Section */}
+          <div className="mt-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <Sparkles className="w-5 h-5 text-indigo-600" />
+              <h3 className="text-lg font-bold text-slate-900">Domande Pronte sul Peeragogy Handbook</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
+              {quickPrompts.map((prompt, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleQuickPrompt(prompt)}
+                  className="group p-4 text-left bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+                  disabled={isTyping}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors duration-300">
+                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-900 group-hover:text-indigo-900 transition-colors duration-300">
+                        {prompt}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1 group-hover:text-indigo-600 transition-colors duration-300">
+                        Clicca per inserire nel chat
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         </div>

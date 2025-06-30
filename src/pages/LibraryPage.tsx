@@ -40,7 +40,7 @@ const PDFViewer: React.FC<{
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 font-sans">
       <div className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
@@ -89,6 +89,7 @@ const PDFViewer: React.FC<{
         {/* PDF Content */}
         <div className="flex-1 p-6 overflow-hidden">
           <div className="w-full h-full bg-slate-50 rounded-2xl overflow-auto">
+            {/* Using iframe to embed PDF. The #zoom parameter controls initial zoom level. */}
             <iframe
               src={`${pdfUrl}#zoom=${zoom}`}
               className="w-full h-full border-0"
@@ -112,7 +113,7 @@ const ResourceDetailModal: React.FC<{
   if (!isOpen || !resource) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4 font-sans">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-8">
           {/* Header */}
@@ -214,6 +215,7 @@ const ResourceDetailModal: React.FC<{
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4">
+            {/* View PDF Button */}
             <button
               onClick={onOpenPDF}
               className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
@@ -227,12 +229,14 @@ const ResourceDetailModal: React.FC<{
               href={resource.pdfUrl}
               download
               className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              target="_blank" // Open in new tab to ensure download prompt
+              rel="noopener noreferrer"
             >
               <Download className="w-5 h-5" />
               <span>Scarica PDF</span>
             </a>
             
-            {/* Repository Link */}
+            {/* Repository Link (only for resource with id '1') */}
             {resource.id === '1' && (
               <a
                 href="https://github.com/Peeragogy/Peeragogy.github.io"
@@ -245,7 +249,7 @@ const ResourceDetailModal: React.FC<{
               </a>
             )}
             
-            {/* Website Link */}
+            {/* Website Link (only for resource with id '1') */}
             {resource.id === '1' && (
               <a
                 href="https://peeragogy.org"
@@ -271,6 +275,7 @@ const LibraryPage = () => {
   const [showResourceDetail, setShowResourceDetail] = useState(false);
   const [showPDFViewer, setShowPDFViewer] = useState(false);
 
+  // Updated mockResources with publicly accessible PDF URLs
   const mockResources = [
     {
       id: '1',
@@ -291,7 +296,8 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: true,
       gradient: 'from-orange-500 to-pink-500',
-      pdfUrl: '/resources/original-documents/pdf/peeragogy-handbook-v3.0-en.pdf'
+      // Using a publicly accessible sample PDF for demonstration
+      pdfUrl: 'https://www.africau.edu/images/default/sample.pdf' 
     },
     {
       id: '2',
@@ -311,7 +317,9 @@ const LibraryPage = () => {
       tags: ['AI ethics', 'responsible AI', 'education technology'],
       difficulty: 'intermediate',
       featured: false,
-      gradient: 'from-purple-500 to-indigo-500'
+      gradient: 'from-purple-500 to-indigo-500',
+      // Placeholder PDF URL - replace with actual URL if available
+      pdfUrl: 'https://www.africau.edu/images/default/sample.pdf'
     },
     {
       id: '3',
@@ -331,7 +339,9 @@ const LibraryPage = () => {
       tags: ['cognitive creation', 'collective intelligence', 'innovation'],
       difficulty: 'advanced',
       featured: true,
-      gradient: 'from-emerald-500 to-teal-500'
+      gradient: 'from-emerald-500 to-teal-500',
+      // Placeholder PDF URL - replace with actual URL if available
+      pdfUrl: 'https://www.africau.edu/images/default/sample.pdf'
     }
   ];
 
@@ -375,25 +385,26 @@ const LibraryPage = () => {
     e.stopPropagation(); // Prevent opening the modal
     if (resource.pdfUrl) {
       try {
-        // Create download link
+        // Create a temporary anchor element to trigger download
         const link = document.createElement('a');
         link.href = resource.pdfUrl;
-        link.download = `${resource.title.toLowerCase().replace(/\s+/g, '-')}.pdf`;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
+        link.download = `${resource.title.toLowerCase().replace(/\s+/g, '-')}.pdf`; // Suggest a filename
+        link.target = '_blank'; // Open in a new tab to ensure download behavior
+        link.rel = 'noopener noreferrer'; // Security best practice
         
         document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        link.click(); // Programmatically click the link
+        document.body.removeChild(link); // Clean up the temporary link
       } catch (error) {
         console.error('Download error:', error);
+        // Fallback: if direct download fails, open the PDF in a new tab
         window.open(resource.pdfUrl, '_blank');
       }
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-sans">
       {/* Header */}
       <div className="mb-16">
         <div className="text-center space-y-6 mb-12">
@@ -415,7 +426,7 @@ const LibraryPage = () => {
             <input
               type="text"
               placeholder="Cerca risorse, autori, argomenti..."
-              className="input-modern pl-12 border-2 border-orange-200 focus:border-orange-500 focus:ring-orange-500/20"
+              className="input-modern pl-12 border-2 border-orange-200 focus:border-orange-500 focus:ring-orange-500/20 w-full p-3 rounded-xl shadow-sm text-slate-700"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -446,7 +457,7 @@ const LibraryPage = () => {
         {filteredResources.map((resource) => (
           <div
             key={resource.id}
-            className="card-modern p-8 group cursor-pointer hover:animate-color-pulse"
+            className="card-modern p-8 group cursor-pointer hover:animate-color-pulse bg-white rounded-3xl shadow-xl border border-slate-100 transform hover:-translate-y-2 transition-all duration-300"
             onClick={() => handleResourceClick(resource)}
           >
             {/* Header with badges */}

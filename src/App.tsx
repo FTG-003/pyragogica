@@ -34,10 +34,14 @@ function App() {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'home': return <HomePage />;
-      case 'library': return <LibraryPage />;
-      case 'chatbot': return <ChatbotPage />;
-      default: return <HomePage />;
+      case 'home': 
+        return <HomePage onNavigate={handlePageChange} />;
+      case 'library': 
+        return <LibraryPage />;
+      case 'chatbot': 
+        return <ChatbotPage />;
+      default: 
+        return <HomePage onNavigate={handlePageChange} />;
     }
   };
 
@@ -60,7 +64,7 @@ function App() {
                   <h1 className="text-2xl font-bold text-gradient">
                     Biblioteca Pyragogica
                   </h1>
-                  <p className="text-sm text-slate-500 font-medium">Modern Interface</p>
+                  <p className="text-sm text-slate-500 font-medium">Hub di Conoscenza Interattiva</p>
                 </div>
               </div>
 

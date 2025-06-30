@@ -1,7 +1,29 @@
 import React from 'react';
 import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Database, Layers, CheckCircle, Crown, Lock, Sparkles } from 'lucide-react';
 
-const HomePage = () => {
+interface HomePageProps {
+  onNavigate?: (page: string) => void;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+  const handleNavigateToLibrary = () => {
+    if (onNavigate) {
+      onNavigate('library');
+    } else {
+      // Fallback per navigazione diretta
+      window.location.hash = '#library';
+    }
+  };
+
+  const handleNavigateToChatbot = () => {
+    if (onNavigate) {
+      onNavigate('chatbot');
+    } else {
+      // Fallback per navigazione diretta
+      window.location.hash = '#chatbot';
+    }
+  };
+
   const features = [
     {
       icon: Database,
@@ -125,13 +147,19 @@ const HomePage = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <button className="btn-modern btn-primary group">
+            <button 
+              onClick={handleNavigateToLibrary}
+              className="btn-modern btn-primary group cursor-pointer"
+            >
               <Database className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
               <span className="text-lg">Esplora la Biblioteca</span>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
             
-            <button className="btn-modern btn-secondary group">
+            <button 
+              onClick={handleNavigateToChatbot}
+              className="btn-modern btn-secondary group cursor-pointer"
+            >
               <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
               <span className="text-lg">Prova il Chatbot RAG</span>
             </button>
@@ -318,11 +346,17 @@ const HomePage = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <button className="btn-modern bg-white text-indigo-600 hover:bg-slate-100 shadow-xl">
+            <button 
+              onClick={handleNavigateToLibrary}
+              className="btn-modern bg-white text-indigo-600 hover:bg-slate-100 shadow-xl cursor-pointer"
+            >
               <Database className="w-6 h-6" />
               <span className="text-lg font-bold">Esplora Contenuti</span>
             </button>
-            <button className="btn-modern bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600">
+            <button 
+              onClick={handleNavigateToChatbot}
+              className="btn-modern bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600 cursor-pointer"
+            >
               <Brain className="w-6 h-6" />
               <span className="text-lg font-bold">Prova il Chatbot RAG</span>
             </button>

@@ -25,7 +25,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const features = [
     {
       icon: Database,
-      title: 'Hub di Conoscenza Interattiva',
+      title: 'Dal Testo al Dialogo: L’Intelligenza prende Forma',
       description: 'Indicizzazione e organizzazione intelligente di testi educativi e filosofici con sistema di categorizzazione avanzato.',
       stats: 'Contenuti Illimitati',
       gradient: 'from-orange-500 to-red-500'

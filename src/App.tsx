@@ -64,7 +64,7 @@ function App() {
                   <h1 className="text-2xl font-bold text-gradient">
                     Biblioteca Pyragogica
                   </h1>
-                  <p className="text-sm text-slate-500 font-medium">Hub di Conoscenza Interattiva</p>
+                  <p className="text-sm text-slate-500 font-medium">Interroga i Libri. Accendi il Sapere</p>
                 </div>
               </div>
 

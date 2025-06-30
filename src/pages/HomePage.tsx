@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Lightbulb, Database, Layers, Search, Infinity, Target, Sparkles, CheckCircle } from 'lucide-react';
+import { BookOpen, Brain, Users, Zap, ArrowRight, Star, Globe, Shield, Database, Layers, CheckCircle } from 'lucide-react';
 
 const HomePage = () => {
   const features = [
@@ -70,14 +70,12 @@ const HomePage = () => {
         </div>
         
         <div className="container-modern hero-content">
-          {/* Modern Badge */}
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20 animate-scale-in mb-8">
             <Star className="w-5 h-5 text-yellow-400" />
             <span>Biblioteca Digitale Infinitamente Scalabile</span>
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
           </div>
           
-          {/* Main Title */}
           <div className="space-y-8">
             <h1 className="hero-title animate-fade-in-up">
               Biblioteca Digitale
@@ -92,7 +90,6 @@ const HomePage = () => {
             </p>
           </div>
           
-          {/* Modern CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <button className="btn-modern btn-primary group">
               <Database className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
@@ -140,7 +137,6 @@ const HomePage = () => {
                     {feature.description}
                   </p>
                   <div className="status-indicator status-success">
-                    <Infinity className="w-3 h-3" />
                     <span>{feature.stats}</span>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -27,7 +27,7 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
       setIsVisible(true);
       const timer = setTimeout(() => {
         setIsVisible(false);
-        setTimeout(onClose, 300); // Wait for animation to complete
+        setTimeout(onClose, 300);
       }, duration);
 
       return () => clearTimeout(timer);
@@ -128,7 +128,6 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
   );
 };
 
-// Hook per gestire le notifiche toast
 export const useToast = () => {
   const [toasts, setToasts] = useState<Array<{
     id: string;
@@ -138,16 +137,16 @@ export const useToast = () => {
     duration?: number;
   }>>([]);
 
-  const showToast = (type: ToastType, title: string, message?: string, duration?: number) => {
+  const showToast = useCallback((type: ToastType, title: string, message?: string, duration?: number) => {
     const id = Date.now().toString();
     setToasts(prev => [...prev, { id, type, title, message, duration }]);
-  };
+  }, []);
 
-  const removeToast = (id: string) => {
+  const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
-  };
+  }, []);
 
-  const ToastContainer = () => (
+  const ToastContainer = useCallback(() => (
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {toasts.map(toast => (
         <ToastNotification
@@ -161,19 +160,19 @@ export const useToast = () => {
         />
       ))}
     </div>
-  );
+  ), [toasts, removeToast]);
 
   return {
     showToast,
     ToastContainer,
-    success: (title: string, message?: string, duration?: number) => 
-      showToast('success', title, message, duration),
-    error: (title: string, message?: string, duration?: number) => 
-      showToast('error', title, message, duration),
-    warning: (title: string, message?: string, duration?: number) => 
-      showToast('warning', title, message, duration),
-    info: (title: string, message?: string, duration?: number) => 
-      showToast('info', title, message, duration)
+    success: useCallback((title: string, message?: string, duration?: number) => 
+      showToast('success', title, message, duration), [showToast]),
+    error: useCallback((title: string, message?: string, duration?: number) => 
+      showToast('error', title, message, duration), [showToast]),
+    warning: useCallback((title: string, message?: string, duration?: number) => 
+      showToast('warning', title, message, duration), [showToast]),
+    info: useCallback((title: string, message?: string, duration?: number) => 
+      showToast('info', title, message, duration), [showToast])
   };
 };
 

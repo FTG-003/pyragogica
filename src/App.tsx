@@ -4,7 +4,6 @@ import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useToast } from './components/ToastNotification';
 
-// Lazy loading delle pagine principali
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const LibraryPage = React.lazy(() => import('./pages/LibraryPage'));
 const ChatbotPage = React.lazy(() => import('./pages/ChatbotPage'));
@@ -45,11 +44,9 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-slate-50">
-        {/* Modern Navigation */}
         <nav className="nav-modern">
           <div className="container-modern">
             <div className="flex justify-between items-center h-20">
-              {/* Modern Logo */}
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600">
@@ -67,7 +64,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Desktop Navigation */}
               <div className="hidden md:flex items-center gap-2">
                 {navigation.map((item) => {
                   const Icon = item.icon;
@@ -85,7 +81,6 @@ function App() {
                 })}
               </div>
 
-              {/* Mobile menu button */}
               <div className="md:hidden">
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -97,7 +92,6 @@ function App() {
               </div>
             </div>
 
-            {/* Mobile Navigation */}
             {mobileMenuOpen && (
               <div className="md:hidden border-t border-slate-200/50 py-6 bg-white/95 backdrop-blur-xl">
                 <div className="space-y-3">
@@ -125,7 +119,6 @@ function App() {
           </div>
         </nav>
 
-        {/* Page Content with Modern Loading */}
         <main className="relative">
           <Suspense 
             fallback={
@@ -150,7 +143,6 @@ function App() {
           </Suspense>
         </main>
 
-        {/* Toast Notifications Container */}
         <ToastContainer />
       </div>
     </ErrorBoundary>

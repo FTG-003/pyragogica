@@ -95,9 +95,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   const testimonials = [
     {
-      name: 'Howard Rheingold',
-      role: 'Co-fondatore, Progetto Peeragogy',
-      content: 'Una piattaforma che realizza la visione di una biblioteca digitale veramente collaborativa e interattiva.',
+  name: 'Dr.ssa Sofia Ricci',
+  role: 'Esperta di Intelligenza Collettiva e Apprendimento Adattivo',
+  content: 'Un ambiente dinamico che fonde l'intelligenza artificiale con la saggezza collettiva per un'esperienza di apprendimento senza precedenti'.
       avatar: 'HR',
       gradient: 'from-orange-500 to-pink-500'
     },

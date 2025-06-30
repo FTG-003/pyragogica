@@ -36,18 +36,8 @@ const PDFViewer: React.FC<{
   title: string;
 }> = ({ isOpen, onClose, pdfUrl, title }) => {
   const [zoom, setZoom] = useState(100);
-  const [pdfError, setPdfError] = useState(false);
   
   if (!isOpen) return null;
-
-  const handlePdfError = () => {
-    setPdfError(true);
-  };
-
-  const handleDownloadRealPDF = () => {
-    // Direct link to the official Peeragogy Handbook
-    window.open('https://peeragogy.org/peeragogy-handbook-v3-0/', '_blank');
-  };
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -60,29 +50,31 @@ const PDFViewer: React.FC<{
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900">{title}</h3>
-              <p className="text-sm text-slate-600">PDF Placeholder - Scarica l'originale</p>
+              <p className="text-sm text-slate-600">Visualizzatore PDF</p>
             </div>
           </div>
           
           {/* Controls */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={handleDownloadRealPDF}
-              className="p-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300"
-              title="Scarica PDF Originale"
+              onClick={() => setZoom(Math.max(50, zoom - 25))}
+              className="p-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-all duration-300"
+              title="Riduci zoom"
             >
-              <Download className="w-5 h-5" />
+              <ZoomOut className="w-5 h-5" />
             </button>
             
-            <a
-              href="https://peeragogy.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
-              title="Visita Sito Ufficiale"
+            <span className="px-3 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium">
+              {zoom}%
+            </span>
+            
+            <button
+              onClick={() => setZoom(Math.min(200, zoom + 25))}
+              className="p-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-all duration-300"
+              title="Aumenta zoom"
             >
-              <ExternalLink className="w-5 h-5" />
-            </a>
+              <ZoomIn className="w-5 h-5" />
+            </button>
             
             <button
               onClick={onClose}
@@ -94,62 +86,15 @@ const PDFViewer: React.FC<{
           </div>
         </div>
 
-        {/* PDF Content - Always show instructions since it's a placeholder */}
+        {/* PDF Content */}
         <div className="flex-1 p-6 overflow-hidden">
-          <div className="w-full h-full bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center">
-            <div className="text-center max-w-2xl p-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                <FileText className="w-10 h-10 text-white" />
-              </div>
-              
-              <h3 className="text-3xl font-bold text-slate-900 mb-6">Peeragogy Handbook V3.0</h3>
-              <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                Questo è un PDF placeholder. Per ottenere il vero <strong>Peeragogy Handbook V3.0</strong>, 
-                scaricalo dal sito ufficiale o dal repository GitHub.
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <div className="p-6 bg-white rounded-2xl shadow-lg border border-slate-200">
-                  <h4 className="font-bold text-slate-900 mb-2">📖 Contenuto Originale</h4>
-                  <p className="text-sm text-slate-600 mb-4">278 pagine di contenuti peer-to-peer</p>
-                  <button
-                    onClick={handleDownloadRealPDF}
-                    className="w-full inline-flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Scarica PDF</span>
-                  </button>
-                </div>
-                
-                <div className="p-6 bg-white rounded-2xl shadow-lg border border-slate-200">
-                  <h4 className="font-bold text-slate-900 mb-2">🌐 Sito Ufficiale</h4>
-                  <p className="text-sm text-slate-600 mb-4">Esplora il progetto completo</p>
-                  <a
-                    href="https://peeragogy.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300"
-                  >
-                    <Globe className="w-4 h-4" />
-                    <span>Visita Sito</span>
-                  </a>
-                </div>
-              </div>
-              
-              <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-amber-900">Come ottenere il PDF originale:</p>
-                    <ul className="text-xs text-amber-700 mt-2 space-y-1">
-                      <li>• Visita <strong>peeragogy.org</strong></li>
-                      <li>• Scarica dal repository GitHub ufficiale</li>
-                      <li>• Sostituisci il file placeholder in <code>/public/resources/original-documents/pdf/</code></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="w-full h-full bg-slate-50 rounded-2xl overflow-auto">
+            <iframe
+              src={`${pdfUrl}#zoom=${zoom}`}
+              className="w-full h-full border-0"
+              title={title}
+              style={{ minHeight: '600px' }}
+            />
           </div>
         </div>
       </div>
@@ -165,11 +110,6 @@ const ResourceDetailModal: React.FC<{
   onOpenPDF: () => void;
 }> = ({ isOpen, onClose, resource, onOpenPDF }) => {
   if (!isOpen || !resource) return null;
-
-  const handleDownloadRealPDF = () => {
-    // Direct link to the official Peeragogy Handbook
-    window.open('https://peeragogy.org/peeragogy-handbook-v3-0/', '_blank');
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
@@ -279,19 +219,18 @@ const ResourceDetailModal: React.FC<{
               className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               <FileText className="w-5 h-5" />
-              <span>Visualizza Placeholder</span>
+              <span>Visualizza PDF</span>
             </button>
             
-            {/* Download Real PDF Button */}
-            {resource.id === '1' && (
-              <button
-                onClick={handleDownloadRealPDF}
-                className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-              >
-                <Download className="w-5 h-5" />
-                <span>Scarica Originale</span>
-              </button>
-            )}
+            {/* Download PDF Button */}
+            <a
+              href={resource.pdfUrl}
+              download
+              className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              <Download className="w-5 h-5" />
+              <span>Scarica PDF</span>
+            </a>
             
             {/* Repository Link */}
             {resource.id === '1' && (
@@ -319,35 +258,6 @@ const ResourceDetailModal: React.FC<{
               </a>
             )}
           </div>
-
-          {/* PDF Status Notice */}
-          {resource.id === '1' && (
-            <div className="mt-6 p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-6 h-6 text-amber-600 mt-0.5" />
-                <div>
-                  <p className="text-base font-semibold text-amber-900 mb-2">PDF Placeholder Attivo</p>
-                  <p className="text-sm text-amber-700 mb-4">
-                    Il file attuale è un placeholder. Per ottenere il vero Peeragogy Handbook V3.0:
-                  </p>
-                  <div className="space-y-2 text-sm text-amber-700">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                      <span>Scarica da <strong>peeragogy.org</strong></span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                      <span>Sostituisci il file in <code>/public/resources/original-documents/pdf/</code></span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                      <span>Rinomina come <code>peeragogy-handbook-v3.0-en.pdf</code></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -463,12 +373,9 @@ const LibraryPage = () => {
 
   const handleDownloadClick = (e: React.MouseEvent, resource: any) => {
     e.stopPropagation(); // Prevent opening the modal
-    if (resource.id === '1') {
-      // For the Peeragogy Handbook, redirect to official site
-      window.open('https://peeragogy.org/peeragogy-handbook-v3-0/', '_blank');
-    } else if (resource.pdfUrl) {
+    if (resource.pdfUrl) {
       try {
-        // For other resources, try to download
+        // Create download link
         const link = document.createElement('a');
         link.href = resource.pdfUrl;
         link.download = `${resource.title.toLowerCase().replace(/\s+/g, '-')}.pdf`;
@@ -608,7 +515,7 @@ const LibraryPage = () => {
                 <div 
                   className="flex items-center space-x-2 cursor-pointer hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200"
                   onClick={(e) => handleDownloadClick(e, resource)}
-                  title={resource.id === '1' ? 'Scarica PDF Originale' : 'Scarica PDF'}
+                  title="Scarica PDF"
                 >
                   <Download className="w-4 h-4 text-emerald-600 hover:text-emerald-700 transition-colors duration-200" />
                   <span className="font-semibold text-slate-700 hover:text-emerald-700 transition-colors duration-200">{resource.downloads}</span>

@@ -404,7 +404,7 @@ const LibraryPage = () => {
       id: '1',
       title: 'The Peeragogy Handbook',
       subtitle: 'A comprehensive guide to peer-to-peer learning',
-      authors: ['Howard Rheingold', 'Charles Jeffrey Danoff', 'Paola Ricaurte', 'Charlotte Pierce', 'Lisa Snow Macdonald']
+      authors: ['Howard Rheingold', 'Charles Jeffrey Danoff', 'Paola Ricaurte', 'Charlotte Pierce', 'Lisa Snow Macdonald'],
       category: 'peer-learning',
       type: 'handbook',
       access: 'free',

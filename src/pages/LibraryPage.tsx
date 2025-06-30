@@ -28,7 +28,7 @@ const getAccessStyle = (access: string) => {
   }
 };
 
-// PDF Viewer Component with fallback
+// PDF Viewer Component
 const PDFViewer: React.FC<{
   isOpen: boolean;
   onClose: () => void;
@@ -40,14 +40,17 @@ const PDFViewer: React.FC<{
   
   if (!isOpen) return null;
 
-  // Fallback URLs for Peeragogy Handbook
-  const fallbackUrls = [
-    'https://raw.githubusercontent.com/Peeragogy/Peeragogy.github.io/master/peeragogy-handbook-v3-0.pdf',
-    'https://peeragogy.org/peeragogy-handbook-v3-0.pdf'
-  ];
-
   const handlePdfError = () => {
     setPdfError(true);
+  };
+
+  const handleDownloadPDF = () => {
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -87,12 +90,20 @@ const PDFViewer: React.FC<{
               </div>
             )}
             
+            <button
+              onClick={handleDownloadPDF}
+              className="p-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300"
+              title="Scarica PDF"
+            >
+              <Download className="w-5 h-5" />
+            </button>
+            
             <a
-              href={fallbackUrls[0]}
+              href={pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
-              title="Apri PDF online"
+              title="Apri PDF in nuova finestra"
             >
               <ExternalLink className="w-5 h-5" />
             </a>
@@ -110,44 +121,33 @@ const PDFViewer: React.FC<{
         {/* PDF Content */}
         <div className="flex-1 p-6 overflow-hidden">
           {pdfError ? (
-            // Error fallback with multiple options
+            // Error fallback
             <div className="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center">
               <div className="text-center max-w-md">
                 <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <AlertCircle className="w-8 h-8 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">PDF non disponibile localmente</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">Errore caricamento PDF</h3>
                 <p className="text-slate-600 mb-6 leading-relaxed">
-                  Il file PDF non è presente nel progetto locale. Puoi accedere al documento attraverso i link ufficiali:
+                  Non è possibile visualizzare il PDF nel browser. Prova ad aprirlo in una nuova finestra o scaricarlo.
                 </p>
-                <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button
+                    onClick={handleDownloadPDF}
+                    className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300"
+                  >
+                    <Download className="w-5 h-5" />
+                    <span>Scarica PDF</span>
+                  </button>
                   <a
-                    href={fallbackUrls[0]}
+                    href={pdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300"
+                    className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-pink-600 transition-all duration-300"
                   >
-                    📄 Apri PDF dal Repository GitHub
+                    <ExternalLink className="w-5 h-5" />
+                    <span>Apri PDF</span>
                   </a>
-                  <a
-                    href="https://peeragogy.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
-                  >
-                    🌐 Visita il Sito Ufficiale
-                  </a>
-                </div>
-                <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                  <div className="flex items-start space-x-3">
-                    <Upload className="w-5 h-5 text-blue-600 mt-0.5" />
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-blue-900">Per sviluppatori:</p>
-                      <p className="text-xs text-blue-700 mt-1">
-                        Carica il PDF in <code className="bg-blue-100 px-1 rounded">public/resources/original-documents/pdf/</code>
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -159,17 +159,18 @@ const PDFViewer: React.FC<{
                 title={title}
                 onError={handlePdfError}
                 onLoad={(e) => {
-                  // Check if iframe loaded successfully
                   const iframe = e.target as HTMLIFrameElement;
-                  try {
-                    // If we can't access the content, it likely failed to load
-                    if (!iframe.contentDocument && !iframe.contentWindow) {
-                      handlePdfError();
+                  // Check if iframe content is accessible
+                  setTimeout(() => {
+                    try {
+                      if (iframe.contentDocument === null) {
+                        // PDF might not be loading properly
+                        console.log('PDF iframe loaded but content not accessible');
+                      }
+                    } catch (error) {
+                      console.log('PDF iframe cross-origin restriction');
                     }
-                  } catch (error) {
-                    // Cross-origin or other loading error
-                    handlePdfError();
-                  }
+                  }, 1000);
                 }}
               />
             </div>
@@ -188,6 +189,17 @@ const ResourceDetailModal: React.FC<{
   onOpenPDF: () => void;
 }> = ({ isOpen, onClose, resource, onOpenPDF }) => {
   if (!isOpen || !resource) return null;
+
+  const handleDownloadPDF = () => {
+    if (resource.pdfUrl) {
+      const link = document.createElement('a');
+      link.href = resource.pdfUrl;
+      link.download = `${resource.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 p-4">
@@ -300,6 +312,17 @@ const ResourceDetailModal: React.FC<{
               <span>Visualizza PDF</span>
             </button>
             
+            {/* Download PDF Button */}
+            {resource.pdfUrl && (
+              <button
+                onClick={handleDownloadPDF}
+                className="flex-1 inline-flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <Download className="w-5 h-5" />
+                <span>Scarica PDF</span>
+              </button>
+            )}
+            
             {/* Repository Link */}
             {resource.id === '1' && (
               <a
@@ -329,14 +352,13 @@ const ResourceDetailModal: React.FC<{
 
           {/* PDF Status Notice */}
           {resource.id === '1' && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
               <div className="flex items-start space-x-3">
-                <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
+                <FileText className="w-5 h-5 text-green-600 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-blue-900">Accesso al PDF</p>
-                  <p className="text-xs text-blue-700 mt-1">
-                    Il PDF può essere visualizzato tramite i link ufficiali del progetto Peeragogy. 
-                    Il visualizzatore integrato fornisce accesso diretto ai contenuti originali.
+                  <p className="text-sm font-medium text-green-900">PDF Disponibile</p>
+                  <p className="text-xs text-green-700 mt-1">
+                    Il PDF originale del Peeragogy Handbook V3.0 è disponibile per la visualizzazione diretta e il download.
                   </p>
                 </div>
               </div>
@@ -453,6 +475,18 @@ const LibraryPage = () => {
   const handleCloseDetail = () => {
     setShowResourceDetail(false);
     setSelectedResource(null);
+  };
+
+  const handleDownloadClick = (e: React.MouseEvent, resource: any) => {
+    e.stopPropagation(); // Prevent opening the modal
+    if (resource.pdfUrl) {
+      const link = document.createElement('a');
+      link.href = resource.pdfUrl;
+      link.download = `${resource.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -575,9 +609,13 @@ const LibraryPage = () => {
                   <Star className="w-4 h-4 text-yellow-500 fill-current" />
                   <span className="font-semibold text-slate-700">{resource.rating}</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Download className="w-4 h-4 text-emerald-600" />
-                  <span className="font-semibold text-slate-700">{resource.downloads}</span>
+                <div 
+                  className="flex items-center space-x-2 cursor-pointer hover:bg-emerald-50 p-2 rounded-lg transition-colors duration-200"
+                  onClick={(e) => handleDownloadClick(e, resource)}
+                  title="Scarica PDF"
+                >
+                  <Download className="w-4 h-4 text-emerald-600 hover:text-emerald-700 transition-colors duration-200" />
+                  <span className="font-semibold text-slate-700 hover:text-emerald-700 transition-colors duration-200">{resource.downloads}</span>
                 </div>
               </div>
               <button className={`group inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r ${resource.gradient} text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105 shadow-lg`}>

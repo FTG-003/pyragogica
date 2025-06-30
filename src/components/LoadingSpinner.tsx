@@ -26,18 +26,8 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   return (
     <div className={`flex flex-col items-center justify-center space-y-4 ${className}`}>
-      {/* Modern Loading Spinner */}
       <div className="relative">
-        <div className={`${sizeClasses[size]} border-4 border-slate-200 rounded-full animate-spin`}
-             style={{
-               borderTopColor: '#6366f1',
-               borderRightColor: '#8b5cf6'
-             }}></div>
-        <div className="absolute inset-0 rounded-full"
-             style={{
-               background: 'conic-gradient(from 0deg, transparent, rgba(99, 102, 241, 0.1))',
-               animation: 'spin 2s linear infinite reverse'
-             }}></div>
+        <Loader2 className={`${sizeClasses[size]} text-indigo-600 animate-spin`} />
       </div>
       
       {text && (

@@ -23,7 +23,6 @@
     letter-spacing: -0.011em;
   }
   
-  /* Enhanced Typography Hierarchy */
   h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
@@ -38,20 +37,17 @@
   h5 { @apply text-lg md:text-xl; }
   h6 { @apply text-base md:text-lg; }
   
-  /* Enhanced Reading Experience */
   p {
     line-height: 1.7;
     font-weight: 400;
     letter-spacing: -0.006em;
   }
   
-  /* Focus States */
   *:focus {
     outline: 2px solid #6366f1;
     outline-offset: 2px;
   }
   
-  /* Selection Styling */
   ::selection {
     background-color: #e0e7ff;
     color: #3730a3;
@@ -60,12 +56,10 @@
 
 /* Modern Component System */
 @layer components {
-  /* Container System */
   .container-modern {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  /* Button System */
   .btn-modern {
     @apply inline-flex items-center justify-center gap-2;
     @apply px-6 py-3 rounded-xl font-semibold;
@@ -89,14 +83,12 @@
     @apply shadow-md hover:shadow-lg;
   }
   
-  /* Card System */
   .card-modern {
     @apply bg-white rounded-2xl shadow-sm border border-slate-100;
     @apply transition-all duration-300 ease-out;
     @apply hover:shadow-lg hover:-translate-y-1;
   }
   
-  /* Input System */
   .input-modern {
     @apply w-full px-4 py-3 border-2 border-slate-200 rounded-xl;
     @apply focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500;
@@ -107,12 +99,6 @@
     letter-spacing: -0.01em;
   }
   
-  .input-modern::placeholder {
-    @apply text-slate-400;
-    font-weight: 400;
-  }
-  
-  /* Navigation */
   .nav-modern {
     @apply bg-white/90 backdrop-blur-xl border-b border-slate-200/50;
     @apply sticky top-0 z-50 shadow-sm;
@@ -131,7 +117,6 @@
     @apply shadow-lg;
   }
   
-  /* Hero Section */
   .hero-modern {
     @apply relative overflow-hidden;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
@@ -154,7 +139,6 @@
     line-height: 1.6;
   }
   
-  /* Grid System */
   .grid-modern {
     @apply grid gap-6 md:gap-8;
   }
@@ -164,12 +148,10 @@
   .grid-3 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3; }
   .grid-4 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4; }
   
-  /* Section Spacing */
   .section-modern {
     @apply py-16 md:py-24;
   }
   
-  /* Status Indicators */
   .status-indicator {
     @apply inline-flex items-center gap-2 px-3 py-1 rounded-full;
     @apply text-sm font-semibold border;
@@ -193,7 +175,6 @@
   }
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -216,7 +197,6 @@
   }
 }
 
-/* Utility Classes */
 @layer utilities {
   .animate-fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
@@ -236,7 +216,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .btn-modern {
     @apply px-4 py-2 text-sm min-h-[44px];
@@ -251,7 +230,6 @@
   }
 }
 
-/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

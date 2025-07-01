@@ -7,19 +7,62 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# Editor directories and files
-.vscode/*
+# Dependency directories
+node_modules/
+.bolt/
+.bolt-cache/
+.bolt-history/
+
+# Build output
+dist/
+build/
+out/
+.next/
+.nuxt/
+.tmp/
+.temp/
+.cache/
+coverage/
+
+# Local config files
+*.local
+.env
+.env.*.local
+.env.local
+.envrc
+*.secret
+.secret/
+
+# VSCode
+.vscode/
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/settings.json
+
+# IDEs
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-.env
+*.code-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+# OS-specific trash
+.trash/
+__MACOSX/
+
+# Bolt AI-specific (esperienza diretta)
+bolt-export.json
+bolt-snapshots/
+bolt-tests/
+

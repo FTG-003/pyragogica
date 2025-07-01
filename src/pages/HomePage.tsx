@@ -54,7 +54,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   ];
 
   const benefits = [
-    { text: 'Accesso a contenuti peer-to-peer di qualità mondiale', icon: Globe },
+    { text: 'Accesso a contenuti peer-to-peer di qualità ', icon: Globe },
     { text: 'Sistema RAG per sintesi e interrogazione intelligente', icon: Brain },
     { text: 'Distinzione chiara tra contenuti open e premium', icon: Shield },
     { text: 'Chatbot multi-personalità per ogni stile di apprendimento', icon: Users },
@@ -151,16 +151,17 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 Pyragogica
               </span>
             </h1>
-            
             <p className="text-lg sm:text-xl md:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Un <strong className="text-orange-300">hub di conoscenza interattiva</strong> dove puoi esplorare, acquistare e interrogare contenuti — sia liberi che premium — dedicati all'<strong className="text-pink-300">apprendimento peer-to-peer</strong>, 
-              all'<strong className="text-purple-300">etica dell' IA</strong> e alla <strong className="text-emerald-300">co-creazione cognitiva</strong>.
+              Un <strong className="text-orange-300">hub interattivo</strong> dove puoi <strong>parlare direttamente con i testi</strong> — esplorando, acquistando e interrogando contenuti, sia liberi che premium, sull’<strong className="text-pink-300">apprendimento peer-to-peer</strong>, l’<strong className="text-purple-300">etica dell’IA</strong> e la <strong className="text-emerald-300">co-creazione cognitiva</strong>.
               <br />
               <br />
-              Il tutto potenziato da un sistema avanzato di <strong className="text-yellow-300">chatbot con RAG</strong>, per sintesi, domande e dialoghi personalizzati.
+              <p>
+                Il tutto potenziato da un sistema avanzato di <strong className="text-yellow-300">chatbot con RAG</strong>, per sintesi, domande e dialoghi personalizzati.
+              </p>
             </p>
           </div>
-          
+              <br />
+              <br />
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <button 
               onClick={handleNavigateToLibrary}
@@ -394,7 +395,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm">
               <Crown className="w-4 h-4" />
-              <span className="text-sm">Community "Very"</span>
+              <span className="text-sm">Community "Members"</span>
             </div>
           </div>
         </div>

@@ -153,14 +153,14 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </h1>
             
             <p className="text-lg sm:text-xl md:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Un <strong className="text-orange-300">hub di conoscenza interattiva</strong> dove puoi esplorare, acquistare e interrogare contenuti — sia liberi che premium — dedicati all'<strong className="text-pink-300">apprendimento peer-to-peer</strong>, 
-              all'<strong className="text-purple-300">etica dell\' IA</strong> e alla <strong className="text-emerald-300">co-creazione cognitiva</strong>.
+              Un <strong className="text-orange-300">hub di conoscenza interattiva</strong> dove puoi dialogare direttamente con i testi sia liberi che premium — dedicati all'<strong className="text-pink-300">apprendimento peer-to-peer</strong>, 
+              all'<strong className="text-purple-300">etica dell' IA</strong> e alla <strong className="text-emerald-300">co-creazione cognitiva</strong>.
               <br />
               <br />
               Il tutto potenziato da un sistema avanzato di <strong className="text-yellow-300">chatbot con RAG</strong>, per sintesi, domande e dialoghi personalizzati.
             </p>
+            <br ></br>
           </div>
-          
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <button 
               onClick={handleNavigateToLibrary}

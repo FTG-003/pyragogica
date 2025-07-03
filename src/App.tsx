@@ -1,8 +1,9 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import { BookOpen, Brain, Users, Menu, X, Sparkles, Database, Zap } from 'lucide-react';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useToast } from './components/ToastNotification';
+import ModernButton from './components/ui/ModernButton';
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const LibraryPage = React.lazy(() => import('./pages/LibraryPage'));
@@ -11,6 +12,12 @@ const ChatbotPage = React.lazy(() => import('./pages/ChatbotPage'));
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    // Persist login in sessionStorage
+    return sessionStorage.getItem('isAuthenticated') === 'true';
+  });
+  const [password, setPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
   const { ToastContainer, success, error, info } = useToast();
 
   const navigation = [
@@ -18,6 +25,28 @@ function App() {
     { id: 'library', name: 'Biblioteca', icon: Database },
     { id: 'chatbot', name: 'AI Assistant', icon: Brain },
   ];
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      sessionStorage.setItem('isAuthenticated', 'true');
+    } else {
+      sessionStorage.removeItem('isAuthenticated');
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setTimeout(() => {
+      if (password === 'Pippo') {
+        setIsAuthenticated(true);
+        success('Accesso riuscito!', 'Benvenuto nella Biblioteca Pyragogica!', 2000);
+      } else {
+        error('Password errata', 'Riprova con la password corretta.', 2500);
+      }
+      setLoginLoading(false);
+    }, 700);
+  };
 
   const handlePageChange = (pageId: string) => {
     setCurrentPage(pageId);
@@ -44,6 +73,45 @@ function App() {
         return <HomePage onNavigate={handlePageChange} />;
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 animate-fade-in-up">
+        <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10 max-w-md w-full border-2 border-white/60">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br from-indigo-600 to-purple-600 mb-4">
+              <span className="text-3xl font-bold text-white">🔒</span>
+            </div>
+            <h2 className="text-2xl font-bold text-gradient mb-2">Accesso Riservato</h2>
+            <p className="text-slate-600 text-center">Inserisci la password per accedere alla Biblioteca Pyragogica</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <input
+              type="password"
+              className="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-200 outline-none text-lg transition-all bg-white/80"
+              placeholder="Password..."
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              autoFocus
+              autoComplete="current-password"
+              disabled={loginLoading}
+            />
+            <ModernButton
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loginLoading}
+              className="w-full"
+              ariaLabel="Accedi"
+            >
+              Accedi
+            </ModernButton>
+          </form>
+        </div>
+        <ToastContainer />
+      </div>
+    );
+  }
 
   return (
     <ErrorBoundary>

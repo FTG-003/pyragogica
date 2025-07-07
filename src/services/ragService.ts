@@ -526,26 +526,17 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
       let response: Response;
 
       if (provider.id === 'flowise') {
-        // Chiamata a Flowise /api/v1/prediction/{chatflowid}
-        const chatflowid = model.id;
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json'
-        };
-        if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
-        response = await fetch(`${provider.baseUrl}/prediction/${chatflowid}`, {
+        // Forza sempre l'uso del proxy backend
+        let data;
+        response = await fetch('/api/ai/flowise', {
           method: 'POST',
-          headers,
-          body: JSON.stringify({
-            question: prompt,
-            // Puoi aggiungere altri parametri se richiesti da Flowise
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: prompt })
         });
+        data = await response.json();
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Flowise API Error ${response.status}: ${errorData.error || 'Unknown error'}`);
+          throw new Error(`Flowise API Error ${response.status}: ${data.error || 'Unknown error'}`);
         }
-        const data = await response.json();
-        // Flowise tipicamente restituisce { text: '...', ... }
         return data.text || data.answer || 'Nessuna risposta generata';
       } else if (provider.id === 'openrouter') {
         response = await fetch(`${provider.baseUrl}/chat/completions`, {

@@ -3,6 +3,7 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const winston = require('winston');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
@@ -281,6 +282,32 @@ app.post('/api/auth/login', (req, res) => {
   } else {
     logger.warn('Tentativo di login fallito', { username, ip: req.ip });
     res.status(401).json({ error: 'Credenziali non valide' });
+  }
+});
+
+// Endpoint proxy per Flowise
+app.post('/api/ai/flowise', async (req, res) => {
+  const { question } = req.body;
+  const chatflowid = '9c4a9fce-a2dd-4e4f-a4b7-1bc72b9b9191';
+  const apiKey = process.env.FLOWISE_API_KEY || 'VFbQZT_5p-bLh45Ox3UOl4wi6CkAmw3e8X9UCXXHWAE';
+  try {
+    const response = await fetch(`https://flowise.pyragogy.org/api/v1/prediction/${chatflowid}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({ question })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Flowise proxy error:', data);
+      return res.status(response.status).json({ error: data.error || 'Flowise error', status: response.status });
+    }
+    res.json(data);
+  } catch (err) {
+    console.error('Proxy error:', err);
+    res.status(500).json({ error: 'Proxy server error', details: err.message });
   }
 });
 

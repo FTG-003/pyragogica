@@ -30,7 +30,7 @@ const logger = winston.createLogger({
 // Middleware di sicurezza
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: 'https://library.pyragogy.org',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -287,7 +287,13 @@ app.post('/api/auth/login', (req, res) => {
 
 // Endpoint proxy per Flowise
 app.post('/api/ai/flowise', async (req, res) => {
-  const { question } = req.body;
+  // Accetta sia 'question' che 'query' come campo
+  const question = req.body.question || req.body.query;
+  console.log('Richiesta ricevuta per Flowise:', question);
+  if (!question || typeof question !== 'string') {
+    console.error('Richiesta Flowise senza campo question/query:', req.body);
+    return res.status(400).json({ error: 'Campo question (o query) richiesto e deve essere una stringa' });
+  }
   const chatflowid = '9c4a9fce-a2dd-4e4f-a4b7-1bc72b9b9191';
   const apiKey = process.env.FLOWISE_API_KEY || 'VFbQZT_5p-bLh45Ox3UOl4wi6CkAmw3e8X9UCXXHWAE';
   try {
@@ -299,7 +305,14 @@ app.post('/api/ai/flowise', async (req, res) => {
       },
       body: JSON.stringify({ question })
     });
-    const data = await response.json();
+    const contentType = response.headers.get('content-type');
+    const text = await response.text();
+    console.log('Risposta Flowise (raw):', text);
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('Flowise ha risposto con contenuto non JSON:', text);
+      return res.status(502).json({ error: 'Risposta non valida da Flowise', details: text });
+    }
+    const data = JSON.parse(text);
     if (!response.ok) {
       console.error('Flowise proxy error:', data);
       return res.status(response.status).json({ error: data.error || 'Flowise error', status: response.status });
@@ -307,6 +320,87 @@ app.post('/api/ai/flowise', async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error('Proxy error:', err);
+    res.status(500).json({ error: 'Proxy server error', details: err.message });
+  }
+});
+
+// Endpoint proxy per OpenRouter
+app.post('/api/ai/openrouter', async (req, res) => {
+  const { model, messages, temperature, max_tokens } = req.body;
+  const apiKey = req.headers['authorization'] ? req.headers['authorization'].replace('Bearer ', '') : process.env.OPENROUTER_API_KEY;
+  if (!model || !messages) {
+    return res.status(400).json({ error: 'Model e messages sono richiesti' });
+  }
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+        'HTTP-Referer': process.env.FRONTEND_URL || 'http://localhost:5173',
+        'X-Title': 'Pyragogica RAG System'
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: temperature || 0.7,
+        max_tokens: max_tokens || 1000
+      })
+    });
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('OpenRouter ha risposto con contenuto non JSON:', text);
+      return res.status(502).json({ error: 'Risposta non valida da OpenRouter', details: text });
+    }
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('OpenRouter proxy error:', data);
+      return res.status(response.status).json({ error: data.error || 'OpenRouter error', status: response.status });
+    }
+    res.json(data);
+  } catch (err) {
+    console.error('Proxy OpenRouter error:', err);
+    res.status(500).json({ error: 'Proxy server error', details: err.message });
+  }
+});
+
+// Endpoint proxy per Anthropic
+app.post('/api/ai/anthropic', async (req, res) => {
+  const { model, messages, temperature, max_tokens } = req.body;
+  const apiKey = req.headers['authorization'] ? req.headers['authorization'].replace('Bearer ', '') : process.env.ANTHROPIC_API_KEY;
+  if (!model || !messages) {
+    return res.status(400).json({ error: 'Model e messages sono richiesti' });
+  }
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        ...(apiKey ? { 'x-api-key': apiKey } : {})
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: max_tokens || 1000,
+        temperature: temperature || 0.7,
+        messages
+      })
+    });
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Anthropic ha risposto con contenuto non JSON:', text);
+      return res.status(502).json({ error: 'Risposta non valida da Anthropic', details: text });
+    }
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Anthropic proxy error:', data);
+      return res.status(response.status).json({ error: data.error || 'Anthropic error', status: response.status });
+    }
+    res.json(data);
+  } catch (err) {
+    console.error('Proxy Anthropic error:', err);
     res.status(500).json({ error: 'Proxy server error', details: err.message });
   }
 });

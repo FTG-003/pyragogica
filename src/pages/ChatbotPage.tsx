@@ -103,11 +103,13 @@ const APIConfigPanel: React.FC<{
   const [selectedModel, setSelectedModel] = useState(ragService.getCurrentModel()?.id || '');
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
+  const [apiKeyValid, setApiKeyValid] = useState(false);
   const { success, error } = useToast();
 
   useEffect(() => {
     const currentKey = ragService.getAPIKey(selectedProvider);
     setApiKey(currentKey || '');
+    setApiKeyValid(!!currentKey && currentKey.length > 10); // semplice validazione
   }, [selectedProvider]);
 
   const handleProviderChange = (providerId: string) => {
@@ -116,6 +118,7 @@ const APIConfigPanel: React.FC<{
     setSelectedModel(ragService.getCurrentModel()?.id || '');
     const currentKey = ragService.getAPIKey(providerId);
     setApiKey(currentKey || '');
+    setApiKeyValid(!!currentKey && currentKey.length > 10);
   };
 
   const handleModelChange = (modelId: string) => {
@@ -125,9 +128,11 @@ const APIConfigPanel: React.FC<{
 
   const handleSaveApiKey = () => {
     if (ragService.setAPIKey(selectedProvider, apiKey)) {
+      setApiKeyValid(true);
       success('API Key salvata', 'Configurazione aggiornata con successo');
       onConfigUpdate();
     } else {
+      setApiKeyValid(false);
       error('Errore', 'API Key non valida');
     }
   };
@@ -135,6 +140,7 @@ const APIConfigPanel: React.FC<{
   const handleRemoveApiKey = () => {
     ragService.removeAPIKey(selectedProvider);
     setApiKey('');
+    setApiKeyValid(false);
     success('API Key rimossa', 'Configurazione aggiornata');
     onConfigUpdate();
   };
@@ -149,7 +155,7 @@ const APIConfigPanel: React.FC<{
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6 sm:p-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Configurazione API</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Configurazione AI</h2>
             <button
               onClick={onClose}
               className="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-300"
@@ -166,16 +172,24 @@ const APIConfigPanel: React.FC<{
                 <button
                   key={provider.id}
                   onClick={() => handleProviderChange(provider.id)}
-                  className={`p-4 sm:p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
+                  className={`p-4 sm:p-6 rounded-2xl border-2 transition-all duration-300 text-left relative ${
                     selectedProvider === provider.id
                       ? 'border-indigo-500 bg-indigo-50'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <h4 className="font-bold text-slate-900 mb-2">{provider.name}</h4>
+                  <h4 className="font-bold text-slate-900 mb-2 flex items-center">
+                    {provider.name}
+                    {selectedProvider === provider.id && apiKeyValid && provider.requiresKey && (
+                      <span className="ml-2 px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-semibold">API Key OK</span>
+                    )}
+                    {selectedProvider === provider.id && !provider.requiresKey && (
+                      <span className="ml-2 px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-semibold">Pronto</span>
+                    )}
+                  </h4>
                   <p className="text-sm text-slate-600 mb-3">{provider.description}</p>
                   <div className="text-xs text-slate-500">
-                    {provider.models.filter(m => m.free).length} modelli gratuiti
+                    {provider.models.length} modello disponibile
                   </div>
                 </button>
               ))}
@@ -186,125 +200,88 @@ const APIConfigPanel: React.FC<{
           {currentProvider && (
             <div className="mb-8">
               <h3 className="text-xl font-bold text-slate-900 mb-4">Seleziona Modello</h3>
-              
-              {/* Free Models */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-green-700 mb-3 flex items-center">
-                  <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                  Modelli Gratuiti
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {currentProvider.models.filter(m => m.free).map((model) => (
-                    <button
-                      key={model.id}
-                      onClick={() => handleModelChange(model.id)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
-                        selectedModel === model.id
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-slate-200 hover:border-green-300'
-                      }`}
-                    >
-                      <div className="font-semibold text-slate-900">{model.name}</div>
-                      <div className="text-sm text-slate-600 mt-1">{model.description}</div>
-                      <div className="text-xs text-slate-500 mt-2">
-                        Context: {model.contextWindow.toLocaleString()} token
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {currentProvider.models.map((model) => (
+                  <button
+                    key={model.id}
+                    onClick={() => handleModelChange(model.id)}
+                    className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                      selectedModel === model.id
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-slate-200 hover:border-green-300'
+                    }`}
+                  >
+                    <div className="font-semibold text-slate-900">{model.name}</div>
+                    <div className="text-sm text-slate-600 mt-1">{model.description}</div>
+                    <div className="text-xs text-slate-500 mt-2">
+                      Context: {model.contextWindow.toLocaleString()} token
+                    </div>
+                  </button>
+                ))}
               </div>
-
-              {/* Premium Models */}
-              {currentProvider.models.some(m => !m.free) && (
-                <div>
-                  <h4 className="text-lg font-semibold text-orange-700 mb-3 flex items-center">
-                    <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
-                    Modelli Premium
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {currentProvider.models.filter(m => !m.free).map((model) => (
-                      <button
-                        key={model.id}
-                        onClick={() => handleModelChange(model.id)}
-                        className={`p-4 rounded-xl border-2 transition-all duration-300 text-left ${
-                          selectedModel === model.id
-                            ? 'border-orange-500 bg-orange-50'
-                            : 'border-slate-200 hover:border-orange-300'
-                        }`}
-                      >
-                        <div className="font-semibold text-slate-900">{model.name}</div>
-                        <div className="text-sm text-slate-600 mt-1">{model.description}</div>
-                        <div className="text-xs text-slate-500 mt-2">
-                          Context: {model.contextWindow.toLocaleString()} token
-                          {model.pricing && (
-                            <span className="ml-2">
-                              • ${model.pricing.input}/1K in, ${model.pricing.output}/1K out
-                            </span>
-                          )}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
-          {/* API Key Configuration */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">API Key</h3>
-            <div className="bg-slate-50 rounded-2xl p-6">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  API Key per {currentProvider?.name}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showApiKey ? 'text' : 'password'}
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder={currentProvider?.keyFormat}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-12"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  >
-                    {showApiKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
+          {/* API Key Configuration (solo se richiesta) */}
+          {currentProvider?.requiresKey && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">API Key</h3>
+              <div className="bg-slate-50 rounded-2xl p-6">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    API Key per {currentProvider?.name}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showApiKey ? 'text' : 'password'}
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                      placeholder={currentProvider?.keyFormat}
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-12 ${apiKeyValid ? 'border-green-400 bg-green-50' : 'border-slate-300'}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showApiKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <button
-                  onClick={handleSaveApiKey}
-                  disabled={!apiKey.trim()}
-                  className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  Salva API Key
-                </button>
-                {ragService.getAPIKey(selectedProvider) && (
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                   <button
-                    onClick={handleRemoveApiKey}
-                    className="px-6 py-3 border border-red-300 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all duration-300"
+                    onClick={handleSaveApiKey}
+                    disabled={!apiKey.trim()}
+                    className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                   >
-                    Rimuovi
+                    Salva API Key
                   </button>
+                  {ragService.getAPIKey(selectedProvider) && (
+                    <button
+                      onClick={handleRemoveApiKey}
+                      className="px-6 py-3 border border-red-300 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all duration-300"
+                    >
+                      Rimuovi
+                    </button>
+                  )}
+                </div>
+                {apiKeyValid && (
+                  <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-xl text-green-800 text-sm font-semibold flex items-center">
+                    <CheckCircle className="w-5 h-5 mr-2" /> API Key valida per {currentProvider?.name}
+                  </div>
                 )}
-              </div>
-
-              {/* Security Notice */}
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <div className="flex items-start space-x-3">
-                  <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div className="text-sm text-blue-800">
-                    <strong>Sicurezza:</strong> Le API key sono memorizzate localmente nel tuo browser e non vengono mai inviate a server esterni.
+                {/* Security Notice */}
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                  <div className="flex items-start space-x-3">
+                    <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div className="text-sm text-blue-800">
+                      <strong>Sicurezza:</strong> Le API key sono memorizzate localmente nel tuo browser e non vengono mai inviate a server esterni diversi dal provider selezionato.
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Current Configuration Summary */}
           {currentModel && (
@@ -321,15 +298,11 @@ const APIConfigPanel: React.FC<{
                 </div>
                 <div>
                   <span className="font-medium text-slate-700">Tipo:</span>
-                  <span className={`ml-2 font-semibold ${currentModel.free ? 'text-green-600' : 'text-orange-600'}`}>
-                    {currentModel.free ? 'Gratuito' : 'Premium'}
-                  </span>
+                  <span className={`ml-2 font-semibold ${currentModel.free ? 'text-green-600' : 'text-orange-600'}`}>{currentModel.free ? 'Gratuito' : 'Premium'}</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700">API Key:</span>
-                  <span className={`ml-2 font-semibold ${ragService.getAPIKey(selectedProvider) ? 'text-green-600' : 'text-red-600'}`}>
-                    {ragService.getAPIKey(selectedProvider) ? 'Configurata' : 'Mancante'}
-                  </span>
+                  <span className={`ml-2 font-semibold ${apiKeyValid || !currentProvider?.requiresKey ? 'text-green-600' : 'text-red-600'}`}>{currentProvider?.requiresKey ? (apiKeyValid ? 'Configurata' : 'Mancante') : 'Non richiesta'}</span>
                 </div>
               </div>
             </div>
@@ -369,30 +342,7 @@ const ChatbotPage = () => {
     const welcomeMessage: ChatMessage = {
       id: '1',
       role: 'system',
-      content: `🤖 **Benvenuto nel Sistema RAG Pyragogico Production-Ready!**
-
-**🎯 Sistema di Testing Completo** - Configurazione API personalizzabile
-
-**Vector Store:** ✅ Simulazione locale con contenuti reali del Peeragogy Handbook
-**Status:** Pronto per la configurazione
-
-**Per iniziare:**
-1. 🔧 Clicca su "Configurazione" per inserire la tua API key
-2. 🎭 Seleziona una personalità AI
-3. 💬 Inizia a chattare!
-
-**Comandi utili:**
-• \`/help\` - Guida completa
-• \`/status\` - Verifica configurazione
-• \`/providers\` - Lista provider disponibili
-
-**🆓 Modelli Gratuiti Disponibili:**
-• Phi-3 Mini/Medium (Microsoft)
-• Gemma 7B (Google)
-• Llama 3 8B (Meta)
-• Mistral 7B (Mistral AI)
-
-Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere alle tue domande! 📚`,
+      content: `🤖 **Benvenuto nel Sistema RAG Pyragogico Production-Ready!**\n\n**🎯 Sistema di Testing Completo** - Configurazione API personalizzabile\n\n**Status:** Pronto per la configurazione\n\n**Per iniziare:**\n1. 🔧 Clicca su "Configurazione" per inserire la tua API key\n2. 🎭 Seleziona una personalità AI\n3. 💬 Inizia a chattare!\n\n**Comandi utili:**\n• \`/help\` - Guida completa\n• \`/status\` - Verifica configurazione\n• \`/providers\` - Lista provider disponibili\n\n**🆓 Modelli Gratuiti Disponibili:**\n• Phi-3 Mini/Medium (Microsoft)\n• Gemma 7B (Google)\n• Llama 3 8B (Meta)\n• Mistral 7B (Mistral AI)`,
       timestamp: new Date(),
       sessionId: ragService.getSessionId()
     };

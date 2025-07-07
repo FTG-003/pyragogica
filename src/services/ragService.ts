@@ -1,3 +1,5 @@
+// Rimuovo import fs, path e override del systemPrompt
+
 export interface APIProvider {
   id: string;
   name: string;
@@ -77,9 +79,6 @@ export interface UserSession {
   createdAt: Date;
   lastActivity: Date;
 }
-
-// Import vector store
-import { searchVectorStore, getVectorStoreStats } from '../data/vectorStore';
 
 // OpenRouter Models with Free Tier Identification
 export const OPENROUTER_MODELS: ModelInfo[] = [
@@ -170,62 +169,6 @@ export const OPENROUTER_MODELS: ModelInfo[] = [
 
 export const API_PROVIDERS: APIProvider[] = [
   {
-    id: 'openrouter',
-    name: 'OpenRouter',
-    baseUrl: 'https://openrouter.ai/api/v1',
-    models: OPENROUTER_MODELS,
-    keyFormat: 'sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    description: 'Access to multiple AI models including free options',
-    requiresKey: true
-  },
-  {
-    id: 'openai',
-    name: 'OpenAI Direct',
-    baseUrl: 'https://api.openai.com/v1',
-    models: [
-      {
-        id: 'gpt-4o',
-        name: 'GPT-4o',
-        provider: 'openai',
-        free: false,
-        contextWindow: 128000,
-        description: 'Most capable GPT model',
-        pricing: { input: 0.005, output: 0.015 }
-      },
-      {
-        id: 'gpt-4o-mini',
-        name: 'GPT-4o Mini',
-        provider: 'openai',
-        free: false,
-        contextWindow: 128000,
-        description: 'Efficient and cost-effective',
-        pricing: { input: 0.00015, output: 0.0006 }
-      }
-    ],
-    keyFormat: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    description: 'Direct access to OpenAI models',
-    requiresKey: true
-  },
-  {
-    id: 'anthropic',
-    name: 'Anthropic',
-    baseUrl: 'https://api.anthropic.com/v1',
-    models: [
-      {
-        id: 'claude-3-5-sonnet-20241022',
-        name: 'Claude 3.5 Sonnet',
-        provider: 'anthropic',
-        free: false,
-        contextWindow: 200000,
-        description: 'Most capable Claude model',
-        pricing: { input: 0.003, output: 0.015 }
-      }
-    ],
-    keyFormat: 'sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    description: 'Direct access to Claude models',
-    requiresKey: true
-  },
-  {
     id: 'flowise',
     name: 'Flowise',
     baseUrl: 'https://flowise.pyragogy.org/api/v1',
@@ -236,13 +179,50 @@ export const API_PROVIDERS: APIProvider[] = [
         provider: 'flowise',
         free: true,
         contextWindow: 16000,
-        description: 'Flowise RAG Chatflow (Piragogica)'
+        description: 'Flowise RAG Chatflow (Peeragogy, PDF, ecc.)'
       }
     ],
-    keyFormat: 'mR3ujTWQDmPeuD_m-pca-NxdDlW6TnYjqcArN5BidZc',
-    description: 'Flowise RAG API (Piragogica)',
+    keyFormat: '',
+    description: 'Flowise RAG API (no API key richiesta)',
+    requiresKey: false
+  },
+  {
+    id: 'openrouter',
+    name: 'OpenRouter',
+    baseUrl: 'https://openrouter.ai/api/v1',
+    models: [
+      {
+        id: 'mistralai/mistral-7b-instruct:free',
+        name: 'Mistral 7B',
+        provider: 'openrouter',
+        free: true,
+        contextWindow: 32768,
+        description: 'Mistral 7B (open, gratuito)'
+      }
+    ],
+    keyFormat: 'sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    description: 'OpenRouter (richiede API key, supporta Mistral 7B)',
     requiresKey: true
   },
+  {
+    id: 'openai',
+    name: 'OpenAI',
+    baseUrl: 'https://api.openai.com/v1',
+    models: [
+      {
+        id: 'gpt-4o',
+        name: 'GPT-4o',
+        provider: 'openai',
+        free: false,
+        contextWindow: 128000,
+        description: 'OpenAI GPT-4o (top quality, richiede API key)',
+        pricing: { input: 0.005, output: 0.015 }
+      }
+    ],
+    keyFormat: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    description: 'OpenAI GPT-4o (richiede API key)',
+    requiresKey: true
+  }
 ];
 
 // Import AI personalities
@@ -433,40 +413,13 @@ export class RAGService {
     };
   }
 
-  // Enhanced Vector Store Integration
-  private async queryVectorStore(query: string, topK: number = 3): Promise<RetrievedSource[]> {
-    try {
-      // Use the real vector store with Peeragogy V3 content
-      const results = searchVectorStore(query, topK);
-      
-      return results.map(doc => ({
-        id: doc.id,
-        title: doc.metadata.title,
-        chapter: doc.metadata.chapter,
-        content: doc.content,
-        similarity: doc.score || 0.8, // Use computed score
-        metadata: {
-          author: doc.metadata.author,
-          page: doc.metadata.page,
-          section: doc.metadata.section,
-          source: doc.metadata.source,
-          language: doc.metadata.language,
-          version: doc.metadata.version
-        }
-      }));
-    } catch (error) {
-      console.error('Error querying vector store:', error);
-      return [];
-    }
-  }
-
   // Main RAG Generation with Real Content
   async generateResponse(
     query: string,
     personalityId: string
   ): Promise<{
     response: string;
-    sources: RetrievedSource[];
+    sources: any[];
     tokens?: { input: number; output: number; cost: number };
   }> {
     const status = this.getSystemStatus();
@@ -479,41 +432,24 @@ export class RAGService {
       throw new Error(`Personalità "${personalityId}" non trovata.`);
     }
 
-    // Retrieve relevant sources from real Peeragogy content
-    const sources = await this.queryVectorStore(query);
-    if (sources.length === 0) {
-      throw new Error('Nessuna fonte rilevante trovata nel Peeragogy Handbook per questa domanda.');
-    }
-
-    // Build RAG prompt with real content
-    const sourceContext = sources.map(source => 
-      `[${source.title} - ${source.chapter}]
-${source.content}
-(Autore: ${source.metadata.author}, Pagina: ${source.metadata.page}, Versione: ${source.metadata.version})`
-    ).join('\n\n');
-
-    const ragPrompt = `${personality.systemPrompt}
-
-CONTESTO DAL PEERAGOGY HANDBOOK V3 (CONTENUTO REALE):
-${sourceContext}
-
-DOMANDA DELL'UTENTE: ${query}
-
-Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peeragogy Handbook V3, mantenendo la personalità ${personality.name} (${personality.emoji}). Cita sempre le fonti specifiche quando possibile.`;
-
-    // Call AI API
-    const response = await this.callAIAPI(ragPrompt, personality);
-
-    const tokens = {
-      input: Math.ceil(ragPrompt.length / 4),
-      output: Math.ceil(response.length / 4),
-      cost: this.calculateCost(ragPrompt.length, response.length)
+    // Inoltra la domanda direttamente al provider (es. Flowise) senza retrieval locale
+    const responseObj = await this.callAIAPI(query, personality);
+    // Si assume che la risposta possa includere fonti già formattate dal provider
+    // Adatta la struttura se necessario
+    return {
+      response: responseObj.text || responseObj.answer || responseObj.response || '',
+      sources: responseObj.sources || [],
+      tokens: responseObj.tokens || undefined
     };
-
-    return { response, sources, tokens };
   }
 
-  private async callAIAPI(prompt: string, personality: PersonalityConfig): Promise<string> {
+  private async callAIAPI(prompt: string, personality: PersonalityConfig): Promise<{
+    text?: string;
+    answer?: string;
+    response?: string;
+    sources?: any[];
+    tokens?: { input: number; output: number; cost: number };
+  }> {
     const provider = this.getCurrentProvider();
     const model = this.getCurrentModel();
     const apiKey = this.getAPIKey(this.currentSession.selectedProvider);
@@ -533,54 +469,96 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question: prompt })
         });
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          console.error('Risposta non JSON dal backend Flowise:', text);
+          throw new Error('Risposta non valida dal backend Flowise. Controlla i log o la connessione.');
+        }
         data = await response.json();
         if (!response.ok) {
           throw new Error(`Flowise API Error ${response.status}: ${data.error || 'Unknown error'}`);
         }
-        return data.text || data.answer || 'Nessuna risposta generata';
-      } else if (provider.id === 'openrouter') {
-        response = await fetch(`${provider.baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'Pyragogica RAG System'
-          },
-          body: JSON.stringify({
-            model: model.id,
-            messages: [
-              { role: 'system', content: prompt }
-            ],
-            temperature: personality.temperature,
-            max_tokens: personality.maxTokens
-          })
-        });
-      } else if (provider.id === 'openai') {
-        response = await fetch(`${provider.baseUrl}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: model.id,
-            messages: [
-              { role: 'system', content: prompt }
-            ],
-            temperature: personality.temperature,
-            max_tokens: personality.maxTokens
-          })
-        });
-      } else if (provider.id === 'anthropic') {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01'
+        return {
+          text: data.text || data.answer || 'Nessuna risposta generata',
+          sources: data.sources || [],
+          tokens: data.tokens || undefined
         };
-        if (apiKey) headers['x-api-key'] = apiKey;
-        response = await fetch(`${provider.baseUrl}/messages`, {
+      } else if (provider.id === 'openrouter') {
+        // Proxy backend per OpenRouter
+        let data;
+        response = await fetch('/api/ai/openrouter', {
           method: 'POST',
-          headers,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
+          },
+          body: JSON.stringify({
+            model: model.id,
+            messages: [
+              { role: 'system', content: prompt }
+            ],
+            temperature: personality.temperature,
+            max_tokens: personality.maxTokens
+          })
+        });
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          console.error('Risposta non JSON dal backend OpenRouter:', text);
+          throw new Error('Risposta non valida dal backend OpenRouter. Controlla i log o la connessione.');
+        }
+        data = await response.json();
+        if (!response.ok) {
+          throw new Error(`OpenRouter API Error ${response.status}: ${data.error || 'Unknown error'}`);
+        }
+        return {
+          text: data.choices?.[0]?.message?.content || 'Nessuna risposta generata',
+          sources: data.sources || [],
+          tokens: data.tokens || undefined
+        };
+      } else if (provider.id === 'openai') {
+        // Proxy backend per OpenAI
+        let data;
+        response = await fetch('/api/ai/openai', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
+          },
+          body: JSON.stringify({
+            model: model.id,
+            messages: [
+              { role: 'system', content: prompt }
+            ],
+            temperature: personality.temperature,
+            max_tokens: personality.maxTokens
+          })
+        });
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          console.error('Risposta non JSON dal backend OpenAI:', text);
+          throw new Error('Risposta non valida dal backend OpenAI. Controlla i log o la connessione.');
+        }
+        data = await response.json();
+        if (!response.ok) {
+          throw new Error(`OpenAI API Error ${response.status}: ${data.error || 'Unknown error'}`);
+        }
+        return {
+          text: data.choices?.[0]?.message?.content || 'Nessuna risposta generata',
+          sources: data.sources || [],
+          tokens: data.tokens || undefined
+        };
+      } else if (provider.id === 'anthropic') {
+        // Proxy backend per Anthropic
+        let data;
+        response = await fetch('/api/ai/anthropic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
+          },
           body: JSON.stringify({
             model: model.id,
             max_tokens: personality.maxTokens,
@@ -590,21 +568,23 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
             ]
           })
         });
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          console.error('Risposta non JSON dal backend Anthropic:', text);
+          throw new Error('Risposta non valida dal backend Anthropic. Controlla i log o la connessione.');
+        }
+        data = await response.json();
+        if (!response.ok) {
+          throw new Error(`Anthropic API Error ${response.status}: ${data.error || 'Unknown error'}`);
+        }
+        return {
+          text: data.content?.[0]?.text || 'Nessuna risposta generata',
+          sources: data.sources || [],
+          tokens: data.tokens || undefined
+        };
       } else {
         throw new Error(`Provider ${provider.id} non supportato`);
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`API Error ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
-      }
-
-      const data = await response.json();
-
-      if (provider.id === 'anthropic') {
-        return data.content[0]?.text || 'Nessuna risposta generata';
-      } else {
-        return data.choices[0]?.message?.content || 'Nessuna risposta generata';
       }
 
     } catch (error) {
@@ -640,31 +620,18 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
     switch (command) {
       case 'status':
         const status = this.getSystemStatus();
-        const vectorStats = getVectorStoreStats();
-        
-        return `📊 **Stato Sistema RAG con Contenuti Reali**
+        return `📊 **Stato Sistema RAG**
 
-**�� Configurazione:**
+**Configurazione:**
 • Provider: ${status.provider}
 • Modello: ${status.model} ${status.modelIsFree ? '(GRATUITO)' : '(A PAGAMENTO)'}
 • API Key: ${status.hasApiKey ? '✅ Configurata' : '❌ Mancante'}
 • Sistema: ${status.configured ? '✅ Operativo' : '⚠️ Richiede configurazione'}
 
-**📚 Vector Store (Contenuti Reali):**
-• Documenti: ${vectorStats.totalDocuments} dal Peeragogy Handbook V3
-• Lingue: ${vectorStats.languages.join(', ')}
-• Versioni: ${vectorStats.versions.join(', ')}
-• Capitoli: ${vectorStats.chapters.length}
-• Autori: ${vectorStats.authors.length}
-
-**🎭 Personalità disponibili:** ${PERSONALITIES.length}
-• 🎓 Accademico • 💡 Divulgatore • 🧠 Critico • 🤔 Socratico
-
-**📱 Sessione:**
+�� Sessione:
 • ID: \`${status.sessionId}\`
 • Cronologia: ${this.getConversationHistory().length} messaggi
-
-${status.configured ? '**🚀 Sistema pronto con contenuti reali del Peeragogy Handbook V3!**' : '**⚙️ Configura API key per iniziare**'}`;
+${status.configured ? '**🚀 Sistema pronto!**' : '**⚙️ Configura API key per iniziare**'}`;
 
       case 'providers':
         return `🔌 **Provider AI Disponibili**
@@ -707,33 +674,6 @@ ${currentProvider.models.filter(m => !m.free).map(model =>
 
 Seleziona un modello dall'interfaccia di configurazione!`;
 
-      case 'vectorstore':
-        const stats = getVectorStoreStats();
-        return `📚 **Vector Store - Peeragogy Handbook V3**
-
-**📊 Statistiche:**
-• **Documenti totali:** ${stats.totalDocuments}
-• **Lingue:** ${stats.languages.join(', ')}
-• **Versioni:** ${stats.versions.join(', ')}
-• **Capitoli:** ${stats.chapters.length}
-• **Autori:** ${stats.authors.length}
-
-**📖 Capitoli disponibili:**
-${stats.chapters.map(chapter => `• ${chapter}`).join('\n')}
-
-**✍️ Autori principali:**
-${stats.authors.map(author => `• ${author}`).join('\n')}
-
-**🔍 Contenuti indicizzati:**
-Il vector store contiene contenuti reali estratti dal PDF del Peeragogy Handbook V3, inclusi:
-- Introduzione ai principi della peeragogy
-- Motivazione e psicologia dell'apprendimento
-- Case study 5PH1NX dettagliato
-- Pattern e casi d'uso pratici
-- Guida all'implementazione
-
-Tutti i contenuti sono semanticamente indicizzati per ricerca intelligente!`;
-
       case 'clear':
         this.clearConversationHistory();
         return '🗑️ **Cronologia conversazione cancellata**\n\nLa cronologia è stata rimossa dalla sessione corrente.';
@@ -759,20 +699,12 @@ Ogni sessione mantiene la propria cronologia e configurazione separate.`;
 • Scegli una personalità AI
 
 **💬 Comandi Sistema:**
-• \`/status\` - Stato configurazione e vector store
+• \`/status\` - Stato configurazione
 • \`/providers\` - Lista provider disponibili
 • \`/models\` - Modelli del provider corrente
-• \`/vectorstore\` - Info contenuti Peeragogy V3
 • \`/clear\` - Cancella cronologia conversazione
 • \`/session\` - Info sessione corrente
 • \`/help\` - Questa guida
-
-**📚 Contenuti Reali:**
-Il sistema ora include contenuti reali estratti dal Peeragogy Handbook V3:
-- 10+ documenti semanticamente indicizzati
-- Contenuti originali in inglese
-- Citazioni precise con pagine e autori
-- Ricerca intelligente nei contenuti
 
 **🆓 Modelli Gratuiti:**
 Usa OpenRouter con modelli gratuiti per testing senza costi!
@@ -785,7 +717,7 @@ Usa OpenRouter con modelli gratuiti per testing senza costi!
 **🚀 Per iniziare:**
 1. Configura una API key nell'interfaccia
 2. Seleziona un modello (consigliati quelli gratuiti)
-3. Fai una domanda sul Peeragogy Handbook!
+3. Fai una domanda!
 
 **💡 Esempi di domande:**
 • "Spiegami i principi fondamentali della peeragogy"
@@ -800,7 +732,6 @@ Usa OpenRouter con modelli gratuiti per testing senza costi!
 • \`/status\` - Stato sistema
 • \`/providers\` - Lista provider
 • \`/models\` - Modelli disponibili
-• \`/vectorstore\` - Info contenuti reali
 • \`/clear\` - Cancella cronologia
 • \`/session\` - Info sessione
 • \`/help\` - Guida completa

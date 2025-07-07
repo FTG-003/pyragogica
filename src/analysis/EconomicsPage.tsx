@@ -247,8 +247,9 @@ const EconomicsPage = () => {
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-2xl font-bold">Proiezioni Finanziarie</h3>
           <div className="flex items-center space-x-4">
-            <label className="text-slate-300">Anni:</label>
+            <label htmlFor="projection-years" className="text-slate-300">Anni:</label>
             <select
+              id="projection-years"
               value={projectionYears}
               onChange={(e) => setProjectionYears(Number(e.target.value))}
               className="bg-slate-700 text-white px-4 py-2 rounded-lg"

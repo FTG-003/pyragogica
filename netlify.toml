@@ -6,9 +6,10 @@
   NODE_VERSION = "18"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/*"
+  to = "https://api.pyragogica.org:3001/api/:splat"
   status = 200
+  force = true
 
 [[headers]]
   for = "/*"

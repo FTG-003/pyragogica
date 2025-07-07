@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Brain, User, Settings, Key, Database, AlertCircle, CheckCircle, Loader, Copy, RotateCcw, Trash2, Globe, Shield, Zap, Eye, EyeOff, ChevronDown, ExternalLink, Menu, X, Cpu, Sparkles } from 'lucide-react';
+import { Send, Brain, User, Settings, Key, Database, AlertCircle, CheckCircle, Loader, Copy, RotateCcw, Trash2, Globe, Shield, Zap, Eye, EyeOff, ChevronDown, ExternalLink, Menu, X, Cpu, Sparkles, LogOut } from 'lucide-react';
 import { ragService, PERSONALITIES, API_PROVIDERS, type ChatMessage, type PersonalityConfig, type RetrievedSource, type APIProvider, type ModelInfo } from '../services/ragService';
 import { useToast } from '../components/ToastNotification';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -348,6 +348,7 @@ const ChatbotPage = () => {
   const [showApiConfig, setShowApiConfig] = useState(false);
   const [systemStatus, setSystemStatus] = useState(ragService.getSystemStatus());
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [flowiseActive, setFlowiseActive] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -403,6 +404,10 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    setFlowiseActive(systemStatus.provider === 'Flowise');
+  }, [systemStatus]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -492,7 +497,10 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
             textToSend,
             selectedPersonality
           );
-
+          // Logging specifico per Flowise
+          if (systemStatus.provider === 'Flowise') {
+            console.log('[Flowise] Risposta:', result);
+          }
           const assistantMessage: ChatMessage = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
@@ -503,23 +511,22 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
             tokens: result.tokens,
             sessionId: ragService.getSessionId()
           };
-
           setMessages(prev => [...prev, assistantMessage]);
           ragService.addMessageToHistory(assistantMessage);
           success('Risposta generata', `Basata sui contenuti del Peeragogy Handbook${systemStatus.modelIsFree ? ' (modello gratuito)' : ''}`);
         }
       }
-    } catch (error) {
+    } catch (err) {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'system',
-        content: `❌ **Errore Sistema RAG**\n\n${error instanceof Error ? error.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Controlla che la tua API key sia valida\n• Prova con un modello diverso`,
+        content: `❌ **Errore Sistema RAG**\n\n${err instanceof Error ? err.message : 'Errore sconosciuto'}\n\n**Possibili soluzioni:**\n• Verifica la configurazione con \`/status\`\n• Controlla che la tua API key sia valida\n• Prova con un modello diverso`,
         timestamp: new Date(),
         sessionId: ragService.getSessionId()
       };
       setMessages(prev => [...prev, errorMessage]);
       ragService.addMessageToHistory(errorMessage);
-      error('Errore sistema', error instanceof Error ? error.message : 'Errore sconosciuto');
+      error('Errore sistema', err instanceof Error ? err.message : 'Errore sconosciuto');
     } finally {
       setIsTyping(false);
     }
@@ -571,6 +578,11 @@ Il sistema utilizzerà i contenuti reali del Peeragogy Handbook per rispondere a
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
             <Brain className="w-4 h-4" />
             <span>Sistema RAG Production-Ready con API Personalizzabili</span>
+            {flowiseActive && (
+              <span className="ml-3 inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-full text-xs font-bold animate-pulse">
+                <Zap className="w-3 h-3 mr-1" /> Flowise attivo
+              </span>
+            )}
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
           <p className="text-lg sm:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">

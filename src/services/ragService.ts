@@ -224,7 +224,25 @@ export const API_PROVIDERS: APIProvider[] = [
     keyFormat: 'sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     description: 'Direct access to Claude models',
     requiresKey: true
-  }
+  },
+  {
+    id: 'flowise',
+    name: 'Flowise',
+    baseUrl: 'https://flowise.pyragogy.org/api/v1',
+    models: [
+      {
+        id: '9c4a9fce-a2dd-4e4f-a4b7-1bc72b9b9191',
+        name: 'Piragogica Chatflow',
+        provider: 'flowise',
+        free: true,
+        contextWindow: 16000,
+        description: 'Flowise RAG Chatflow (Piragogica)'
+      }
+    ],
+    keyFormat: 'mR3ujTWQDmPeuD_m-pca-NxdDlW6TnYjqcArN5BidZc',
+    description: 'Flowise RAG API (Piragogica)',
+    requiresKey: true
+  },
 ];
 
 // Import AI personalities
@@ -500,14 +518,36 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
     const model = this.getCurrentModel();
     const apiKey = this.getAPIKey(this.currentSession.selectedProvider);
 
-    if (!provider || !model || !apiKey) {
+    if (!provider || !model) {
       throw new Error('Configurazione API incompleta');
     }
 
     try {
       let response: Response;
 
-      if (provider.id === 'openrouter') {
+      if (provider.id === 'flowise') {
+        // Chiamata a Flowise /api/v1/prediction/{chatflowid}
+        const chatflowid = model.id;
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json'
+        };
+        if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+        response = await fetch(`${provider.baseUrl}/prediction/${chatflowid}`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            question: prompt,
+            // Puoi aggiungere altri parametri se richiesti da Flowise
+          })
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Flowise API Error ${response.status}: ${errorData.error || 'Unknown error'}`);
+        }
+        const data = await response.json();
+        // Flowise tipicamente restituisce { text: '...', ... }
+        return data.text || data.answer || 'Nessuna risposta generata';
+      } else if (provider.id === 'openrouter') {
         response = await fetch(`${provider.baseUrl}/chat/completions`, {
           method: 'POST',
           headers: {
@@ -542,13 +582,14 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
           })
         });
       } else if (provider.id === 'anthropic') {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01'
+        };
+        if (apiKey) headers['x-api-key'] = apiKey;
         response = await fetch(`${provider.baseUrl}/messages`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01'
-          },
+          headers,
           body: JSON.stringify({
             model: model.id,
             max_tokens: personality.maxTokens,
@@ -612,7 +653,7 @@ Rispondi alla domanda utilizzando le informazioni fornite dal contesto del Peera
         
         return `📊 **Stato Sistema RAG con Contenuti Reali**
 
-**🔐 Configurazione:**
+**�� Configurazione:**
 • Provider: ${status.provider}
 • Modello: ${status.model} ${status.modelIsFree ? '(GRATUITO)' : '(A PAGAMENTO)'}
 • API Key: ${status.hasApiKey ? '✅ Configurata' : '❌ Mancante'}

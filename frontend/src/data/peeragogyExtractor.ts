@@ -833,7 +833,7 @@ export function convertToLibraryFormat(extracted: ExtractedHandbook) {
     status: 'complete' as const,
     format: ['PDF', 'HTML', 'Interactive Web'],
     fileSize: '3.2 MB',
-    downloadUrl: '/resources/original-documents/pdf/peeragogy-handbook-v3.0-en.pdf',
+    downloadUrl: '/original-documents/pdf/peeragogy-handbook-v3.0-en.pdf',
     prerequisites: ['Interest in collaborative learning', 'Basic understanding of educational concepts'],
     learningOutcomes: [
       'Understand the principles and theory of peeragogy',

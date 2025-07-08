@@ -295,7 +295,7 @@ const LibraryPage = () => {
       featured: true,
       gradient: 'from-orange-500 to-pink-500',
       // Percorso corretto basato sulla struttura del repository
-      pdfUrl: '/resources/original-documents/pdf/peeragogy-3-0-ebook.pdf'
+      pdfUrl: '/original-documents/pdf/peeragogy-3-0-ebook.pdf'
     },
     {
       id: '2',
@@ -316,7 +316,7 @@ const LibraryPage = () => {
       difficulty: 'intermediate',
       featured: false,
       gradient: 'from-purple-500 to-indigo-500',
-      pdfUrl: '/resources/original-documents/pdf/peeragogy-3-0-ebook.pdf'
+      pdfUrl: '/original-documents/pdf/peeragogy-3-0-ebook.pdf'
     },
     {
       id: '3',
@@ -337,7 +337,7 @@ const LibraryPage = () => {
       difficulty: 'advanced',
       featured: true,
       gradient: 'from-emerald-500 to-teal-500',
-      pdfUrl: '/resources/original-documents/pdf/peeragogy-3-0-ebook.pdf'
+      pdfUrl: '/original-documents/pdf/peeragogy-3-0-ebook.pdf'
     }
   ];
 

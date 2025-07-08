@@ -5,131 +5,76 @@
 [![Deploy Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 **Demo Live**
+---
 
-**🔗 [pyragogy.org](https://pyragogy.org)**
+## 📁 Struttura del Progetto
 
-## ✨ **Caratteristiche Principali**
+```
+/
+├── backend/     → Codice backend (API, server, DB, ecc.)
+├── frontend/    → Codice frontend (SPA React, assets, build, ecc.)
+├── docs/        → Documentazione, PDF, note, immagini, wireframe...
+├── README.md    → Questa guida
+```
 
-### 🧠 **Sistema RAG Multi-Personalità**
-- **4 Personalità AI**: Accademico, Divulgatore, Critico, Socratico
-- **Modelli Gratuiti**: Phi-3, Gemma, Llama 3, Mistral via OpenRouter
-- **API Sicure**: Gestione locale delle chiavi, nessun server backend
+---
 
-### 📚 **Hub di Conoscenza Interattiva**
-- **Contenuti Open & Premium**: Distinzione chiara tra accesso libero e a pagamento
-- **Apprendimento Peer-to-Peer**: Metodologie collaborative
-- **Etica AI**: Principi per intelligenza artificiale responsabile
-- **Co-creazione Cognitiva**: Tecniche di intelligenza collettiva
+## 📦 Cartelle Principali
 
-### 🎨 **Design Moderno**
-- **Mobile-First**: Responsive su tutti i dispositivi
-- **Animazioni Fluide**: Micro-interazioni coinvolgenti
-- **Palette Colorata**: Design vibrante e professionale
-- **Accessibilità**: WCAG 2.1 compliant
+### [`/frontend/`](./frontend/)
+- **React SPA** (src/)
+- **Assets pubblici** (public/)
+- **Config**: vite, tailwind, eslint, netlify, ecc.
+- **Build/Deploy**: Netlify
+- **Guida**: [Build & Deploy su Netlify](./frontend/README.md) _(da creare)_
 
-## 🛠️ **Tecnologie**
+### [`/backend/`](./backend/)
+- **Node.js/Express API**
+- **Config**: server, logging, sicurezza
+- **Avvio/Deploy**: Coolify, Docker, PM2
+- **Guida**: [Avvio & Deploy Backend](./backend/README.md) _(da creare)_
 
-- **Frontend**: React 18 + TypeScript + Tailwind CSS
-- **Build Tool**: Vite
-- **AI Integration**: OpenRouter, OpenAI, Anthropic
-- **Icons**: Lucide React
-- **Deployment**: Netlify
+### [`/docs/`](./docs/)
+- **Documentazione tecnica**
+- **PDF, media, note, wireframe**
+- **API, tutorial, strategie UI**
 
-## 🚀 **Quick Start**
+---
 
-### **Prerequisiti**
-- Node.js 18+
-- npm 8+
+## 🚀 Quick Start
 
-### **Installazione**
+### Frontend
 ```bash
-# Clone del repository
-git clone https://github.com/pyragogy/biblioteca-digitale.git
-cd biblioteca-digitale
-
-# Installazione dipendenze
+cd frontend
 npm install
-
-# Avvio development server
-npm run dev
+npm run dev # sviluppo
+npm run build # produzione
 ```
+Deploy consigliato: **Netlify** ([guida](./frontend/README.md))
 
-### **Build Production**
+### Backend
 ```bash
-# Build ottimizzato
-npm run build
-
-# Preview build locale
-npm run preview
+cd backend
+npm install
+npm run start # produzione
+npm run dev   # sviluppo
 ```
+Deploy consigliato: **Coolify** o **Docker** ([guida](./backend/README.md))
 
-## 🔧 **Configurazione**
+---
 
-### **API Keys**
-L'applicazione richiede API keys per funzionare:
+## 📄 Documentazione
 
-1. **OpenRouter** (Raccomandato - modelli gratuiti disponibili)
-   - Registrati su [openrouter.ai](https://openrouter.ai)
-   - Ottieni la tua API key
-   - Inseriscila nell'interfaccia di configurazione
+- [docs/ARCHITETTURA.md](./docs/ARCHITETTURA.md)
+- [docs/ROADMAP_DEPLOY.md](./docs/ROADMAP_DEPLOY.md)
+- [docs/codebase-analysis.md](./docs/codebase-analysis.md)
+- [docs/deployment-report.md](./docs/deployment-report.md)
+- [docs/UI_STRATEGY.md](./docs/UI_STRATEGY.md)
+- [docs/original-documents/](./docs/original-documents/) _(PDF, media)_
 
-2. **OpenAI** (Opzionale)
-   - API key da [platform.openai.com](https://platform.openai.com)
+---
 
-3. **Anthropic** (Opzionale)
-   - API key da [console.anthropic.com](https://console.anthropic.com)
-
-### **Sicurezza**
-- ✅ API keys memorizzate **solo localmente** nel browser
-- ✅ Nessun server backend richiesto
-- ✅ Sessioni isolate per ogni utente
-- ✅ Nessun tracking o analytics invasivi
-
-## 📖 **Come Usare**
-
-### **1. Configurazione Iniziale**
-- Apri l'applicazione
-- Vai su "Configurazione" nell'AI Assistant
-- Inserisci la tua API key (consigliato: OpenRouter)
-- Seleziona un modello (disponibili opzioni gratuite)
-
-### **2. Esplora la Biblioteca**
-- Naviga tra i contenuti open e premium
-- Usa i filtri per trovare risorse specifiche
-- Leggi descrizioni dettagliate e metadati
-
-### **3. Interagisci con l'AI**
-- Scegli una delle 4 personalità AI
-- Fai domande sui contenuti
-- Ricevi risposte personalizzate con fonti
-
-### **4. Comandi Sistema**
-- `/status` - Verifica configurazione
-- `/help` - Guida completa
-- `/clear` - Cancella cronologia
-
-## 🌍 **Deploy**
-
-### **Netlify (Raccomandato)**
-1. Fork questo repository
-2. Connetti a Netlify
-3. Deploy automatico da `main` branch
-4. Configurazione in `netlify.toml`
-
-### **Vercel**
-```bash
-npm install -g vercel
-vercel --prod
-```
-
-### **GitHub Pages**
-```bash
-npm run build
-# Upload cartella dist/
-```
-
-## 🤝 **Contribuire**
+## 🤝 Contribuire
 
 1. Fork del repository
 2. Crea un branch (`git checkout -b feature/amazing-feature`)
@@ -137,25 +82,8 @@ npm run build
 4. Push al branch (`git push origin feature/amazing-feature`)
 5. Apri una Pull Request
 
-## 📄 **Licenza**
-
-Questo progetto è sotto licenza MIT. Vedi il file [LICENSE](LICENSE) per dettagli.
-
-## 🙏 **Riconoscimenti**
-
-- **Peeragogy Handbook** - Contenuti educativi di base
-- **OpenRouter** - Accesso a modelli AI gratuiti
-- **Lucide** - Iconografia moderna
-- **Tailwind CSS** - Framework di styling
-
-## 📞 **Supporto**
-
-- **Website**: [pyragogy.org](https://pyragogy.org)
-- **Issues**: [GitHub Issues](https://github.com/pyragogy/biblioteca-digitale/issues)
-- **Email**: support@pyragogy.org
-
 ---
 
-**Versione**: 1.0.0 - Production Ready  
-**Ultimo aggiornamento**: 2025-01-27  
-**Status**: ✅ Deploy Ready
+**Versione**: 2.0.0 (modular refactor)
+**Ultimo aggiornamento**: 2025-01-27
+**Status**: ✅ Modular Ready

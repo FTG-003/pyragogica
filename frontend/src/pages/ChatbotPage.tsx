@@ -524,30 +524,32 @@ const ChatbotPage = () => {
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header - Fixed height to prevent jumping */}
-        <div className="text-center mb-8 min-h-[180px] flex flex-col justify-center">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
-            <Brain className="w-4 h-4" />
+        <div className="text-center mb-8 min-h-[180px] flex flex-col justify-center relative">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6 hover-lift cursor-pointer">
+            <Brain className="w-4 h-4 animate-pulse" />
             <span>Sistema RAG Production-Ready con API Personalizzabili</span>
             {flowiseActive && (
-              <span className="ml-3 inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-full text-xs font-bold animate-pulse">
+              <span className="ml-3 inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-full text-xs font-bold animate-pulse glow-pulse">
                 <Zap className="w-3 h-3 mr-1" /> Flowise attivo
               </span>
             )}
           </div>
-          <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6">AI Assistant Pyragogico</h1>
-          <p className="text-lg sm:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
-            Sistema RAG con personalità multiple basato sul <strong>Peeragogy Handbook completo</strong>. 
+          <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6 animate-fade-in-up" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+            AI Assistant Pyragogico
+          </h1>
+          <p className="text-lg sm:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            Sistema RAG con personalità multiple basato sul <strong className="text-purple-600">Peeragogy Handbook completo</strong>. 
             Configurazione API flessibile con supporto per modelli gratuiti e premium.
           </p>
           
           {/* System Status - Fixed height */}
-          <div className="mt-8 flex flex-wrap justify-center gap-4 min-h-[60px] items-center">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl">
+          <div className="mt-8 flex flex-wrap justify-center gap-4 min-h-[60px] items-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl hover-lift cursor-pointer">
               <Database className="w-4 h-4 text-green-600" />
               <span className="text-green-800 font-semibold">Vector Store Locale</span>
               <CheckCircle className="w-4 h-4 text-green-600" />
             </div>
-            <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border ${
+            <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border hover-lift cursor-pointer ${
               systemStatus.configured 
                 ? 'bg-green-50 border-green-200 text-green-800' 
                 : 'bg-orange-50 border-orange-200 text-orange-800'
@@ -558,7 +560,7 @@ const ChatbotPage = () => {
               </span>
             </div>
             {systemStatus.modelIsFree && (
-              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl hover-lift cursor-pointer">
                 <Zap className="w-4 h-4 text-emerald-600" />
                 <span className="text-emerald-800 font-semibold">Modello Gratuito</span>
               </div>
@@ -656,7 +658,7 @@ const ChatbotPage = () => {
             </div>
 
             {/* Enhanced Personality Selector */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200 hover-lift">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-slate-900">Personalità AI</h3>
                 <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
@@ -669,9 +671,9 @@ const ChatbotPage = () => {
                   <button
                     key={personality.id}
                     onClick={() => handlePersonalityChange(personality.id)}
-                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 ${
+                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 hover-lift ${
                       selectedPersonality === personality.id
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20 glow-pulse'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-900 border-2 border-transparent hover:border-slate-200'
                     }`}
                   >
@@ -681,7 +683,7 @@ const ChatbotPage = () => {
                         <h4 className="font-bold flex items-center space-x-2">
                           <span>{personality.name}</span>
                           {selectedPersonality === personality.id && (
-                            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">ATTIVA</span>
+                            <span className="text-xs bg-white/20 px-2 py-1 rounded-full animate-pulse">ATTIVA</span>
                           )}
                         </h4>
                       </div>

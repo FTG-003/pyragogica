@@ -1,147 +1,41 @@
 /* Signature Animations - Biblioteca Digitale Pyragogica */
-/* Unique micro-interactions that embody collaborative learning */
+/* Optimized for smooth performance and natural movement */
 
 /* === CORE ANIMATION KEYFRAMES === */
 
-/* Thinking Animation - Suggests AI contemplation */
-@keyframes thinking {
+/* Smooth Parallax - Reduced keyframes for better performance */
+@keyframes parallax-float {
   0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    opacity: 0.7; 
+    transform: translateY(0px) translateX(0px);
   }
-  33% { 
-    transform: scale(1.02) rotate(0.5deg); 
-    opacity: 0.85; 
-  }
-  66% { 
-    transform: scale(1.05) rotate(-0.5deg); 
-    opacity: 1; 
+  50% { 
+    transform: translateY(-15px) translateX(8px);
   }
 }
 
-/* Knowledge Flow - Content appearing with understanding */
-@keyframes knowledge-flow {
+/* Optimized Scale - Smoother scaling */
+@keyframes smooth-scale {
   0% { 
-    transform: translateX(-100%) scale(0.8);
+    transform: scale(0.95);
     opacity: 0;
-    filter: blur(4px);
-  }
-  30% {
-    transform: translateX(-20%) scale(0.9);
-    opacity: 0.3;
-    filter: blur(2px);
-  }
-  60% {
-    transform: translateX(5%) scale(1.02);
-    opacity: 0.8;
-    filter: blur(0.5px);
   }
   100% { 
-    transform: translateX(0) scale(1);
-    opacity: 1;
-    filter: blur(0);
-  }
-}
-
-/* Collaborative Pulse - Community activity indicator */
-@keyframes collaborative-pulse {
-  0% { 
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
     transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.1);
-    transform: scale(1.01);
-  }
-  100% { 
-    box-shadow: 0 0 0 16px rgba(34, 197, 94, 0);
-    transform: scale(1);
-  }
-}
-
-/* Insight Spark - Moment of understanding */
-@keyframes insight-spark {
-  0% { 
-    transform: scale(1) rotate(0deg);
-    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
-  }
-  25% {
-    transform: scale(1.1) rotate(2deg);
-    box-shadow: 0 0 10px 2px rgba(168, 85, 247, 0.3);
-  }
-  50% {
-    transform: scale(1.05) rotate(-1deg);
-    box-shadow: 0 0 20px 4px rgba(168, 85, 247, 0.2);
-  }
-  75% {
-    transform: scale(1.02) rotate(0.5deg);
-    box-shadow: 0 0 15px 3px rgba(168, 85, 247, 0.1);
-  }
-  100% { 
-    transform: scale(1) rotate(0deg);
-    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
-  }
-}
-
-/* Peer Connection - Elements connecting with each other */
-@keyframes peer-connection {
-  0% { 
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  25% {
-    transform: translateY(-2px) scale(1.02);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translateY(-4px) scale(1.05);
-    opacity: 0.8;
-  }
-  75% {
-    transform: translateY(-2px) scale(1.02);
-    opacity: 0.9;
-  }
-  100% { 
-    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
-/* Emergence - Content emerging organically */
-@keyframes emergence {
-  0% { 
-    transform: scale(0.3) rotate(-5deg);
-    opacity: 0;
-    filter: blur(10px);
+/* Simplified Glow - Less aggressive */
+@keyframes glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
   }
-  20% {
-    transform: scale(0.5) rotate(-3deg);
-    opacity: 0.2;
-    filter: blur(6px);
-  }
-  40% {
-    transform: scale(0.8) rotate(-1deg);
-    opacity: 0.5;
-    filter: blur(3px);
-  }
-  60% {
-    transform: scale(1.1) rotate(1deg);
-    opacity: 0.8;
-    filter: blur(1px);
-  }
-  80% {
-    transform: scale(1.05) rotate(0.5deg);
-    opacity: 0.95;
-    filter: blur(0.5px);
-  }
-  100% { 
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-    filter: blur(0);
+  50% { 
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
   }
 }
 
-/* Breathing - Subtle life-like animation */
+/* Breathing - Natural movement */
 @keyframes breathing {
   0%, 100% { 
     transform: scale(1);
@@ -153,248 +47,139 @@
   }
 }
 
-/* Constellation - Navigation elements connecting */
-@keyframes constellation {
-  0% { 
-    transform: rotate(0deg) translateX(0px) rotate(0deg);
-  }
-  100% { 
-    transform: rotate(360deg) translateX(20px) rotate(-360deg);
-  }
-}
-
-/* === PERSONALITY-SPECIFIC ANIMATIONS === */
-
-/* Academic - Structured, precise movements */
-@keyframes academic-emphasis {
+/* Floating Particles - More natural movement */
+@keyframes float-particle {
   0%, 100% { 
-    transform: translateY(0);
-    border-width: 2px;
-  }
-  50% { 
-    transform: translateY(-1px);
-    border-width: 3px;
-  }
-}
-
-/* Socratic - Questioning, conversational flow */
-@keyframes socratic-inquiry {
-  0% { 
-    transform: rotate(0deg) scale(1);
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0.3;
   }
   25% { 
-    transform: rotate(1deg) scale(1.01);
+    transform: translateY(-20px) translateX(10px) rotate(90deg);
+    opacity: 0.6;
   }
   50% { 
-    transform: rotate(-1deg) scale(1.02);
+    transform: translateY(-10px) translateX(-5px) rotate(180deg);
+    opacity: 0.4;
   }
   75% { 
-    transform: rotate(0.5deg) scale(1.01);
-  }
-  100% { 
-    transform: rotate(0deg) scale(1);
+    transform: translateY(-30px) translateX(15px) rotate(270deg);
+    opacity: 0.7;
   }
 }
 
-/* Critical - Sharp, analytical movements */
-@keyframes critical-analysis {
+/* Sparkle Effect - Subtle twinkling */
+@keyframes sparkle {
   0%, 100% { 
-    transform: scaleX(1) skewX(0deg);
-    border-left-width: 2px;
+    transform: scale(1) rotate(0deg);
+    opacity: 0.4;
   }
   50% { 
-    transform: scaleX(1.02) skewX(0.5deg);
-    border-left-width: 4px;
-  }
-}
-
-/* Divulgative - Playful, accessible movements */
-@keyframes divulgative-bounce {
-  0%, 100% { 
-    transform: translateY(0) scale(1);
-  }
-  25% { 
-    transform: translateY(-3px) scale(1.02);
-  }
-  50% { 
-    transform: translateY(-5px) scale(1.05);
-  }
-  75% { 
-    transform: translateY(-2px) scale(1.02);
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
   }
 }
 
 /* === UTILITY ANIMATION CLASSES === */
 
-/* Thinking States */
-.ai-thinking {
-  animation: thinking 2s ease-in-out infinite;
+/* Optimized Parallax Effects */
+.parallax-float {
+  animation: parallax-float 8s ease-in-out infinite;
+  will-change: transform;
 }
 
-.ai-thinking-fast {
-  animation: thinking 1s ease-in-out infinite;
+.parallax-float-slow {
+  animation: parallax-float 12s ease-in-out infinite;
+  will-change: transform;
 }
 
-.ai-thinking-slow {
-  animation: thinking 3s ease-in-out infinite;
+.parallax-float-fast {
+  animation: parallax-float 6s ease-in-out infinite;
+  will-change: transform;
 }
 
-/* Knowledge Flow */
-.knowledge-entering {
-  animation: knowledge-flow 0.7s var(--ease-thinking) forwards;
+/* Smooth Scaling */
+.smooth-scale-in {
+  animation: smooth-scale 0.4s ease-out forwards;
+  will-change: transform, opacity;
 }
 
-.knowledge-emerging {
-  animation: emergence 1s var(--ease-collaborative) forwards;
+.smooth-scale-in-slow {
+  animation: smooth-scale 0.8s ease-out forwards;
+  will-change: transform, opacity;
 }
 
-/* Community Presence */
-.community-active {
-  animation: collaborative-pulse 2s infinite;
+/* Glow Effects */
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
-.peer-connected {
-  animation: peer-connection 1.5s ease-in-out infinite;
+.glow-pulse-slow {
+  animation: glow-pulse 4s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
+/* Enhanced Hover Effects - Simplified for better performance */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: box-shadow;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+}
+
+/* Particle Animations */
+.float-particle {
+  animation: float-particle 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.float-particle-slow {
+  animation: float-particle 15s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.float-particle-fast {
+  animation: float-particle 8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.sparkle-effect {
+  animation: sparkle 4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Breathing Animation */
 .content-breathing {
-  animation: breathing 4s ease-in-out infinite;
-}
-
-/* Insight Moments */
-.insight-moment {
-  animation: insight-spark 0.8s var(--ease-thinking) forwards;
-}
-
-.aha-moment {
-  animation: insight-spark 1.2s var(--ease-collaborative) forwards;
-}
-
-/* Personality Animations */
-.personality-academic .animated {
-  animation: academic-emphasis 2s ease-in-out infinite;
-}
-
-.personality-socratic .animated {
-  animation: socratic-inquiry 3s ease-in-out infinite;
-}
-
-.personality-critical .animated {
-  animation: critical-analysis 1.5s ease-in-out infinite;
-}
-
-.personality-divulgative .animated {
-  animation: divulgative-bounce 2s ease-out infinite;
-}
-
-/* === HOVER ANIMATIONS === */
-
-/* Collaborative Hover - Elements that respond to community */
-.hover-collaborative {
-  transition: all var(--duration-normal) var(--ease-thinking);
-}
-
-.hover-collaborative:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: var(--shadow-lg), var(--glow-primary);
-}
-
-/* Knowledge Hover - Learning content interactions */
-.hover-knowledge {
-  transition: all var(--duration-slow) var(--ease-collaborative);
-}
-
-.hover-knowledge:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: var(--shadow-xl), var(--glow-secondary);
-  filter: brightness(1.05);
-}
-
-/* Insight Hover - Moments of understanding */
-.hover-insight {
-  transition: all var(--duration-normal) var(--ease-thinking);
-}
-
-.hover-insight:hover {
-  animation: insight-spark 0.6s var(--ease-thinking) forwards;
-}
-
-/* === LOADING ANIMATIONS === */
-
-/* Thoughtful Loading - Suggests contemplation */
-.loading-thoughtful {
-  position: relative;
-  overflow: hidden;
-}
-
-.loading-thoughtful::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(14, 165, 233, 0.1),
-    transparent
-  );
-  animation: thoughtful-sweep 2s ease-in-out infinite;
-}
-
-@keyframes thoughtful-sweep {
-  0% { left: -100%; }
-  50% { left: 0%; }
-  100% { left: 100%; }
-}
-
-/* Collaborative Loading - Multiple elements working together */
-.loading-collaborative {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.loading-collaborative .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary-500);
-  animation: collaborative-dots 1.5s ease-in-out infinite;
-}
-
-.loading-collaborative .dot:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.loading-collaborative .dot:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes collaborative-dots {
-  0%, 80%, 100% {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-  40% {
-    transform: scale(1.2);
-    opacity: 1;
-  }
+  animation: breathing 6s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 /* === TRANSITION UTILITIES === */
 
-/* Smooth Transitions */
+/* Optimized Transitions */
 .transition-smooth {
-  transition: all var(--duration-normal) var(--ease-thinking);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .transition-collaborative {
-  transition: all var(--duration-slow) var(--ease-collaborative);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .transition-instant {
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Transform Origins for Natural Movement */
@@ -416,9 +201,9 @@
     transition-duration: 0.01ms !important;
   }
   
-  .ai-thinking,
-  .community-active,
-  .peer-connected,
+  .parallax-float,
+  .float-particle,
+  .sparkle-effect,
   .content-breathing {
     animation: none;
   }
@@ -426,9 +211,8 @@
 
 /* High contrast mode adjustments */
 @media (prefers-contrast: high) {
-  .hover-collaborative:hover,
-  .hover-knowledge:hover {
-    box-shadow: var(--shadow-xl);
-    filter: none;
+  .hover-lift:hover,
+  .hover-glow:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   }
 }

@@ -1,6 +1,6 @@
-# NOTE: Il backend risponde su https://api.pyragogica.org:3010
+# NOTE: Il backend risponde su https://api.pyragogica.org:4000
 # Ricordati di impostare su Netlify:
-# VITE_API_URL = "https://api.pyragogica.org:3010"
+# VITE_API_URL = "https://api.pyragogica.org:4000"
 
 [build]
   publish = "dist"
@@ -40,6 +40,6 @@
 # Redirect API calls to backend
 [[redirects]]
   from = "/api/*"
-  to = "https://api.pyragogica.org:3010/api/:splat"
+  to = "https://api.pyragogica.org:4000/api/:splat"
   status = 200
   force = true

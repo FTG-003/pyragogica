@@ -14,6 +14,6 @@ RUN npm install --production
 COPY . .
 
 # Espone la porta (modifica se usi una porta diversa)
-EXPOSE 4567
+EXPOSE 4000
 # Comando di avvio
 CMD ["npm", "start"] 

@@ -464,7 +464,7 @@ export class RAGService {
       if (provider.id === 'flowise') {
         // Forza sempre l'uso del proxy backend
         let data;
-        response = await fetch('/api/ai/flowise', {
+        response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/ai/flowise`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question: prompt, persona: personality.name })
@@ -487,7 +487,7 @@ export class RAGService {
       } else if (provider.id === 'openrouter') {
         // Proxy backend per OpenRouter
         let data;
-        response = await fetch('/api/ai/openrouter', {
+        response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/ai/openrouter`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -520,7 +520,7 @@ export class RAGService {
       } else if (provider.id === 'openai') {
         // Proxy backend per OpenAI
         let data;
-        response = await fetch('/api/ai/openai', {
+        response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/ai/openai`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -553,7 +553,7 @@ export class RAGService {
       } else if (provider.id === 'anthropic') {
         // Proxy backend per Anthropic
         let data;
-        response = await fetch('/api/ai/anthropic', {
+        response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/ai/anthropic`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

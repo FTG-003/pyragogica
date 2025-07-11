@@ -11,7 +11,7 @@ if (typeof fetch === 'undefined') {
 }
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 4567;
 
 // Configurazione logging
 const logger = winston.createLogger({

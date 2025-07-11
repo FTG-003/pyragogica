@@ -30,7 +30,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:80', // Backend runs on port 80
+        target: 'http://localhost:8080', // Backend runs on port 8080
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path

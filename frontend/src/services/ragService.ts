@@ -467,7 +467,7 @@ export class RAGService {
         response = await fetch('/api/ai/flowise', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: prompt })
+          body: JSON.stringify({ question: prompt, persona: personality.name })
         });
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {

@@ -3,8 +3,12 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const winston = require('winston');
-const fetch = require('node-fetch');
 require('dotenv').config();
+
+// Garantisce che fetch sia disponibile anche in CommonJS
+if (typeof fetch === 'undefined') {
+  global.fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -289,22 +293,30 @@ app.post('/api/auth/login', (req, res) => {
 app.post('/api/ai/flowise', async (req, res) => {
   // Accetta sia 'question' che 'query' come campo
   const question = req.body.question || req.body.query;
-  console.log('Richiesta ricevuta per Flowise:', question);
+  const persona = req.body.persona;
+  console.log('Richiesta ricevuta per Flowise:', question, 'Persona:', persona);
   if (!question || typeof question !== 'string') {
     console.error('Richiesta Flowise senza campo question/query:', req.body);
     return res.status(400).json({ error: 'Campo question (o query) richiesto e deve essere una stringa' });
   }
+  // Se la personalità è presente, la includo come prefisso nel prompt
+  let prompt = question;
+  if (persona && typeof persona === 'string') {
+    prompt = `[PERSONALITÀ: ${persona}] ${question}`;
+  }
   const chatflowid = '9c4a9fce-a2dd-4e4f-a4b7-1bc72b9b9191';
   const apiKey = process.env.FLOWISE_API_KEY || 'VFbQZT_5p-bLh45Ox3UOl4wi6CkAmw3e8X9UCXXHWAE';
   try {
+    console.log('Invio richiesta a Flowise:', prompt);
     const response = await fetch(`https://flowise.pyragogy.org/api/v1/prediction/${chatflowid}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
-      body: JSON.stringify({ question })
+      body: JSON.stringify({ question: prompt })
     });
+    console.log('Risposta ricevuta da Flowise, status:', response.status);
     const contentType = response.headers.get('content-type');
     const text = await response.text();
     console.log('Risposta Flowise (raw):', text);

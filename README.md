@@ -85,5 +85,5 @@ Deploy consigliato: **Coolify** o **Docker** ([guida](./backend/README.md))
 ---
 
 **Versione**: 2.0.0 (modular refactor)
-**Ultimo aggiornamento**: 2025-01-27
+**Ultimo aggiornamento**: 2025-01-27  
 **Status**: ✅ Modular Ready

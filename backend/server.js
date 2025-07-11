@@ -34,7 +34,7 @@ const logger = winston.createLogger({
 // Middleware di sicurezza
 app.use(helmet());
 app.use(cors({
-  origin: 'https://library.pyragogy.org',
+  origin: ['https://library.pyragogy.org', 'http://localhost:5173'],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

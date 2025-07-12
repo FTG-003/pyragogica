@@ -122,49 +122,21 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       {/* Hero Section */}
       <section className="hero-modern relative overflow-hidden">
         <div className="absolute inset-0">
-          {/* Background gradients with improved positioning */}
-          <div className="absolute top-20 left-20 w-72 h-72 rounded-full opacity-20 animate-pulse bg-gradient-to-br from-orange-400 to-pink-500" style={{ filter: 'blur(40px)' }}></div>
-          <div className="absolute top-40 right-20 w-72 h-72 rounded-full opacity-20 animate-pulse bg-gradient-to-br from-purple-400 to-indigo-500" style={{ filter: 'blur(40px)', animationDelay: '2s' }}></div>
-          <div className="absolute bottom-20 left-1/2 w-72 h-72 rounded-full opacity-20 animate-pulse bg-gradient-to-br from-emerald-400 to-teal-500" style={{ filter: 'blur(40px)', animationDelay: '4s' }}></div>
-          
-          {/* Sophisticated Particle System */}
-          {/* Large floating elements */}
-          <div className="absolute top-1/4 left-1/4 w-6 h-6 bg-white/15 rounded-full float-particle" style={{ animationDelay: '0s' }}></div>
-          <div className="absolute top-1/3 right-1/3 w-4 h-4 bg-white/20 rounded-full float-particle-slow" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-white/25 rounded-full float-particle-fast" style={{ animationDelay: '4s' }}></div>
-          
-          {/* Medium particles with different shapes */}
-          <div className="absolute top-1/2 right-1/4 w-5 h-5 bg-gradient-to-br from-orange-300/30 to-pink-300/30 rounded-lg float-particle" style={{ animationDelay: '1s', transform: 'rotate(45deg)' }}></div>
-          <div className="absolute bottom-1/4 right-1/3 w-4 h-4 bg-gradient-to-br from-purple-300/25 to-indigo-300/25 rounded-full float-particle-slow" style={{ animationDelay: '3s' }}></div>
-          <div className="absolute top-2/3 left-1/5 w-3 h-3 bg-gradient-to-br from-emerald-300/35 to-teal-300/35 rounded-lg float-particle-fast" style={{ animationDelay: '5s', transform: 'rotate(30deg)' }}></div>
-          
-          {/* Small sparkle particles */}
-          <div className="absolute top-1/6 right-1/6 w-2 h-2 bg-white/40 rounded-full sparkle-effect" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute bottom-1/6 left-1/6 w-1.5 h-1.5 bg-white/35 rounded-full sparkle-effect" style={{ animationDelay: '2.5s' }}></div>
-          <div className="absolute top-3/4 right-1/5 w-2.5 h-2.5 bg-white/30 rounded-full sparkle-effect" style={{ animationDelay: '4.5s' }}></div>
-          
-          {/* Organic shapes for more natural feel */}
-          <div className="absolute top-1/5 left-2/3 w-4 h-6 bg-gradient-to-br from-yellow-300/20 to-orange-300/20 rounded-full float-particle" style={{ animationDelay: '1.5s', transform: 'rotate(15deg)' }}></div>
-          <div className="absolute bottom-1/5 right-1/6 w-5 h-3 bg-gradient-to-br from-blue-300/25 to-cyan-300/25 rounded-full float-particle-slow" style={{ animationDelay: '3.5s', transform: 'rotate(-20deg)' }}></div>
-          
-          {/* Subtle background texture */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-0 left-0 w-full h-full" style={{
-              backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 1px, transparent 1px), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '100px 100px, 150px 150px'
-            }}></div>
-          </div>
+          {/* Background gradients - Static for performance */}
+          <div className="absolute top-20 left-20 w-72 h-72 rounded-full opacity-20 bg-gradient-to-br from-orange-400 to-pink-500" style={{ filter: 'blur(40px)' }}></div>
+          <div className="absolute top-40 right-20 w-72 h-72 rounded-full opacity-20 bg-gradient-to-br from-purple-400 to-indigo-500" style={{ filter: 'blur(40px)' }}></div>
+          <div className="absolute bottom-20 left-1/2 w-72 h-72 rounded-full opacity-20 bg-gradient-to-br from-emerald-400 to-teal-500" style={{ filter: 'blur(40px)' }}></div>
         </div>
         
         <div className="container-modern hero-content relative z-10">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20 animate-scale-in mb-8 animate-color-pulse shadow-lg">
-            <Star className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '3s' }} />
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-semibold border border-white/20 mb-8 shadow-lg">
+            <Star className="w-5 h-5 text-yellow-400" />
             <span>Hub di Conoscenza Interattiva</span>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
           </div>
           
           <div className="space-y-8">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-up" style={{ 
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6" style={{ 
               lineHeight: '1.1',
               paddingBottom: '0.2em',
               textShadow: '0 4px 8px rgba(0,0,0,0.3)'
@@ -183,8 +155,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               </span>
             </h1>
             
-            <p className="text-lg sm:text-xl md:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ 
-              animationDelay: '0.2s',
+            <p className="text-lg sm:text-xl md:text-2xl text-slate-200 max-w-4xl mx-auto leading-relaxed" style={{ 
               textShadow: '0 2px 4px rgba(0,0,0,0.2)'
             }}>
               Un <strong className="text-orange-300 drop-shadow-sm">hub di conoscenza interattiva</strong> dove puoi dialogare direttamente con i testi sia liberi che premium — dedicati all'<strong className="text-pink-300 drop-shadow-sm">apprendimento peer-to-peer</strong>, 
@@ -195,7 +166,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </p>
             <br ></br>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <button 
               onClick={handleNavigateToLibrary}
               className="btn-modern btn-primary group cursor-pointer transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
@@ -236,19 +207,19 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <div key={index} className="card-modern p-8 animate-fade-in-up group hover-lift hover-glow cursor-pointer" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg group-hover:shadow-xl`}>
-                    <Icon className="w-6 h-6 text-white group-hover:rotate-12 transition-transform duration-300" />
+                <div key={index} className="card-modern p-8 group hover-lift cursor-pointer">
+                  <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-200 shadow-lg group-hover:shadow-xl`}>
+                    <Icon className="w-6 h-6 text-white group-hover:rotate-12 transition-transform duration-200" />
                   </div>
                   
-                  <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-orange-600 group-hover:to-pink-600 group-hover:bg-clip-text transition-all duration-300">
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-orange-600 group-hover:to-pink-600 group-hover:bg-clip-text transition-all duration-200">
                     {feature.title}
                   </h3>
-                  <p className="text-slate-600 leading-relaxed mb-4 group-hover:text-slate-700 transition-colors duration-300">
+                  <p className="text-slate-600 leading-relaxed mb-4 group-hover:text-slate-700 transition-colors duration-200">
                     {feature.description}
                   </p>
-                  <div className="status-indicator status-success group-hover:scale-105 transition-transform duration-300">
-                    <Heart className="w-3 h-3 group-hover:animate-pulse" />
+                  <div className="status-indicator status-success group-hover:scale-105 transition-transform duration-200">
+                    <Heart className="w-3 h-3" />
                     <span>{feature.stats}</span>
                   </div>
                 </div>
@@ -276,7 +247,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             {contentTypes.map((type, index) => {
               const Icon = type.icon;
               return (
-                <div key={index} className="card-modern p-6 animate-fade-in-up hover:animate-color-pulse" style={{ animationDelay: `${index * 0.1}s` }}>
+                <div key={index} className="card-modern p-6">
                   <div className={`w-10 h-10 bg-gradient-to-br ${type.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg`}>
                     <Icon className="w-5 h-5 text-white" />
                   </div>

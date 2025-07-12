@@ -16,28 +16,17 @@
   
   body {
     @apply text-slate-900;
-    /* Sfondo colorato e dinamico */
+    /* Sfondo statico ottimizzato per performance */
     background: linear-gradient(135deg, 
       #f0f9ff 0%,    /* blue-50 */
-      #fef3c7 25%,   /* amber-100 */
-      #f3e8ff 50%,   /* purple-100 */
-      #ecfdf5 75%,   /* green-50 */
-      #fef2f2 100%   /* red-50 */
+      #fef3c7 50%,   /* amber-100 */
+      #f3e8ff 100%   /* purple-100 */
     );
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.011em;
-  }
-  
-  /* Animazione sfondo dinamico */
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -80,11 +69,11 @@
   .btn-modern {
     @apply inline-flex items-center justify-center gap-2;
     @apply px-4 py-3 sm:px-6 sm:py-3 rounded-2xl font-semibold;
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-200 ease-out;
     @apply focus:outline-none focus:ring-4;
     @apply transform hover:scale-105 active:scale-95;
     @apply min-h-[44px] text-sm sm:text-base;
-    @apply shadow-lg hover:shadow-2xl;
+    @apply shadow-lg hover:shadow-xl;
     font-feature-settings: 'ss01';
     letter-spacing: -0.01em;
   }
@@ -105,23 +94,18 @@
   
   .card-modern {
     @apply bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-white/50;
-    @apply transition-all duration-500 ease-out;
-    @apply hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02];
-    /* Bordo colorato animato */
+    @apply transition-all duration-300 ease-out;
+    @apply hover:shadow-xl hover:-translate-y-1;
+    /* Bordo colorato statico */
     background: linear-gradient(white, white) padding-box,
                 linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6, #06b6d4) border-box;
     border: 2px solid transparent;
   }
   
-  .card-modern:hover {
-    background: linear-gradient(white, white) padding-box,
-                linear-gradient(135deg, #f97316, #db2777, #7c3aed, #0891b2) border-box;
-  }
-  
   .input-modern {
     @apply w-full px-4 py-3 border-2 rounded-2xl;
     @apply focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500;
-    @apply transition-all duration-300 text-base;
+    @apply transition-all duration-200 text-base;
     @apply bg-white/90 backdrop-blur-sm hover:border-amber-300;
     @apply min-h-[44px];
     @apply border-orange-300;
@@ -137,7 +121,7 @@
   
   .nav-item {
     @apply flex items-center gap-3 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl;
-    @apply text-sm font-semibold transition-all duration-300;
+    @apply text-sm font-semibold transition-all duration-200;
     @apply hover:bg-gradient-to-r hover:from-orange-100 hover:to-pink-100;
     @apply min-h-[44px];
     font-feature-settings: 'ss01';
@@ -152,21 +136,9 @@
     @apply relative overflow-hidden;
     background: linear-gradient(135deg, 
       #1e1b4b 0%,     /* indigo-900 */
-      #7c2d12 25%,    /* red-900 */
       #581c87 50%,    /* purple-900 */
-      #164e63 75%,    /* cyan-900 */
-      #365314 100%    /* green-900 */
+      #164e63 100%    /* cyan-900 */
     );
-    background-size: 400% 400%;
-    animation: heroGradient 20s ease infinite;
-  }
-  
-  @keyframes heroGradient {
-    0% { background-position: 0% 50%; }
-    25% { background-position: 100% 50%; }
-    50% { background-position: 100% 100%; }
-    75% { background-position: 0% 100%; }
-    100% { background-position: 0% 50%; }
   }
   
   .hero-content {
@@ -227,9 +199,9 @@
     @apply shadow-blue-500/20;
   }
 
-  /* Mobile-First Chat Interface with Colors */
+  /* Mobile-First Chat Interface - Ottimizzato per performance */
   .chat-container {
-    @apply h-[calc(100vh-8rem)] sm:h-[600px] md:h-[700px] lg:h-[800px];
+    @apply h-[calc(100vh-12rem)] sm:h-[600px] md:h-[700px] lg:h-[800px];
     @apply flex flex-col rounded-2xl sm:rounded-3xl;
     @apply shadow-2xl border-2;
     background: linear-gradient(white, white) padding-box,
@@ -258,7 +230,7 @@
   
   .message-bubble {
     @apply p-3 sm:p-4 md:p-6 rounded-2xl sm:rounded-3xl shadow-lg;
-    @apply max-w-[85%] sm:max-w-3xl;
+    @apply max-w-[90%] sm:max-w-3xl;
   }
   
   .message-user {
@@ -287,7 +259,7 @@
   }
 }
 
-/* Animazioni colorate */
+/* Animazioni essenziali solo - Performance ottimizzata */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -310,46 +282,13 @@
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-@keyframes colorPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
-  }
-}
-
 @layer utilities {
   .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
+    animation: fadeInUp 0.4s ease-out forwards;
   }
   
   .animate-scale-in {
-    animation: scaleIn 0.4s ease-out forwards;
-  }
-  
-  .animate-shimmer {
-    animation: shimmer 2s infinite;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(245, 158, 11, 0.4),
-      transparent
-    );
-    background-size: 200px 100%;
-  }
-  
-  .animate-color-pulse {
-    animation: colorPulse 3s ease-in-out infinite;
+    animation: scaleIn 0.3s ease-out forwards;
   }
   
   .shadow-modern {
@@ -390,7 +329,7 @@
   }
 }
 
-/* Mobile Optimizations with Colors */
+/* Mobile Optimizations - Chatbot specific */
 @media (max-width: 640px) {
   .btn-modern {
     @apply px-3 py-2 text-sm min-h-[44px];
@@ -410,15 +349,103 @@
   }
   
   .chat-container {
-    @apply rounded-lg;
+    @apply h-[calc(100vh-14rem)] rounded-lg;
+    min-height: 500px;
   }
   
   .message-bubble {
-    @apply max-w-[90%] p-3 rounded-xl;
+    @apply max-w-[95%] p-3 rounded-xl;
+  }
+  
+  /* Mobile chat input ottimizzato */
+  .chat-input-area {
+    @apply p-3;
+  }
+  
+  /* Mobile message spacing */
+  .chat-messages {
+    @apply p-3 space-y-3;
+  }
+  
+  /* Mobile header compatto e centrato */
+  .chat-header {
+    @apply p-3;
+  }
+  
+  /* Prevent header overlap on mobile */
+  .min-h-screen {
+    min-height: 100vh;
+    padding-top: 0;
+  }
+  
+  /* Ensure proper centering on mobile */
+  .lg\:col-span-9 {
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  /* Compact header elements */
+  .chat-header h3 {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  .chat-header p {
+    font-size: 0.75rem;
+    line-height: 1rem;
   }
 }
 
-/* Reduced Motion */
+/* Tablet Optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .chat-container {
+    @apply h-[calc(100vh-18rem)];
+    min-height: 650px;
+  }
+  
+  .message-bubble {
+    @apply max-w-[92%] p-4 sm:p-6;
+  }
+  
+  .chat-messages {
+    @apply p-4 sm:p-6 space-y-4 sm:space-y-6;
+  }
+  
+  .chat-header {
+    @apply p-4 sm:p-6;
+  }
+  
+  .chat-input-area {
+    @apply p-4 sm:p-6;
+  }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1025px) {
+  .chat-container {
+    @apply h-[calc(100vh-14rem)];
+    min-height: 700px;
+    max-height: 900px;
+  }
+  
+  .message-bubble {
+    @apply max-w-[88%] p-6 md:p-8;
+  }
+  
+  .chat-messages {
+    @apply p-4 sm:p-6 md:p-8 space-y-6;
+  }
+  
+  .chat-header {
+    @apply p-6 md:p-8;
+  }
+  
+  .chat-input-area {
+    @apply p-6 md:p-8;
+  }
+}
+
+/* Reduced Motion - Performance ottimizzata */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -429,12 +456,10 @@
   }
   
   body {
-    animation: none;
     background: linear-gradient(135deg, #f0f9ff 0%, #fef3c7 100%);
   }
   
   .hero-modern {
-    animation: none;
     background: linear-gradient(135deg, #1e1b4b 0%, #581c87 100%);
   }
 }

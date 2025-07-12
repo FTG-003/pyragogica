@@ -522,83 +522,84 @@ const ChatbotPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Header - Fixed height to prevent jumping */}
-        <div className="text-center mb-8 min-h-[180px] flex flex-col justify-center relative">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6 hover-lift cursor-pointer">
-            <Brain className="w-4 h-4 animate-pulse" />
-            <span>Sistema RAG Production-Ready con API Personalizzabili</span>
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
+        {/* Header - Compact on mobile to prevent overlap */}
+        <div className="text-center mb-4 sm:mb-6 lg:mb-8 min-h-[120px] sm:min-h-[160px] lg:min-h-[180px] flex flex-col justify-center relative">
+          <div className="inline-flex items-center space-x-2 px-3 sm:px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold mb-4 sm:mb-6 hover-lift cursor-pointer">
+            <Brain className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Sistema RAG Production-Ready con API Personalizzabili</span>
+            <span className="sm:hidden">RAG System Ready</span>
             {flowiseActive && (
-              <span className="ml-3 inline-flex items-center px-3 py-1 bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-full text-xs font-bold animate-pulse glow-pulse">
-                <Zap className="w-3 h-3 mr-1" /> Flowise attivo
+              <span className="ml-2 sm:ml-3 inline-flex items-center px-2 sm:px-3 py-1 bg-gradient-to-r from-green-400 to-teal-500 text-white rounded-full text-xs font-bold">
+                <Zap className="w-3 h-3 mr-1" /> <span className="hidden sm:inline">Flowise attivo</span>
               </span>
             )}
           </div>
-          <h1 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6 animate-fade-in-up" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             AI Assistant Pyragogico
           </h1>
-          <p className="text-lg sm:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <p className="text-sm sm:text-lg lg:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed px-2">
             Sistema RAG con personalità multiple basato sul <strong className="text-purple-600">Peeragogy Handbook completo</strong>. 
-            Configurazione API flessibile con supporto per modelli gratuiti e premium.
+            <span className="hidden sm:inline">Configurazione API flessibile con supporto per modelli gratuiti e premium.</span>
           </p>
           
-          {/* System Status - Fixed height */}
-          <div className="mt-8 flex flex-wrap justify-center gap-4 min-h-[60px] items-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl hover-lift cursor-pointer">
-              <Database className="w-4 h-4 text-green-600" />
-              <span className="text-green-800 font-semibold">Vector Store Locale</span>
-              <CheckCircle className="w-4 h-4 text-green-600" />
+          {/* System Status - Compact on mobile */}
+          <div className="mt-4 sm:mt-6 lg:mt-8 flex flex-wrap justify-center gap-2 sm:gap-4 min-h-[40px] sm:min-h-[50px] lg:min-h-[60px] items-center">
+            <div className="inline-flex items-center space-x-2 px-3 sm:px-4 py-2 bg-green-50 border border-green-200 rounded-xl hover-lift cursor-pointer">
+              <Database className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
+              <span className="text-green-800 font-semibold text-xs sm:text-sm">Vector Store</span>
+              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
             </div>
-            <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl border hover-lift cursor-pointer ${
+            <div className={`inline-flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-xl border hover-lift cursor-pointer ${
               systemStatus.configured 
                 ? 'bg-green-50 border-green-200 text-green-800' 
                 : 'bg-orange-50 border-orange-200 text-orange-800'
             }`}>
-              <Key className="w-4 h-4" />
-              <span className="font-semibold">
-                {systemStatus.configured ? 'API Configurata' : 'API da Configurare'}
+              <Key className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="font-semibold text-xs sm:text-sm">
+                {systemStatus.configured ? 'API OK' : 'API da Config'}
               </span>
             </div>
             {systemStatus.modelIsFree && (
-              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl hover-lift cursor-pointer">
-                <Zap className="w-4 h-4 text-emerald-600" />
-                <span className="text-emerald-800 font-semibold">Modello Gratuito</span>
+              <div className="inline-flex items-center space-x-2 px-3 sm:px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl hover-lift cursor-pointer">
+                <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+                <span className="text-emerald-800 font-semibold text-xs sm:text-sm">Gratuito</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Main Content Grid - Fixed layout to prevent overlapping */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Main Content Grid - Optimized for all screen sizes */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
           {/* Mobile Sidebar Toggle */}
-          <div className="lg:hidden col-span-1">
+          <div className="lg:hidden col-span-1 mb-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="w-full flex items-center justify-between p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50"
+              className="w-full flex items-center justify-between p-3 sm:p-4 bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-slate-200/50"
             >
               <div className="flex items-center space-x-3">
-                <span className="text-2xl">{getCurrentPersonality().emoji}</span>
+                <span className="text-xl sm:text-2xl">{getCurrentPersonality().emoji}</span>
                 <div className="text-left">
-                  <div className="font-semibold text-slate-900">{getCurrentPersonality().name}</div>
-                  <div className="text-sm text-slate-600">{systemStatus.configured ? 'Configurato' : 'Da configurare'}</div>
+                  <div className="font-semibold text-slate-900 text-sm sm:text-base">{getCurrentPersonality().name}</div>
+                  <div className="text-xs sm:text-sm text-slate-600">{systemStatus.configured ? 'Configurato' : 'Da configurare'}</div>
                 </div>
               </div>
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {sidebarOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
           </div>
 
-          {/* Enhanced Sidebar - Fixed width and proper positioning */}
-          <div className={`lg:col-span-3 space-y-6 ${sidebarOpen ? 'block' : 'hidden lg:block'}`}>
+          {/* Enhanced Sidebar - Optimized for all screen sizes */}
+          <div className={`lg:col-span-3 space-y-4 lg:space-y-6 ${sidebarOpen ? 'block' : 'hidden lg:block'}`}>
             {/* System Status */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-slate-200">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-slate-900">Stato Sistema</h3>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">Stato Sistema</h3>
                 <button
                   onClick={() => setShowApiConfig(true)}
-                  className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
+                  className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200"
                   aria-label="Configurazione API"
                 >
-                  <Settings className="w-5 h-5" />
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
               
@@ -658,37 +659,37 @@ const ChatbotPage = () => {
             </div>
 
             {/* Enhanced Personality Selector */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-slate-200 hover-lift">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-slate-900">Personalità AI</h3>
-                <div className="flex items-center space-x-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-slate-200 hover-lift">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">Personalità AI</h3>
+                <div className="flex items-center space-x-2 px-2 sm:px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span>Attiva</span>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {PERSONALITIES.map((personality) => (
                   <button
                     key={personality.id}
                     onClick={() => handlePersonalityChange(personality.id)}
-                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 hover-lift ${
+                    className={`w-full p-3 sm:p-4 rounded-xl text-left transition-all duration-200 transform hover:scale-105 hover-lift ${
                       selectedPersonality === personality.id
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20 glow-pulse'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg ring-4 ring-indigo-500/20'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-900 border-2 border-transparent hover:border-slate-200'
                     }`}
                   >
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className="text-2xl">{personality.emoji}</span>
+                    <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
+                      <span className="text-xl sm:text-2xl">{personality.emoji}</span>
                       <div className="flex-1">
-                        <h4 className="font-bold flex items-center space-x-2">
+                        <h4 className="font-bold flex items-center space-x-2 text-sm sm:text-base">
                           <span>{personality.name}</span>
                           {selectedPersonality === personality.id && (
-                            <span className="text-xs bg-white/20 px-2 py-1 rounded-full animate-pulse">ATTIVA</span>
+                            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">ATTIVA</span>
                           )}
                         </h4>
                       </div>
                     </div>
-                    <p className="text-sm opacity-90 mb-2">{personality.description}</p>
+                    <p className="text-xs sm:text-sm opacity-90 mb-2">{personality.description}</p>
                     <div className="text-xs opacity-75">
                       Temp: {personality.temperature} • Max: {personality.maxTokens} token
                     </div>
@@ -698,73 +699,77 @@ const ChatbotPage = () => {
             </div>
           </div>
 
-          {/* Enhanced Chat Interface - Fixed height and proper spacing */}
+          {/* Enhanced Chat Interface - Optimized for all screen sizes */}
           <div className="lg:col-span-9">
             <div 
               ref={chatContainerRef}
-              className="bg-white rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden"
-              style={{ height: '700px' }}
+              className="bg-white rounded-xl sm:rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden"
+              style={{ 
+                height: 'calc(100vh - 16rem)',
+                minHeight: '600px',
+                maxHeight: '900px'
+              }}
             >
-              {/* Enhanced Chat Header with Model Indicator */}
-              <div className="p-6 border-b-2 border-slate-200 bg-gradient-to-r from-orange-50 via-pink-50 to-purple-50">
-                <div className="flex items-center space-x-4">
-                  <div className="relative p-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
-                    <Brain className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+              {/* Enhanced Chat Header - Mobile optimized to prevent overlap */}
+              <div className="p-3 sm:p-4 md:p-6 border-b-2 border-slate-200 bg-gradient-to-r from-orange-50 via-pink-50 to-purple-50">
+                <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+                  <div className="relative p-1.5 sm:p-2 md:p-3 rounded-lg sm:rounded-xl md:rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg flex-shrink-0">
+                    <Brain className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
+                    <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-bold text-slate-900 text-lg sm:text-xl">
-                        RAG System • {getCurrentPersonality().name}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 mb-1 sm:mb-2">
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg lg:text-xl truncate">
+                        RAG • {getCurrentPersonality().name}
                       </h3>
-                      <span className="text-xl sm:text-2xl">{getCurrentPersonality().emoji}</span>
-                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-                        PRODUCTION
+                      <span className="text-base sm:text-lg md:text-xl lg:text-2xl flex-shrink-0">{getCurrentPersonality().emoji}</span>
+                      <span className="px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex-shrink-0">
+                        PROD
                       </span>
                       {systemStatus.modelIsFree && (
-                        <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                        <span className="px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold flex-shrink-0">
                           FREE
                         </span>
                       )}
                     </div>
                     
-                    {/* Model Indicator */}
+                    {/* Model Indicator - Compact on mobile */}
                     {systemStatus.configured && getCurrentModel() && (
-                      <div className="flex items-center space-x-2 mb-1">
-                        <Cpu className="w-4 h-4 text-indigo-600" />
-                        <span className="text-sm font-semibold text-indigo-600">
+                      <div className="flex items-center space-x-1 sm:space-x-2 mb-1">
+                        <Cpu className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-indigo-600 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-semibold text-indigo-600 truncate">
                           {getCurrentModel()?.name}
                         </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        <span className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ${
                           getCurrentModel()?.free 
                             ? 'bg-green-100 text-green-700' 
                             : 'bg-orange-100 text-orange-700'
                         }`}>
-                          {getCurrentModel()?.free ? 'Gratuito' : 'Premium'}
+                          {getCurrentModel()?.free ? 'Free' : 'Pro'}
                         </span>
                       </div>
                     )}
                     
-                    <p className="text-slate-600 text-sm sm:text-base">
+                    <p className="text-slate-600 text-xs sm:text-sm md:text-base truncate">
                       {getCurrentPersonality().description} • {systemStatus.configured ? `${systemStatus.provider} attivo` : 'Configurazione richiesta'}
                     </p>
                   </div>
                   
                   <button
                     onClick={resetChat}
-                    className="group p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 border-2 border-transparent hover:border-red-200"
+                    className="group p-1.5 sm:p-2 md:p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg sm:rounded-xl transition-all duration-200 border-2 border-transparent hover:border-red-200 flex-shrink-0"
                     title="Reset Chat"
                     aria-label="Reset chat"
                   >
-                    <RotateCcw className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-180 transition-transform duration-500" />
+                    <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 group-hover:rotate-180 transition-transform duration-300" />
                   </button>
                 </div>
               </div>
 
-              {/* Enhanced Messages - Fixed height with scroll */}
+              {/* Enhanced Messages - Optimized for all screen sizes */}
               <div 
-                className="p-4 overflow-y-auto space-y-6 bg-gradient-to-b from-orange-50/30 via-pink-50/30 to-purple-50/30"
-                style={{ height: 'calc(100% - 240px)' }}
+                className="p-3 sm:p-4 md:p-6 overflow-y-auto space-y-4 sm:space-y-6 bg-gradient-to-b from-orange-50/30 via-pink-50/30 to-purple-50/30"
+                style={{ height: 'calc(100% - 180px)' }}
               >
                 {messages.map((message) => (
                   <div
@@ -787,7 +792,7 @@ const ChatbotPage = () => {
                           <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                         )}
                       </div>
-                      <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-lg max-w-[85%] sm:max-w-3xl ${
+                      <div className={`p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-lg max-w-[90%] sm:max-w-4xl lg:max-w-5xl ${
                         message.role === 'user' 
                           ? 'bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white' 
                           : message.role === 'system'
@@ -857,9 +862,9 @@ const ChatbotPage = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Enhanced Input - Fixed height */}
-              <div className="p-4 border-t-2 border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50" style={{ height: '120px' }}>
-                <div className="flex space-x-3 sm:space-x-4 h-full items-center">
+              {/* Enhanced Input - Optimized for all screen sizes */}
+              <div className="p-3 sm:p-4 md:p-6 border-t-2 border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50" style={{ height: '120px' }}>
+                <div className="flex space-x-2 sm:space-x-3 lg:space-x-4 h-full items-center">
                   <input
                     ref={inputRef}
                     type="text"
@@ -867,7 +872,7 @@ const ChatbotPage = () => {
                       ? `Chiedi qualcosa sul Peeragogy Handbook a ${getCurrentPersonality().name} o usa un comando (/help)...`
                       : 'Configura una API key per iniziare...'
                     }
-                    className="flex-1 px-6 py-3 border-2 border-orange-300 rounded-2xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 transition-all duration-300 bg-white/90 backdrop-blur-sm hover:border-amber-300 min-h-[44px] text-base"
+                    className="flex-1 px-4 sm:px-6 py-2 sm:py-3 border-2 border-orange-300 rounded-xl sm:rounded-2xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 transition-all duration-200 bg-white/90 backdrop-blur-sm hover:border-amber-300 min-h-[44px] text-sm sm:text-base"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -877,53 +882,53 @@ const ChatbotPage = () => {
                   <button
                     onClick={resetChat}
                     disabled={isTyping}
-                    className="px-4 sm:px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-300 flex items-center space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                    className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-200 flex items-center space-x-1 sm:space-x-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
                     title="Reset Chat"
                     aria-label="Reset chat"
                   >
                     <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="hidden sm:inline">Reset</span>
+                    <span className="hidden lg:inline">Reset</span>
                   </button>
                   
                   <button
                     onClick={() => handleSendMessage()}
                     disabled={!inputValue.trim() || isTyping}
-                    className="px-6 sm:px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2 sm:space-x-3 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-h-[44px]"
+                    className="px-4 sm:px-6 lg:px-8 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center space-x-1 sm:space-x-2 lg:space-x-3 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none min-h-[44px]"
                   >
                     {isTyping ? (
                       <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                     ) : (
                       <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                     )}
-                    <span className="hidden sm:inline">Invia</span>
+                    <span className="hidden lg:inline">Invia</span>
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Quick Prompts Section - Positioned below chat */}
-            <div className="mt-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
-                <h3 className="text-lg font-bold text-slate-900">Domande Pronte sul Peeragogy Handbook</h3>
+            {/* Quick Prompts Section - Mobile optimized */}
+            <div className="mt-4 sm:mt-6">
+              <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">Domande Pronte sul Peeragogy Handbook</h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {quickPrompts.map((prompt, index) => (
                   <button
                     key={index}
                     onClick={() => handleQuickPrompt(prompt)}
-                    className="group p-4 text-left bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+                    className="group p-3 sm:p-4 text-left bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md"
                     disabled={isTyping}
                   >
-                    <div className="flex items-start space-x-3">
-                      <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors duration-300">
-                        <Sparkles className="w-4 h-4 text-indigo-600" />
+                    <div className="flex items-start space-x-2 sm:space-x-3">
+                      <div className="p-1.5 sm:p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors duration-200">
+                        <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-900 group-hover:text-indigo-900 transition-colors duration-300">
+                        <p className="text-xs sm:text-sm font-medium text-slate-900 group-hover:text-indigo-900 transition-colors duration-200">
                           {prompt}
                         </p>
-                        <p className="text-xs text-slate-500 mt-1 group-hover:text-indigo-600 transition-colors duration-300">
+                        <p className="text-xs text-slate-500 mt-1 group-hover:text-indigo-600 transition-colors duration-200">
                           Clicca per inserire nel chat
                         </p>
                       </div>

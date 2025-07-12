@@ -5,6 +5,7 @@
 [build]
   publish = "dist"
   command = "npm run build"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -40,6 +41,39 @@
 # Redirect API calls to backend
 [[redirects]]
   from = "/api/*"
-  to = "https://api.pyragogica.org:4000/api/:splat"
+  to = "/.netlify/functions/:splat"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+
+[functions."auth"]
+  included_files = ["netlify/functions/auth.js"]
+
+[functions."rag"]
+  included_files = ["netlify/functions/rag.js"]
+
+# Neon Database Configuration
+[[plugins]]
+  package = "@netlify/plugin-neon"
+
+[context.production.environment]
+  NEON_DATABASE_URL = "your-production-neon-url"
+  FLOWISE_API_URL = "https://flowise.pyragogy.org/api/v1"
+  FLOWISE_API_KEY = "your-flowise-api-key"
+
+[context.deploy-preview.environment]
+  NEON_DATABASE_URL = "your-preview-neon-url"
+  FLOWISE_API_URL = "https://flowise.pyragogy.org/api/v1"
+  FLOWISE_API_KEY = "your-flowise-api-key"
+
+[context.branch-deploy.environment]
+  NEON_DATABASE_URL = "your-branch-neon-url"
+  FLOWISE_API_URL = "https://flowise.pyragogy.org/api/v1"
+  FLOWISE_API_KEY = "your-flowise-api-key"
